@@ -3,6 +3,7 @@ import AdminDashboard from "../components/AdminDashboard.vue";
 import DashboardPage from "../components/pages/DashboardPage.vue";
 import TasksPage from "../components/pages/TasksPage.vue";
 import UsersPage from "../components/pages/UsersPage.vue";
+import Profile from "@/components/pages/Profile.vue";
 
 const routes = [
   {
@@ -12,6 +13,7 @@ const routes = [
       { path: "", component: DashboardPage },
       { path: "tasks", component: TasksPage },
       { path: "users", component: UsersPage },
+      { path: "profile", component: Profile },
     ],
   },
 ];

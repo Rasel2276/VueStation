@@ -31,8 +31,8 @@
         </div>
 
         <ul v-if="open.tasks && !isCollapsed" class="dropdown">
-          <li>Task List</li>
-          <li>Create Task</li>
+          <li><RouterLink class="menu-link" to="tasks">Task List</RouterLink></li>
+          <li><RouterLink class="menu-link" to="profile">Profile List</RouterLink></li>
         </ul>
       </li>
 
@@ -152,6 +152,11 @@ body {
   width: 70px;
 }
 
+.menu-link{
+  text-decoration: none;
+  color: white;
+}
+
 /* Toggle Button Right Side Floating */
 .toggle-btn {
   position: absolute;
@@ -259,8 +264,8 @@ body {
 
 /* Settings Bottom */
 .settings {
-  position: absolute;
-  bottom: 20px;
+  padding:15px ;
+  margin-top: 60px;
   left: 20px;
   font-size: 14px;
   cursor: pointer;
@@ -279,4 +284,5 @@ body {
     opacity: 1;
   }
 }
+
 </style>
