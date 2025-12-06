@@ -26,7 +26,6 @@
       <li>
         <div class="menu-item" @click="toggleMenu('tasks')">
           <span v-if="!isCollapsed">TASKS</span>
-          <span v-if="!isCollapsed" class="badge">6</span>
           <span class="arrow">&#9654;</span>
         </div>
 

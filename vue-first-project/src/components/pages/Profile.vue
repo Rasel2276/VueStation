@@ -1,120 +1,112 @@
 <template>
-  <div class="profile-wrapper">
-    <div class="profile-card-box">
-      <div class="profile-avatar"></div>
-
-      <h2 class="profile-title">David Smith</h2>
-      <p class="profile-role">UI/UX Designer</p>
-
-      <div class="profile-info">
-        <div class="profile-info-row">
-          <span class="info-label">Email:</span>
-          <span class="info-value">david@example.com</span>
-        </div>
-
-        <div class="profile-info-row">
-          <span class="info-label">Phone:</span>
-          <span class="info-value">01234-567890</span>
-        </div>
-
-        <div class="profile-info-row">
-          <span class="info-label">Location:</span>
-          <span class="info-value">Dhaka, Bangladesh</span>
-        </div>
+  <div class="cards-wrapper">
+    <div class="card blue">
+      <p class="title">Orders Received</p>
+      <div class="icon-row">
+        <i class="icon">🛒</i>
+        <span class="number">486</span>
       </div>
+      <p class="subtitle">Completed Orders <span>351</span></p>
+    </div>
 
-      <button class="profile-edit-btn">Edit Profile</button>
+    <div class="card green">
+      <p class="title">Orders Received</p>
+      <div class="icon-row">
+        <i class="icon">🚀</i>
+        <span class="number">486</span>
+      </div>
+      <p class="subtitle">Completed Orders <span>351</span></p>
+    </div>
+
+    <div class="card yellow">
+      <p class="title">Orders Received</p>
+      <div class="icon-row">
+        <i class="icon">🔄</i>
+        <span class="number">486</span>
+      </div>
+      <p class="subtitle">Completed Orders <span>351</span></p>
+    </div>
+
+    <div class="card red">
+      <p class="title">Orders Received</p>
+      <div class="icon-row">
+        <i class="icon">💳</i>
+        <span class="number">486</span>
+      </div>
+      <p class="subtitle">Completed Orders <span>351</span></p>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Profile",
-};
-</script>
-
-<style>
-.profile-wrapper {
+<style scoped>
+.cards-wrapper {
   display: flex;
+  gap: 30px;
+  margin: 15px;
   justify-content: center;
-  margin-top: 30px;
 }
 
-.profile-card-box {
-  width: 350px;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  animation: fadeIn 0.5s ease;
-}
-
-.profile-avatar {
-  width: 100px;
-  height: 100px;
-  background: #cccccc;
-  border-radius: 50%;
-  margin: 0 auto 15px;
-  border: 4px solid #0aaed8;
-}
-
-.profile-title {
-  font-size: 22px;
-  margin-bottom: 5px;
-  color: #0f6bbf;
-}
-
-.profile-role {
-  color: #666;
-  margin-bottom: 18px;
-}
-
-.profile-info {
-  text-align: left;
-  margin-bottom: 20px;
-}
-
-.profile-info-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.info-label {
-  font-weight: bold;
-  color: #444;
-}
-
-.info-value {
-  color: #555;
-}
-
-.profile-edit-btn {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(to right, #0f6bbf, #0aaed8);
-  border: none;
+.card {
+  width: 260px;
+  padding: 15px;
+  border-radius: 7px;
   color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   transition: 0.3s;
 }
 
-.profile-edit-btn:hover {
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Text styles */
+.title {
+  font-size: 18px;
+  opacity: 0.95;
+  margin-bottom: 10px;
+}
+
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon {
+  font-size: 36px;
+}
+
+.number {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.subtitle {
+  margin-top: 15px;
+  font-size: 15px;
   opacity: 0.9;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.subtitle span {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+/* Gradient Colors */
+.blue {
+  background: linear-gradient(135deg, #3ba4ff 0%, #4c7efd 100%);
+}
+
+.green {
+  background: linear-gradient(135deg, #24d4b5 0%, #19cfa2 100%);
+}
+
+.yellow {
+  background: linear-gradient(135deg, #ffcf66 0%, #f7a836 100%);
+}
+
+.red {
+  background: linear-gradient(135deg, #ff6f91 0%, #ff5670 100%);
 }
 </style>
