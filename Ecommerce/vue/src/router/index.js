@@ -1,8 +1,21 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
+import AdminDashboardLayout from "../Dashboard/Admindashboard/Adminlayout/AdminDashboardLayout.vue";
+import AdminDashboard from "../Dashboard/Admindashboard/Admincomponents/AdminDashboard.vue";
+
+
+const routes = [
+  {
+    path: "/",
+    component: AdminDashboardLayout,
+    children: [
+      { path: "", component: AdminDashboard },
+    ],
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+export default router;

@@ -1,7 +1,7 @@
-<script setup></script>
-
 <template>
-  <h1>MD.Rasel Hossain</h1>
+  <router-view />
 </template>
 
-<style scoped></style>
+<script>
+export default {};
+</script>
