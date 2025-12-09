@@ -1,14 +1,14 @@
 <template>
   <div id="admin-dashboard">
-    <!-- Sidebar -->
+    
     <Sidebar :collapsed="sidebarCollapsed" />
 
-    <!-- Main Area -->
+    
     <div :class="['main-area', { collapsed: sidebarCollapsed }]">
-      <!-- Header -->
+      
       <Header @toggle-sidebar="toggleSidebar" />
 
-      <!-- Scrollable Content -->
+      
       <div class="content">
         <router-view />
       </div>

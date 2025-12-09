@@ -1,5 +1,4 @@
 <template>
-
   <div class="container">
     <h3 class="text-center mb-4">Students List</h3>
 
@@ -13,6 +12,7 @@
           <th>Course</th>
           <th>Email</th>
           <th>Phone</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +22,10 @@
           <td>{{ student.course }}</td>
           <td>{{ student.email }}</td>
           <td>{{ student.phone }}</td>
+          <td>
+            <button @click="editStudent(student.id)">Edit</button>
+            <button @click="deleteStudent(student.id)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -30,42 +34,46 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
-export default {
-  name: "AllStudents",
-  setup() {
-    const students = ref([]);
-    const loading = ref(true);
+const students = ref([]);
+const loading = ref(true);
+const router = useRouter();
 
-    const fetchStudents = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/api/students");
-        if (res.data.status === 200) {
-          students.value = res.data.students;
-        } else {
-          students.value = [];
-        }
-      } catch (error) {
-        console.error("Failed to load students", error);
-        students.value = [];
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    onMounted(() => {
-      fetchStudents();
-    });
-
-    return {
-      students,
-      loading,
-    };
-  },
+const fetchStudents = async () => {
+  try {
+    const res = await axios.get("http://localhost:8000/api/students");
+    students.value = res.data.students ?? [];
+  } catch (error) {
+    console.error("Failed to load students", error);
+    students.value = [];
+  } finally {
+    loading.value = false;
+  }
 };
+
+const editStudent = (id) => {
+  router.push({ name: "UpdateStudent", params: { id } });
+};
+
+const deleteStudent = async (id) => {
+  if (!confirm("Are you sure you want to delete this student?")) return;
+  try {
+    await axios.delete(`http://localhost:8000/api/students/${id}`);
+    alert("Student deleted!");
+    fetchStudents(); // Refresh list
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete student.");
+  }
+};
+
+onMounted(() => {
+  fetchStudents();
+});
 </script>
 
 <style>
@@ -109,9 +117,26 @@ h3 {
   background-color: #f1f1f1;
 }
 
-p.text-center {
-  text-align: center;
-  font-style: italic;
-  color: #555;
+button {
+  margin-right: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:first-child {
+  background-color: #0d6efd;
+  color: white;
+}
+
+button:last-child {
+  background-color: #dc3545;
+  color: white;
 }
 </style>

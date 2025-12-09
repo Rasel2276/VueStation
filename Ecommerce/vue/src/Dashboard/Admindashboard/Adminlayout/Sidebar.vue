@@ -30,7 +30,7 @@
         </div>
 
         <ul v-if="open.tasks && !isCollapsed" class="dropdown">
-          <li><RouterLink class="menu-link" to="tasks">Task List</RouterLink></li>
+          <li><RouterLink class="menu-link" to="ashik">Ashik</RouterLink></li>
           <li><RouterLink class="menu-link" to="profile">Profile List</RouterLink></li>
         </ul>
       </li>
