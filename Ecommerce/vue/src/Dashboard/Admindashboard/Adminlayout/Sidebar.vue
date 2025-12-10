@@ -24,58 +24,88 @@
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('tasks')">
+        <div class="menu-item" @click="toggleMenu('category')">
           <span v-if="!isCollapsed">CATEGORY</span>
           <span class="arrow">&#9654;</span>
         </div>
 
-        <ul v-if="open.tasks && !isCollapsed" class="dropdown">
-          <li><RouterLink class="menu-link" to="ashik">Ashik</RouterLink></li>
-          <li><RouterLink class="menu-link" to="profile">Profile List</RouterLink></li>
+        <ul v-if="open.category && !isCollapsed" class="dropdown">
+          <li><RouterLink class="menu-link" to="ashik">Add Category</RouterLink></li>
+          <li><RouterLink class="menu-link" to="profile">Manage Category</RouterLink></li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('calendar')">
-          <span v-if="!isCollapsed">CALENDAR</span>
+        <div class="menu-item" @click="toggleMenu('sub_category')">
+          <span v-if="!isCollapsed">SUB-CATEGORY</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.calendar && !isCollapsed" class="dropdown">
-          <li>Events</li>
-          <li>Schedules</li>
+        <ul v-if="open.sub_category && !isCollapsed" class="dropdown">
+          <li>Add Category</li>
+          <li>Manage Category</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('charts')">
-          <span v-if="!isCollapsed">CHARTS</span>
+        <div class="menu-item" @click="toggleMenu('supplier')">
+          <span v-if="!isCollapsed">SUPPLIER</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.charts && !isCollapsed" class="dropdown">
+        <ul v-if="open.supplier && !isCollapsed" class="dropdown">
+          <li>Add Supplier</li>
+          <li>Manage Supplier</li>
+          <li>Supplier Product</li>
+          <li>Manage Product</li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="menu-item" @click="toggleMenu('inventory')">
+          <span v-if="!isCollapsed">INVENTORY</span>
+          <span class="arrow">&#9654;</span>
+        </div>
+        <ul v-if="open.inventory && !isCollapsed" class="dropdown">
+          <li>Purchase Product</li>
+          <li>Purchase Record</li>
+          <li>Purchase Return</li>
+          <li>MyStock</li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="menu-item" @click="toggleMenu('vendor_hub')">
+          <span v-if="!isCollapsed">VENDOR HUB</span>
+          <span class="arrow">&#9654;</span>
+        </div>
+        <ul v-if="open.vendor_hub && !isCollapsed" class="dropdown">
+          <li>Sales Request</li>
           <li>Sales</li>
-          <li>Performance</li>
+          <li>Sales Return Request</li>
+          <li>Sales Return</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('forms')">
-          <span v-if="!isCollapsed">FORMS</span>
+        <div class="menu-item" @click="toggleMenu('promotions')">
+          <span v-if="!isCollapsed">PROMOTIONS</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.forms && !isCollapsed" class="dropdown">
-          <li>Form 1</li>
-          <li>Form 2</li>
+        <ul v-if="open.promotions && !isCollapsed" class="dropdown">
+          <li>Coupon</li>
+          <li>Discount</li>
+          <li>Offer</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('messages')">
-          <span v-if="!isCollapsed">MESSAGES</span>
+        <div class="menu-item" @click="toggleMenu('reports')">
+          <span v-if="!isCollapsed">REPORTS</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.messages && !isCollapsed" class="dropdown">
-          <li>Inbox</li>
-          <li>Sent</li>
+        <ul v-if="open.reports && !isCollapsed" class="dropdown">
+          <li>Total Purchase</li>
+          <li>Total Sales</li>
+          <li>Income Statement</li>
         </ul>
       </li>
 
@@ -85,10 +115,11 @@
           <span class="arrow">&#9654;</span>
         </div>
         <ul v-if="open.users && !isCollapsed" class="dropdown">
-          <li>All Users</li>
-          <li>Add User</li>
+          <li>Vendor List</li>
+          <li>Customer List</li>
         </ul>
       </li>
+
     </ul>
 
     <!-- Settings Bottom -->

@@ -8,7 +8,7 @@
 
     <!-- Top Profile Section -->
     <div class="profile-box" v-if="!isCollapsed">
-      <p class="welcome-text">WELCOME-V</p>
+      <p class="welcome-text">WELCOME-Vs</p>
       <div class="avatar"></div>
       <h3 class="name">DAVID SMITH</h3>
       <p class="position">POSITION</p>
@@ -24,71 +24,113 @@
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('tasks')">
-          <span v-if="!isCollapsed">CATEGORY</span>
+        <div class="menu-item" @click="toggleMenu('inventory')">
+          <span v-if="!isCollapsed">INVENTORY</span>
           <span class="arrow">&#9654;</span>
         </div>
 
-        <ul v-if="open.tasks && !isCollapsed" class="dropdown">
-          <li><RouterLink class="menu-link" to="ashik">Ashik</RouterLink></li>
-          <li><RouterLink class="menu-link" to="profile">Profile List</RouterLink></li>
+        <ul v-if="open.inventory && !isCollapsed" class="dropdown">
+          <li><RouterLink class="menu-link" to="ashik">Purchase</RouterLink></li>
+          <li><RouterLink class="menu-link" to="profile">Purchase Record</RouterLink></li>
+          <li><RouterLink class="menu-link" to="profile">Purchase Return</RouterLink></li>
+          <li><RouterLink class="menu-link" to="profile">Return Record</RouterLink></li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('calendar')">
-          <span v-if="!isCollapsed">CALENDAR</span>
+        <div class="menu-item" @click="toggleMenu('promotions')">
+          <span v-if="!isCollapsed">PROMOTIONS</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.calendar && !isCollapsed" class="dropdown">
-          <li>Events</li>
-          <li>Schedules</li>
+        <ul v-if="open.promotions && !isCollapsed" class="dropdown">
+          <li>Coupon</li>
+          <li>Discount</li>
+          <li>Offer</li>
+        </ul>
+      </li>
+
+
+      <li>
+        <div class="menu-item" @click="toggleMenu('adminproducts')">
+          <span v-if="!isCollapsed">ADMIN PRODUCTS</span>
+          <span class="arrow">&#9654;</span>
+        </div>
+        <ul v-if="open.adminproducts && !isCollapsed" class="dropdown">
+          <li>Admin Products</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('charts')">
-          <span v-if="!isCollapsed">CHARTS</span>
+        <div class="menu-item" @click="toggleMenu('products')">
+          <span v-if="!isCollapsed">PRODUCTS</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.charts && !isCollapsed" class="dropdown">
-          <li>Sales</li>
-          <li>Performance</li>
+        <ul v-if="open.products && !isCollapsed" class="dropdown">
+          <li>MyStock</li>
+          <li>Add Poroduct</li>
+          <li>Manage Product</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('forms')">
-          <span v-if="!isCollapsed">FORMS</span>
+        <div class="menu-item" @click="toggleMenu('customer_hub')">
+          <span v-if="!isCollapsed">CUSTOMER HUB</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.forms && !isCollapsed" class="dropdown">
-          <li>Form 1</li>
-          <li>Form 2</li>
+        <ul v-if="open.customer_hub && !isCollapsed" class="dropdown">
+          <li>Customer Order</li>
+          <li>Customer Order Items</li>
+          <li>Customer Information</li>
+          <li>Customer Return</li>
+          <li>Return Record</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('messages')">
-          <span v-if="!isCollapsed">MESSAGES</span>
+        <div class="menu-item" @click="toggleMenu('store')">
+          <span v-if="!isCollapsed">STORE</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.messages && !isCollapsed" class="dropdown">
-          <li>Inbox</li>
-          <li>Sent</li>
+        <ul v-if="open.store && !isCollapsed" class="dropdown">
+          <li>Create Store</li>
+          <li>Manage Store</li>
         </ul>
       </li>
 
       <li>
-        <div class="menu-item" @click="toggleMenu('users')">
+        <div class="menu-item" @click="toggleMenu('reports')">
           <span v-if="!isCollapsed">USERS</span>
           <span class="arrow">&#9654;</span>
         </div>
-        <ul v-if="open.users && !isCollapsed" class="dropdown">
-          <li>All Users</li>
-          <li>Add User</li>
+        <ul v-if="open.reports && !isCollapsed" class="dropdown">
+          <li>Total Purchase</li>
+          <li>Total Sales</li>
+          <li>Income Statement</li>
         </ul>
       </li>
+
+      <li>
+        <div class="menu-item" @click="toggleMenu('chats')">
+          <span v-if="!isCollapsed">CHATS</span>
+          <span class="arrow">&#9654;</span>
+        </div>
+        <ul v-if="open.chats && !isCollapsed" class="dropdown">
+          <li>Chat with Admin</li>
+          <li>Chat with Customer</li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="menu-item" @click="toggleMenu('profile')">
+          <span v-if="!isCollapsed">PROFILE</span>
+          <span class="arrow">&#9654;</span>
+        </div>
+        <ul v-if="open.profile && !isCollapsed" class="dropdown">
+          <li>My Profile</li>
+          <li>Edit Profile</li>
+        </ul>
+      </li>
+
     </ul>
 
     <!-- Settings Bottom -->
