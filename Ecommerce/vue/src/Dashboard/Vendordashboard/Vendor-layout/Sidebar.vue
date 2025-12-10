@@ -99,7 +99,7 @@
 
       <li>
         <div class="menu-item" @click="toggleMenu('reports')">
-          <span v-if="!isCollapsed">USERS</span>
+          <span v-if="!isCollapsed">Reports</span>
           <span class="arrow">&#9654;</span>
         </div>
         <ul v-if="open.reports && !isCollapsed" class="dropdown">
