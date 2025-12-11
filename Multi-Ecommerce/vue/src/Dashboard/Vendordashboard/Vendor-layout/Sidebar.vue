@@ -146,10 +146,10 @@
     },
 
     {
-        icon: '🧑‍💼',
+        icon: '🧑',
         label: 'Profile',
         children: [
-        { icon: '🧑‍💼', label: 'My Profile', to: '/profile/my-profile' },
+        { icon: '🧑', label: 'My Profile', to: '/profile/my-profile' },
         { icon: '✏️', label: 'Edit Profile', to: '/profile/edit-profile' },
         ],
     },
