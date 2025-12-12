@@ -15,6 +15,9 @@ import AdminDashboard from '../Dashboard/Admindashboard/Admincomponents/AdminDas
 import VendorDashboard from '../Dashboard/Vendordashboard/Vendor-components/VendorDashboard.vue'
 import CustomerDashboard from '../Dashboard/Customerdashboard/Customer-components/CustomerDashboard.vue'
 import Recent from '../Dashboard/Admindashboard/Admincomponents/Recent.vue'
+import WebsiteDefaultLayout from '../Website/WebsiteLayout/WebsiteDefaultLayout.vue'
+import ProductPage from '../Website/WebsitePages/ProductPage.vue'
+
 
 
 
@@ -58,6 +61,13 @@ const routes = [
            ],
    },
 
+       {
+        path: "/websitedefaultlayout",
+        component: WebsiteDefaultLayout,
+        children: [
+           { path: "", component: ProductPage },
+           ],
+   },
 
 ]
 
@@ -66,31 +76,29 @@ const router = createRouter({
     routes
 })
 
-// ================================
-// 🔥 GLOBAL ROUTE GUARD (Auth)
-// ================================
+
 router.beforeEach((to, from, next) => {
   const role = localStorage.getItem("role");
 
-  // Free Routes (Login & Register)
+
   if (to.path === "/" || to.path === "/register") {
     return next();
   }
 
-  // Not logged in → Redirect to login
+
   if (!role) return next("/");
 
-  // Admin route protection
+ 
   if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
     return next("/");
   }
 
-  // Vendor route protection
+
   if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
     return next("/");
   }
 
-  // Customer route protection
+
   if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
     return next("/");
   }
