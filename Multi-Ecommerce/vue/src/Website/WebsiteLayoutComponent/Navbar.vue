@@ -1,18 +1,18 @@
 <template>
   <header class="navbar">
-    <!-- LEFT LOGO -->
+   
     <div class="left">
       <div class="logo">
         <span class="logo-red">Z</span>aptro
       </div>
     </div>
 
-    <!-- CENTER MENU (DESKTOP) -->
+    
     <nav class="center-menu">
       <a href="#" class="nav-link" v-for="(link, index) in links" :key="index">{{ link }}</a>
     </nav>
 
-    <!-- RIGHT (DESKTOP) -->
+    
     <div class="right">
       <div class="search-container">
         <input type="text" placeholder="Search..." v-model="search" />
@@ -24,12 +24,12 @@
       </div>
     </div>
 
-    <!-- HAMBURGER (MOBILE) -->
+   
     <div class="hamburger" @click="toggleMenu">
       <i class="fa-solid fa-bars"></i>
     </div>
 
-    <!-- MOBILE SIDE MENU -->
+   
     <div :class="['mobile-menu', { open: menuOpen }]">
       <div class="mobile-header">
         <div class="logo">
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- OVERLAY -->
+   
     <div v-if="menuOpen" class="overlay" @click="toggleMenu"></div>
   </header>
 </template>
@@ -79,7 +79,7 @@ export default {
 </script>
 
 <style scoped>
-/* MAIN NAVBAR */
+
 .navbar {
   width: 100%;
   display: flex;
@@ -92,7 +92,7 @@ export default {
   z-index: 100;
 }
 
-/* LEFT LOGO */
+
 .left .logo {
   font-size: 28px;
   font-weight: 700;
@@ -100,7 +100,7 @@ export default {
 }
 .logo-red { color: #e4002b; }
 
-/* CENTER MENU (DESKTOP) */
+
 .center-menu {
   display: flex;
   gap: 35px;
@@ -124,7 +124,7 @@ export default {
   left: 0;
 }
 
-/* RIGHT SECTION (DESKTOP) */
+
 .right {
   display: flex;
   align-items: center;
@@ -170,7 +170,7 @@ export default {
 }
 .cart:hover { color: #e4002b; }
 
-/* HAMBURGER */
+
 .hamburger {
   display: none;
   font-size: 24px;
@@ -178,7 +178,7 @@ export default {
   cursor: pointer;
 }
 
-/* MOBILE SIDE MENU */
+
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -224,7 +224,7 @@ export default {
   color: white;
   cursor: pointer;
 }
-/* OVERLAY */
+
 .overlay {
   position: fixed;
   top: 0;
@@ -235,7 +235,7 @@ export default {
   z-index: 150;
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 1024px) { .center-menu { gap: 20px; } }
 @media (max-width: 768px) {
   .center-menu, .right { display: none; }

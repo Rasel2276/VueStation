@@ -111,6 +111,8 @@ export default {
 .newsletter-box {
   display: flex;
   margin-bottom: 15px;
+  background: white;
+  border-radius:5px
 }
 
 .newsletter-box input {

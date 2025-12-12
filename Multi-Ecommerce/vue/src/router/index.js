@@ -25,7 +25,7 @@ const routes = [
    
 
   {
-    path: "/",
+    path: "/login",
     name: "login",
     component: Login,
   },
@@ -62,7 +62,7 @@ const routes = [
    },
 
        {
-        path: "/websitedefaultlayout",
+        path: "/",
         component: WebsiteDefaultLayout,
         children: [
            { path: "", component: ProductPage },
@@ -80,31 +80,63 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const role = localStorage.getItem("role");
 
-
-  if (to.path === "/" || to.path === "/register") {
+  // Public routes (no login required)
+  if (
+    to.path === "/login" ||
+    to.path === "/register" ||
+    to.path === "/"       // website home is public
+  ){
     return next();
   }
 
+  // If no role found -> redirect to login
+  if (!role) return next("/login");
 
-  if (!role) return next("/");
-
- 
+  // Role based protections
   if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
-    return next("/");
+    return next("/login");
   }
-
 
   if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
-    return next("/");
+    return next("/login");
   }
 
-
   if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
-    return next("/");
+    return next("/login");
   }
 
   next();
 });
+
+
+// router.beforeEach((to, from, next) => {
+//   const role = localStorage.getItem("role");
+
+
+//   if (to.path === "/" || to.path === "/register") {
+//     return next();
+//   }
+
+
+//   if (!role) return next("/");
+
+ 
+//   if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
+//     return next("/");
+//   }
+
+
+//   if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
+//     return next("/");
+//   }
+
+
+//   if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
+//     return next("/");
+//   }
+
+//   next();
+// });
 
 // Update document title based on route meta title
 router.afterEach((to) => {

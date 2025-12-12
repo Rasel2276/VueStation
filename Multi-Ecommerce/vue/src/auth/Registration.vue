@@ -48,7 +48,7 @@ const handleRegister = async () => {
     })
 
     alert("Registration successful!")
-    router.push("/")
+    router.push("/login")
   } catch (err) {
     alert(err.response?.data?.message || "Registration failed")
   } finally {
