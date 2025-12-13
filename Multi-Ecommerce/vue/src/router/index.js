@@ -1,147 +1,110 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-
+// ===== LAYOUTS =====
 import AdminDefaultLayout from '../Dashboard/Admindashboard/Adminlayout/AdminDefaultLayout.vue'
 import CustomerDefaultLayout from '../Dashboard/Customerdashboard/Customer-layout/CustomerDefaultLayout.vue'
 import VendorDefaultLayout from '../Dashboard/Vendordashboard/Vendor-layout/VendorDefaultLayout.vue'
+import WebsiteDefaultLayout from '../Website/WebsiteLayout/WebsiteDefaultLayout.vue'
 
-
+// ===== AUTH =====
 import Login from '../auth/Login.vue'
 import Registration from '../auth/Registration.vue'
 
-
-// components//
+// ===== DASHBOARD PAGES =====
 import AdminDashboard from '../Dashboard/Admindashboard/Admincomponents/AdminDashboard.vue'
 import VendorDashboard from '../Dashboard/Vendordashboard/Vendor-components/VendorDashboard.vue'
 import CustomerDashboard from '../Dashboard/Customerdashboard/Customer-components/CustomerDashboard.vue'
 import Recent from '../Dashboard/Admindashboard/Admincomponents/Recent.vue'
-import WebsiteDefaultLayout from '../Website/WebsiteLayout/WebsiteDefaultLayout.vue'
+
+// ===== WEBSITE PAGES =====
 import ProductPage from '../Website/WebsitePages/ProductPage.vue'
-
-
-
+import HomePage from '../Website/WebsitePages/HomePage.vue'
+import AboutPage from '../Website/WebsitePages/AboutPage.vue'
+import ContactPage from '../Website/WebsitePages/ContactPage.vue'
+// (Optional future pages)
+// import About from '../Website/WebsitePages/About.vue'
+// import Contact from '../Website/WebsitePages/Contact.vue'
 
 const routes = [
-   
+  // ===== AUTH =====
+  { path: '/login', name: 'login', component: Login },
+  { path: '/register', name: 'register', component: Registration },
 
+  // ===== ADMIN =====
   {
-    path: "/login",
-    name: "login",
-    component: Login,
+    path: '/admin',
+    component: AdminDefaultLayout,
+    children: [
+      { path: '', component: AdminDashboard },         // /admin
+      { path: 'recent', component: Recent },           // /admin/recent
+    ],
   },
 
+  // ===== CUSTOMER =====
   {
-    path: "/register",
-    name: "register",
-    component: Registration,
+    path: '/customer',
+    component: CustomerDefaultLayout,
+    children: [
+      { path: '', component: CustomerDashboard },      // /customer
+    ],
   },
 
-    {
-        path: "/AdminDefaultLayout",
-        component: AdminDefaultLayout,
-        children: [
-           { path: "", component: AdminDashboard},
-           { path: "/folder/recent", component: Recent},
-           ],
-   },
+  // ===== VENDOR =====
+  {
+    path: '/vendor',
+    component: VendorDefaultLayout,
+    children: [
+      { path: '', component: VendorDashboard },        // /vendor
+    ],
+  },
 
-    {
-        path: "/CustomerDefaultLayout",
-        component: CustomerDefaultLayout,
-        children: [
-           { path: "", component: CustomerDashboard },
-           ],
-   },
-
-    {
-        path: "/VendorDefaultLayout",
-        component: VendorDefaultLayout,
-        children: [
-           { path: "", component:  VendorDashboard},
-           ],
-   },
-
-       {
-        path: "/",
-        component: WebsiteDefaultLayout,
-        children: [
-           { path: "", component: ProductPage },
-           ],
-   },
-
+  // ===== WEBSITE =====
+  {
+    path: '/',
+    component: WebsiteDefaultLayout,
+    children: [
+      { path: '', component: HomePage },            // /
+      { path: 'products', component: ProductPage },    // /products
+      { path: 'about', component: AboutPage },
+      { path: 'contact', component: ContactPage },
+    ],
+  },
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(),
+  routes,
 })
 
-
+// ===== ROUTE GUARD =====
 router.beforeEach((to, from, next) => {
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem('role')
 
-  // Public routes (no login required)
+  // PUBLIC WEBSITE ROUTES
   if (
-    to.path === "/login" ||
-    to.path === "/register" ||
-    to.path === "/"       // website home is public
-  ){
-    return next();
+    to.path === '/' ||
+    to.path.startsWith('/products') ||
+    to.path === '/login' ||
+    to.path === '/register'||
+    to.path === '/about'||
+    to.path === '/contact'
+  ) {
+    return next()
   }
 
-  // If no role found -> redirect to login
-  if (!role) return next("/login");
+  if (!role) return next('/login')
 
-  // Role based protections
-  if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
-    return next("/login");
-  }
+  if (to.path.startsWith('/admin') && role !== 'admin') return next('/login')
+  if (to.path.startsWith('/vendor') && role !== 'vendor') return next('/login')
+  if (to.path.startsWith('/customer') && role !== 'customer') return next('/login')
 
-  if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
-    return next("/login");
-  }
+  next()
+})
 
-  if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
-    return next("/login");
-  }
-
-  next();
-});
-
-
-// router.beforeEach((to, from, next) => {
-//   const role = localStorage.getItem("role");
-
-
-//   if (to.path === "/" || to.path === "/register") {
-//     return next();
-//   }
-
-
-//   if (!role) return next("/");
-
- 
-//   if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
-//     return next("/");
-//   }
-
-
-//   if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
-//     return next("/");
-//   }
-
-
-//   if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
-//     return next("/");
-//   }
-
-//   next();
-// });
-
-// Update document title based on route meta title
+// ===== DOCUMENT TITLE =====
 router.afterEach((to) => {
-    const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta?.title)
-    document.title = nearestWithTitle ? nearestWithTitle.meta.title : 'StarCode Kh'
+  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta?.title)
+  document.title = nearestWithTitle ? nearestWithTitle.meta.title : 'StarCode Kh'
 })
 
 export default router

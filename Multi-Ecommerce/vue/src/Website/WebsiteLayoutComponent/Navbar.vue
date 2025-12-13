@@ -1,35 +1,47 @@
 <template>
   <header class="navbar">
-   
+
+    <!-- LEFT LOGO -->
     <div class="left">
       <div class="logo">
         <span class="logo-red">Z</span>aptro
       </div>
     </div>
 
-    
+    <!-- CENTER MENU (DESKTOP) -->
     <nav class="center-menu">
-      <a href="#" class="nav-link" v-for="(link, index) in links" :key="index">{{ link }}</a>
+      <router-link
+        v-for="(link, index) in links"
+        :key="index"
+        :to="link.path"
+        class="nav-link"
+      >
+        {{ link.name }}
+      </router-link>
     </nav>
 
-    
+    <!-- RIGHT (DESKTOP) -->
     <div class="right">
       <div class="search-container">
         <input type="text" placeholder="Search..." v-model="search" />
         <i class="fa-solid fa-magnifying-glass"></i>
       </div>
-      <button class="signin">Sign in</button>
+
+      <router-link to="/login" class="signin">
+        Sign in
+      </router-link>
+
       <div class="cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </div>
     </div>
 
-   
+    <!-- HAMBURGER -->
     <div class="hamburger" @click="toggleMenu">
       <i class="fa-solid fa-bars"></i>
     </div>
 
-   
+    <!-- MOBILE MENU -->
     <div :class="['mobile-menu', { open: menuOpen }]">
       <div class="mobile-header">
         <div class="logo">
@@ -41,7 +53,15 @@
       </div>
 
       <nav class="mobile-links">
-        <a href="#" class="nav-link" v-for="(link, index) in links" :key="index">{{ link }}</a>
+        <router-link
+          v-for="(link, index) in links"
+          :key="index"
+          :to="link.path"
+          class="nav-link"
+          @click="toggleMenu"
+        >
+          {{ link.name }}
+        </router-link>
       </nav>
 
       <div class="mobile-search">
@@ -49,14 +69,18 @@
         <i class="fa-solid fa-magnifying-glass"></i>
       </div>
 
-      <button class="signin">Sign in</button>
+      <router-link to="/login" class="signin" @click="toggleMenu">
+        Sign in
+      </router-link>
+
       <div class="cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </div>
     </div>
 
-   
+    <!-- OVERLAY -->
     <div v-if="menuOpen" class="overlay" @click="toggleMenu"></div>
+
   </header>
 </template>
 
@@ -66,8 +90,13 @@ export default {
   data() {
     return {
       menuOpen: false,
-      links: ["Home", "Products", "About", "Contact"],
       search: "",
+      links: [
+        { name: "Home", path: "/" },
+        { name: "Products", path: "/products" },
+        { name: "About", path: "/about" },
+        { name: "Contact", path: "/contact" },
+      ],
     };
   },
   methods: {
@@ -79,6 +108,8 @@ export default {
 </script>
 
 <style scoped>
+
+/* === CSS একদম আগের মতোই === */
 
 .navbar {
   width: 100%;
@@ -92,14 +123,12 @@ export default {
   z-index: 100;
 }
 
-
 .left .logo {
   font-size: 28px;
   font-weight: 700;
   color: white;
 }
 .logo-red { color: #e4002b; }
-
 
 .center-menu {
   display: flex;
@@ -114,16 +143,6 @@ export default {
   transition: color 0.3s;
 }
 .nav-link:hover { color: #e4002b; }
-.nav-link.active::after {
-  content: "";
-  width: 100%;
-  height: 2px;
-  background: #e4002b;
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-}
-
 
 .right {
   display: flex;
@@ -151,18 +170,20 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   color: #050e3c;
-  cursor: pointer;
 }
+
 .signin {
   background: #e4002b;
   color: white;
   border: none;
-  padding: 8px 18px;
+  padding: 5px 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
+  text-decoration: none;
 }
 .signin:hover { background: #ff1a3c; }
+
 .cart {
   font-size: 20px;
   color: white;
@@ -170,14 +191,12 @@ export default {
 }
 .cart:hover { color: #e4002b; }
 
-
 .hamburger {
   display: none;
   font-size: 24px;
   color: white;
   cursor: pointer;
 }
-
 
 .mobile-menu {
   position: fixed;
@@ -195,14 +214,24 @@ export default {
   color: white;
 }
 .mobile-menu.open { left: 0; }
+
 .mobile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.mobile-links { display: flex; flex-direction: column; gap: 15px; }
-.mobile-links a { color: white; font-size: 18px; text-decoration: none; }
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.mobile-links a {
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+}
 .mobile-links a:hover { color: #e4002b; }
+
 .mobile-search {
   position: relative;
 }
@@ -219,6 +248,7 @@ export default {
   transform: translateY(-50%);
   color: #050e3c;
 }
+
 .mobile-header .close i {
   font-size: 24px;
   color: white;
@@ -235,11 +265,15 @@ export default {
   z-index: 150;
 }
 
+@media (max-width: 1024px) {
+  .center-menu { gap: 20px; }
+}
 
-@media (max-width: 1024px) { .center-menu { gap: 20px; } }
 @media (max-width: 768px) {
-  .center-menu, .right { display: none; }
+  .center-menu,
+  .right { display: none; }
   .hamburger { display: block; }
   .navbar { padding: 12px 20px; }
 }
+
 </style>

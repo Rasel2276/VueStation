@@ -18,7 +18,7 @@
 
       <p class="loginText">
         Already have an account?
-        <button @click="$router.push('/')" class="loginButton">Login</button>
+        <button @click="$router.push('/login')" class="loginButton">Login</button>
       </p>
     </div>
   </div>

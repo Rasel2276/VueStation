@@ -152,3 +152,48 @@ router.afterEach((to) => {
 })
 
 export default router
+
+
+
+
+.signin {
+  background: #e4002b;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.signin:hover { background: #ff1a3c; }
+
+// router.beforeEach((to, from, next) => {
+//   const role = localStorage.getItem("role");
+
+
+//   if (to.path === "/" || to.path === "/register") {
+//     return next();
+//   }
+
+
+//   if (!role) return next("/");
+
+ 
+//   if (to.path.startsWith("/AdminDefaultLayout") && role !== "admin") {
+//     return next("/");
+//   }
+
+
+//   if (to.path.startsWith("/VendorDefaultLayout") && role !== "vendor") {
+//     return next("/");
+//   }
+
+
+//   if (to.path.startsWith("/CustomerDefaultLayout") && role !== "customer") {
+//     return next("/");
+//   }
+
+//   next();
+// });
+
+// Update document title based on route meta title
