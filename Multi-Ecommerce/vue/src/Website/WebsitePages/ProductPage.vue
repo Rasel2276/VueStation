@@ -22,8 +22,8 @@
         </div>
 
         <!-- Search (in sidebar) -->
-        <div class="widget">
-          <input v-model="filters.search" placeholder="Search..." @input="applyFilters" />
+        <div class="widget" >
+          <input v-model="filters.search" id="search-bar" placeholder="Search..." @input="applyFilters" />
         </div>
 
         <!-- Category -->
@@ -91,6 +91,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
+
 
 /*
   NOTE:
@@ -220,6 +221,10 @@ onMounted(() => {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+#search-bar{
+  padding: 7px;
 }
 
 .page {
@@ -404,9 +409,9 @@ onMounted(() => {
 /* Reset button */
 .reset {
   width: 100%;
-  background: #fff;
+  background: #e4002b;
   border: 1px solid #e4002b;
-  color: #e4002b;
+  color: #fff;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;

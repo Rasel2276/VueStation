@@ -119,9 +119,11 @@ export default {
   padding: 12px 40px;
   background: #050e3c;
   box-sizing: border-box;
-  position: relative;
-  z-index: 100;
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
+
 
 .left .logo {
   font-size: 28px;
@@ -143,6 +145,41 @@ export default {
   transition: color 0.3s;
 }
 .nav-link:hover { color: #e4002b; }
+
+
+.nav-link {
+  position: relative;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 0;
+}
+
+/* underline (hidden by default) */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 2px;
+  background: #e4002b;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+/* hover animation */
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* ACTIVE LINK (router) */
+.router-link-exact-active::after {
+  transform: scaleX(1);
+}
+
+
 
 .right {
   display: flex;

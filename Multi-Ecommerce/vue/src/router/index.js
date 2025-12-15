@@ -32,7 +32,7 @@ const routes = [
 
   // ===== ADMIN =====
   {
-    path: '/admin',
+    path: '/AdminDefaultLayout',
     component: AdminDefaultLayout,
     children: [
       { path: '', component: AdminDashboard },         // /admin
@@ -42,7 +42,7 @@ const routes = [
 
   // ===== CUSTOMER =====
   {
-    path: '/customer',
+    path: '/CustomerDefaultLayout',
     component: CustomerDefaultLayout,
     children: [
       { path: '', component: CustomerDashboard },      // /customer
@@ -51,7 +51,7 @@ const routes = [
 
   // ===== VENDOR =====
   {
-    path: '/vendor',
+    path: '/VendorDefaultLayout',
     component: VendorDefaultLayout,
     children: [
       { path: '', component: VendorDashboard },        // /vendor
