@@ -15,8 +15,8 @@ const logout = () => {
   localStorage.removeItem('role')
   localStorage.removeItem('user')
 
-  // Redirect to login page
-  router.push('/')
+  // Redirect to website home page
+  router.replace('/')   // 🔥 replace() avoids going back to protected pages
 }
 </script>
 

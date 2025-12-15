@@ -21,9 +21,7 @@ import ProductPage from '../Website/WebsitePages/ProductPage.vue'
 import HomePage from '../Website/WebsitePages/HomePage.vue'
 import AboutPage from '../Website/WebsitePages/AboutPage.vue'
 import ContactPage from '../Website/WebsitePages/ContactPage.vue'
-// (Optional future pages)
-// import About from '../Website/WebsitePages/About.vue'
-// import Contact from '../Website/WebsitePages/Contact.vue'
+
 
 const routes = [
   // ===== AUTH =====
@@ -35,8 +33,8 @@ const routes = [
     path: '/AdminDefaultLayout',
     component: AdminDefaultLayout,
     children: [
-      { path: '', component: AdminDashboard },         // /admin
-      { path: 'recent', component: Recent },           // /admin/recent
+      { path: '', component: AdminDashboard },  
+      { path: 'recent', component: Recent }, 
     ],
   },
 
@@ -45,7 +43,7 @@ const routes = [
     path: '/CustomerDefaultLayout',
     component: CustomerDefaultLayout,
     children: [
-      { path: '', component: CustomerDashboard },      // /customer
+      { path: '', component: CustomerDashboard },
     ],
   },
 
@@ -54,7 +52,7 @@ const routes = [
     path: '/VendorDefaultLayout',
     component: VendorDefaultLayout,
     children: [
-      { path: '', component: VendorDashboard },        // /vendor
+      { path: '', component: VendorDashboard },
     ],
   },
 
@@ -63,8 +61,8 @@ const routes = [
     path: '/',
     component: WebsiteDefaultLayout,
     children: [
-      { path: '', component: HomePage },            // /
-      { path: 'products', component: ProductPage },    // /products
+      { path: '', component: HomePage }, 
+      { path: 'products', component: ProductPage },   
       { path: 'about', component: AboutPage },
       { path: 'contact', component: ContactPage },
     ],
@@ -92,7 +90,7 @@ router.beforeEach((to, from, next) => {
     return next()
   }
 
-  if (!role) return next('/login')
+  if (!role) return next('/')
 
   if (to.path.startsWith('/admin') && role !== 'admin') return next('/login')
   if (to.path.startsWith('/vendor') && role !== 'vendor') return next('/login')

@@ -277,6 +277,7 @@ export default {
   padding: 6px 35px 6px 12px;
   border-radius: 20px;
   border: none;
+  background: white;
 }
 .mobile-search i {
   position: absolute;
