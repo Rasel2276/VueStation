@@ -164,7 +164,7 @@ export default {
   margin-top: 30px;
 }
 
-/* RESPONSIVE  */
+/* RESPONSIVE  *****/
 @media (max-width: 900px) {
   .footer-container {
     flex-direction: column;
