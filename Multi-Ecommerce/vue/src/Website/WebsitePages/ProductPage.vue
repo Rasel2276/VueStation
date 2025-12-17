@@ -47,7 +47,7 @@
         <!-- Price Range -->
         <div class="widget">
           <h4>Price Range</h4>
-          <p class="price-range-text">Price Range: ${{ priceMin }} - ${{ filters.maxPrice }}</p>
+          <p class="price-range-text">Price Range: ৳{{ priceMin }} - ৳{{ filters.maxPrice }}</p>
           <div class="range-wrap">
             <input type="range" min="0" :max="priceMax" v-model.number="filters.maxPrice" @input="applyFilters" />
             <div class="range-line"><span :style="{ width: rangePercent + '%' }"></span></div>
@@ -62,11 +62,10 @@
         <div class="grid">
           <div v-for="product in paginatedProducts" :key="product.id" class="card">
             <div class="img-wrap">
-              <!-- replace src with your images in /public/assets/... -->
               <img :src="product.image" :alt="product.name" />
             </div>
             <h3 class="title" :title="product.name">{{ product.name }}</h3>
-            <p class="price">${{ product.price }}</p>
+            <p class="price">৳{{ product.price }}</p>
             <button class="add-btn" @click="addToCart(product)">
               <i class="fa-solid fa-cart-shopping"></i> Add to Cart
             </button>
@@ -92,48 +91,38 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 
-
-/*
-  NOTE:
-  - For real projects replace product.image with proper asset paths or URLs.
-  - Include FontAwesome in index.html (see note below).
-*/
-
 const isMobile = ref(false);
 const mobileMenuOpen = ref(false);
 const page = ref(1);
 const perPage = 8;
 
-// sample data (replace images with real ones in /public/assets/)
 const products = ref([
-  { id: 1, name: "Sony WH-1000XM3 Bluetooth Wireless", price: 773, image: "/assets/product-images/p1.jpg", category: "AUDIO",brand: "Sony" },
-  { id: 2, name: "Microsoft Xbox X/S Wireless Controller", price: 57, image: "/assets/product-images/p1.jpg", category: "GAMING", brand: "Microsoft" },
-  { id: 3, name: "Logitech G733 Lightspeed Wireless", price: 384, image: "/assets/product-images/p1.jpg", category: "GAMING", brand: "Logitech" },
-  { id: 4, name: "Sony WH-1000XM5 Wireless", price: 362, image: "/assets/product-images/p1.jpg", category: "AUDIO", brand: "Sony" },
-  { id: 5, name: "Urbanista Los Angeles Sand Gold", price: 265, image: "/assets/product-images/p1.jpg", category: "AUDIO", brand: "Urbanista" },
-  { id: 6, name: "Xiaomi Wired in-Ear Earphones", price: 5, image: "/assets/product-images/p1.jpg", category: "MOBILE", brand: "Xiaomi" },
-  { id: 7, name: "boAt Rockerz 370 On Ear Bluetooth", price: 12, image: "/assets/product-images/p1.jpg", category: "AUDIO", brand: "boAt" },
-  { id: 8, name: "Samsung Galaxy S21 FE 5G", price: 434, image: "/assets/product-images/p1.jpg", category: "MOBILE", brand: "Samsung" },
-  { id: 9, name: "Sample Product 9", price: 150, image: "/assets/product-images/p1.jpg", category: "TV", brand: "BrandX" },
-  { id: 10, name: "Sample Product 10", price: 230, image: "/assets/product-images/p1.jpg", category: "LAPTOP", brand: "BrandY" },
-  // ... add more to test pagination/grid
+  { id: 1, name: "Redmi 15C", price: 11500, image: "/assets/product-images/phone3.webp", category: "PHONE",brand: "Sony" },
+  { id: 2, name: "Hoco W46  Headphone", price: 2700, image: "/assets/product-images/audio3.jpg", category: "AUDIO", brand: "Microsoft" },
+  { id: 3, name: "Xbox One Controller", price: 5300, image: "/assets/product-images/game1.jpg", category: "GAMING", brand: "Logitech" },
+  { id: 4, name: "Pico 4 Ultra", price: 9000, image: "/assets/product-images/game3.jpg", category: "GAMING", brand: "Sony" },
+  { id: 5, name: "Xiaomi 55″ QLED A Pro Smart 4K Google TV 2025", price: 6500, image: "/assets/product-images/tv3.webp", category: "TV", brand: "Urbanista" },
+  { id: 6, name: "Xiaomi Wired in-Ear Earphones", price: 2100, image: "/assets/product-images/audio1.jpg", category: "AUDIO", brand: "Xiaomi" },
+  { id: 7, name: "Hisense 85″ 4K QLED 85Q6N Latest Model Smart Google TV 2025", price: 7500, image: "/assets/product-images/tv4.webp", category: "TV", brand: "boAt" },
+  { id: 8, name: "Casio modern watch", price: 750, image: "/assets/product-images/watch2.jpg", category: "WATCH", brand: "Samsung" },
+  { id: 9, name: "iphone 17 pro max", price: 150000, image: "/assets/product-images/iphone1.jpg", category: "PHONE", brand: "BrandX" },
+  { id: 10, name: "JBL Wave Flex 2 True Wireless Earbuds", price: 2300, image: "/assets/product-images/audio2.jpg", category: "AUDIO", brand: "BrandY" },
+  { id: 10, name: "Winter New Hudi", price: 1300, image: "/assets/product-images/hudi.jpg", category: "CLOTH", brand: "BrandY" },
+  { id: 10, name: "Baggy pant for Men", price: 950, image: "/assets/product-images/pant.jpg", category: "CLOTH", brand: "BrandY" },
+  { id: 10, name: "Winter cap for women", price: 250, image: "/assets/product-images/cap.jpg", category: "CLOTH", brand: "BrandY" },
+  { id: 10, name: "Hand Gloves h52", price: 750, image: "/assets/product-images/gloves.jpg", category: "CLOTH", brand: "BrandY" },
+  { id: 10, name: "Gents Jacket", price: 3700, image: "/assets/product-images/jacket.jpg", category: "CLOTH", brand: "BrandY" },
 ]);
 
-const categories = computed(() => {
-  // unique categories (exclude ALL)
-  const set = new Set(products.value.map(p => p.category));
-  return Array.from(set);
-});
-const brands = computed(() => {
-  return Array.from(new Set(products.value.map(p => p.brand)));
-});
+const categories = computed(() => Array.from(new Set(products.value.map(p => p.category))));
+const brands = computed(() => Array.from(new Set(products.value.map(p => p.brand))));
 
 const priceMin = 0;
-const priceMax = 5000;
+const priceMax = 500000;
 
 const filters = reactive({
   search: "",
-  categories: ["ALL"], // if ALL checked show all
+  categories: ["ALL"],
   brand: "",
   maxPrice: priceMax,
 });
@@ -144,10 +133,7 @@ function applyFilters() {
 
 function onCategoryAll(val) {
   if (filters.categories.includes("ALL")) {
-    // if ALL checked, clear others
     filters.categories = ["ALL"];
-  } else {
-    // when uncheck ALL do nothing
   }
   applyFilters();
 }
@@ -160,24 +146,15 @@ function resetFilters() {
   applyFilters();
 }
 
-// filtered products
 const filtered = computed(() => {
   return products.value.filter(p => {
-    // search
     const s = filters.search.trim().toLowerCase();
     if (s && !(p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s))) return false;
-
-    // category
     if (!filters.categories.includes("ALL")) {
       if (filters.categories.length && !filters.categories.includes(p.category)) return false;
     }
-
-    // brand
     if (filters.brand && p.brand !== filters.brand) return false;
-
-    // price
     if (p.price > filters.maxPrice) return false;
-
     return true;
   });
 });
@@ -188,10 +165,8 @@ const paginatedProducts = computed(() => {
   return filtered.value.slice(start, start + perPage);
 });
 
-// toast for add to cart
 const toast = reactive({ show: false, text: "" });
 let toastTimer = null;
-
 function addToCart(product) {
   toast.text = `${product.name} is added to cart!`;
   toast.show = true;
@@ -199,13 +174,11 @@ function addToCart(product) {
   toastTimer = setTimeout(() => (toast.show = false), 2200);
 }
 
-// range percent for visual bar
 const rangePercent = computed(() => {
   const val = Math.min(filters.maxPrice, priceMax);
   return (val / priceMax) * 100;
 });
 
-// responsive detect
 onMounted(() => {
   const check = () => (isMobile.value = window.innerWidth <= 768);
   check();
@@ -442,7 +415,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: flex-start;
+  align-items: center; /* CENTER CONTENT */
 }
 
 .img-wrap {
@@ -466,12 +439,13 @@ onMounted(() => {
   font-size: 14px;
   color: #222;
   margin: 0;
-  min-height: 36px;
+  text-align: center; /* CENTER NAME */
 }
 
 .price {
   font-weight: 700;
   color: #111;
+  text-align: center; /* CENTER PRICE */
 }
 
 .add-btn {
@@ -611,4 +585,3 @@ onMounted(() => {
   }
 }
 </style>
-

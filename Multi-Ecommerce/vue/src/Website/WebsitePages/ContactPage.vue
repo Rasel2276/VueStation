@@ -4,70 +4,45 @@
     <!-- HERO SECTION -->
     <section class="hero">
       <div class="hero-content">
-        <h1>Customer Help</h1>
-        <p>
-          If talking to a real-life human is more your thing, you can reach our
-          Customer Happiness Team via email (below).
-        </p>
+        <h1>Contact Us</h1>
+        <p>We are here to help and answer any question you might have.</p>
       </div>
     </section>
 
-    <!-- MAIN CONTENT -->
-    <section class="contact-container">
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+      <div class="contact-container">
 
-      <!-- LEFT LINKS -->
-      <aside class="help-links">
-        <h4>How Can We Help?</h4>
-        <ul>
-          <li>FAQs</li>
-          <li>Ordering</li>
-          <li>Shipping</li>
-          <li>Returns + Exchanges</li>
-          <li>International</li>
-          <li>Sustainability</li>
-          <li class="active">Contact</li>
-        </ul>
-      </aside>
-
-      <!-- CENTER FORM -->
-      <div class="contact-form">
-        <h2>Contact Us</h2>
-
-        <input type="text" placeholder="Subject" />
-        <input type="text" placeholder="Name" />
-        <input type="email" placeholder="Email" />
-        <textarea placeholder="Enter your message here..."></textarea>
-
-        <div class="captcha">
-          <input type="checkbox" />
-          <span>I'm not a robot</span>
+        <!-- CONTACT INFO -->
+        <div class="contact-info">
+          <h2>Get in Touch</h2>
+          <p>Feel free to reach out to us via the form or using the contact info below.</p>
+          <div class="info-box">
+            <h3>Phone</h3>
+            <p>+880 1910192276</p>
+          </div>
+          <div class="info-box">
+            <h3>Email</h3>
+            <p>mdraselhossain2276@gmail.com</p>
+          </div>
+          <div class="info-box">
+            <h3>Address</h3>
+            <p>42/2c RND Road, Dhaka, Bangladesh</p>
+          </div>
         </div>
 
-        <button>SUBMIT</button>
-      </div>
+        <!-- CONTACT FORM -->
+        <div class="contact-form">
+          <h2>Send a Message</h2>
+          <form @submit.prevent="submitForm">
+            <input type="text" placeholder="Your Name" v-model="form.name" required>
+            <input type="email" placeholder="Your Email" v-model="form.email" required>
+            <input type="text" placeholder="Subject" v-model="form.subject" required>
+            <textarea rows="5" placeholder="Your Message" v-model="form.message" required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
 
-      <!-- RIGHT INFO -->
-      <aside class="support-info">
-        <h4>Support Hours:</h4>
-        <p>Mon–Fri 9:00am – 5:00pm PST</p>
-        <p class="muted">*Excludes Holidays</p>
-
-        <p class="spaced">
-          Looking for more info on products, shipping, fabric, and more?
-        </p>
-
-        <a href="#">VIEW FAQ</a>
-      </aside>
-
-    </section>
-
-    <!-- BOTTOM CTA -->
-    <section class="bottom-cta">
-      <div class="cta-content">
-        <span class="icon">✉</span>
-        <h2>Get in Touch</h2>
-        <p>Have questions about your order, or a general inquiry?</p>
-        <button>Email Us</button>
       </div>
     </section>
 
@@ -77,216 +52,186 @@
 <script>
 export default {
   name: "ContactPage",
+  data() {
+    return {
+      form: {
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      }
+    };
+  },
+  methods: {
+    submitForm() {
+      alert(`Thank you, ${this.form.name}! Your message has been sent.`);
+      // Reset form
+      this.form.name = "";
+      this.form.email = "";
+      this.form.subject = "";
+      this.form.message = "";
+    }
+  }
 };
 </script>
 
 <style scoped>
-/* =====================
-   GLOBAL
-===================== */
+/* ===== GLOBAL ===== */
 .contact-page {
-  font-family: "Georgia", serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   color: #222;
 }
 
-/* =====================
-   HERO
-===================== */
+/* ===== HERO SECTION ===== */
 .hero {
-  height: 320px;
-  background-image: url("https://images.unsplash.com/photo-1520975916090-3105956dac38");
-  background-size: cover;
-  background-position: center;
+  background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+  height: 40vh;
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 0 80px;
-}
-
-.hero-content {
-  max-width: 600px;
-  color: white;
-}
-
-.hero h1 {
-  font-size: 48px;
-  margin-bottom: 10px;
-}
-
-.hero p {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* =====================
-   CONTACT LAYOUT
-===================== */
-.contact-container {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 60px;
-  padding: 120px;
-  background: #fff;
-}
-
-/* LEFT */
-.help-links h4 {
-  margin-bottom: 20px;
-}
-
-.help-links ul {
-  list-style: none;
-  padding: 0;
-}
-
-.help-links li {
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-}
-
-.help-links li.active {
-  font-weight: bold;
-  color: #000;
-}
-
-/* CENTER FORM */
-.contact-form {
-  max-width: 480px;
-}
-
-.contact-form h2 {
-  font-size: 36px;
-  margin-bottom: 30px;
-}
-
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  padding: 10px 0;
-  margin-bottom: 25px;
-  font-size: 14px;
-  outline: none;
-}
-
-.contact-form textarea {
-  resize: none;
-  height: 100px;
-}
-
-.captcha {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #ddd;
-  padding: 12px;
-  width: fit-content;
-  margin-bottom: 30px;
-  font-size: 13px;
-}
-
-.contact-form button {
-  background: #bdbdbd;
-  border: none;
-  padding: 12px 30px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* RIGHT */
-.support-info {
-  font-size: 14px;
-}
-
-.support-info h4 {
-  margin-bottom: 10px;
-}
-
-.support-info .muted {
-  color: #888;
-  font-size: 13px;
-}
-
-.support-info .spaced {
-  margin: 25px 0;
-}
-
-.support-info a {
-  text-decoration: underline;
-  color: #000;
-  font-weight: 500;
-}
-
-/* =====================
-   BOTTOM CTA
-===================== */
-.bottom-cta {
-  background: #f4f4f4;
-  padding: 80px 20px;
+  position: relative;
   text-align: center;
 }
 
-.cta-content {
-  max-width: 500px;
-  margin: auto;
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
 }
 
-.cta-content .icon {
-  font-size: 28px;
-  display: block;
-  margin-bottom: 15px;
+.hero-content {
+  position: relative;
+  color: #fff;
+  animation: fadeInDown 1s ease forwards; /* About page-এর মতো animation */
 }
 
-.cta-content h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
+.hero-content h1 {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
 }
 
-.cta-content p {
-  font-size: 14px;
+.hero-content p {
+  font-size: 1.2rem;
+}
+
+/* ===== CONTACT SECTION ===== */
+.contact-section {
+  padding: 60px 10%;
+  background: #f9fafb;
+}
+
+.contact-container {
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+/* CONTACT INFO */
+.contact-info {
+  flex: 1 1 350px;
+}
+
+.contact-info h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #3b82f6;
+}
+
+.contact-info p {
+  font-size: 1rem;
   margin-bottom: 25px;
+  color: #4b5563;
 }
 
-.cta-content button {
-  background: #222;
-  color: white;
+.info-box {
+  margin-bottom: 20px;
+}
+
+.info-box h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #222;
+}
+
+.info-box p {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* CONTACT FORM */
+.contact-form {
+  flex: 1 1 450px;
+}
+
+.contact-form h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #3b82f6;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* All input fields same width */
+input, textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59,130,246,0.3);
+}
+
+button {
+  padding: 12px 20px;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
   border: none;
-  padding: 12px 30px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-/* =====================
-   RESPONSIVE
-===================== */
+button:hover {
+  background: #2563eb;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .contact-container {
-    grid-template-columns: 1fr;
-    gap: 50px;
-  }
-
-  .hero {
-    padding: 0 40px;
+    gap: 30px;
   }
 }
 
-@media (max-width: 600px) {
-  .hero {
-    height: 240px;
-    padding: 0 20px;
-  }
-
-  .hero h1 {
-    font-size: 32px;
-  }
-
+@media (max-width: 768px) {
+  .hero-content h1 { font-size: 2rem; }
+  .hero-content p { font-size: 1rem; }
   .contact-container {
-    padding: 50px 20px;
+    flex-direction: column;
+    gap: 30px;
   }
+}
 
-  .contact-form h2 {
-    font-size: 28px;
-  }
+@media (max-width: 480px) {
+  .hero { height: 30vh; }
+  .contact-form h2, .contact-info h2 { font-size: 1.6rem; }
 }
 </style>

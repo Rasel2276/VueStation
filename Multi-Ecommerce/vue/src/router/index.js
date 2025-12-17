@@ -14,13 +14,22 @@ import Registration from '../auth/Registration.vue'
 import AdminDashboard from '../Dashboard/Admindashboard/Admincomponents/AdminDashboard.vue'
 import VendorDashboard from '../Dashboard/Vendordashboard/Vendor-components/VendorDashboard.vue'
 import CustomerDashboard from '../Dashboard/Customerdashboard/Customer-components/CustomerDashboard.vue'
-import Recent from '../Dashboard/Admindashboard/Admincomponents/Recent.vue'
+import CategoryCreate from '../Dashboard/Admindashboard/Admincomponents/CategoryCreate.vue'
+import CategoryManage from '../Dashboard/Admindashboard/Admincomponents/CategoryManage.vue'
+import SubCategoryCreate from '../Dashboard/Admindashboard/Admincomponents/SubCategoryCreate.vue'
+import SubcategoryManage from '../Dashboard/Admindashboard/Admincomponents/SubcategoryManage.vue'
+
 
 // ===== WEBSITE PAGES =====
 import ProductPage from '../Website/WebsitePages/ProductPage.vue'
-import HomePage from '../Website/WebsitePages/HomePage.vue'
 import AboutPage from '../Website/WebsitePages/AboutPage.vue'
 import ContactPage from '../Website/WebsitePages/ContactPage.vue'
+import HomePage from '../Website/WebsitePages/HomePage.vue'
+
+
+
+
+
 
 
 const routes = [
@@ -34,7 +43,10 @@ const routes = [
     component: AdminDefaultLayout,
     children: [
       { path: '', component: AdminDashboard },  
-      { path: 'recent', component: Recent }, 
+      { path: '/category/add_category', component: CategoryCreate }, 
+      { path: '/category/manage_category', component: CategoryManage },
+      { path: '/sub-category/add_category', component: SubCategoryCreate },
+      { path: '/sub-category/manage_category', component: SubcategoryManage },
     ],
   },
 
