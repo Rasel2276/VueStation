@@ -9,12 +9,12 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        $user = $request->user();
-        if(!$user || $user->role !== $role){
-            return response()->json(['message'=>'Unauthorized'],403);
+        $user = $request->user(); // Sanctum token থেকে user
+
+        if (!$user || $user->role !== $role) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
+
         return $next($request);
     }
 }
-
-

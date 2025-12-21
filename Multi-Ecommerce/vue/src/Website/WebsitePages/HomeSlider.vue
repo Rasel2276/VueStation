@@ -57,7 +57,7 @@ export default {
           text: "Discover the latest gadgets & devices"
         },
         {
-          image: "https://images.unsplash.com/photo-1521335629791-ce4aec67dd47",
+          image: "/assets/product-images/productslider.jpg",
           title: "Fashion Collection",
           text: "Trending styles for everyone"
         },

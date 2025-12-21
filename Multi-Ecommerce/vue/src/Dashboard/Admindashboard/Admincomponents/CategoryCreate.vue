@@ -3,26 +3,38 @@
     <div class="card">
       <h2 class="title">Create Category</h2>
 
-      <form class="form">
-        <!-- Category Name & Slug Row -->
+      <form class="form" @submit.prevent="submitForm">
+        <!-- Name & Slug -->
         <div class="field-row">
           <div class="field half">
-            <input type="text" placeholder="Category Name" />
+            <input
+              type="text"
+              placeholder="Category Name"
+              v-model="form.category_name"
+            />
           </div>
           <div class="field half">
-            <input type="text" placeholder="Slug" />
+            <input
+              type="text"
+              placeholder="Slug"
+              v-model="form.slug"
+            />
           </div>
         </div>
 
         <!-- Description -->
         <div class="field">
-          <textarea rows="4" placeholder="Description"></textarea>
+          <textarea
+            rows="4"
+            placeholder="Description"
+            v-model="form.description"
+          ></textarea>
         </div>
 
-        <!-- Status and Image Row -->
+        <!-- Status & Image -->
         <div class="field-row">
           <div class="field half">
-            <select>
+            <select v-model="form.status">
               <option value="">Select Status</option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -30,38 +42,102 @@
           </div>
 
           <div class="field half">
-            <input type="file" />
+            <input type="file" @change="handleImage" />
           </div>
         </div>
-      </form>
 
-      <!-- Button -->
-      <div class="btn-wrapper">
-        <button class="btn">Save Category</button>
-      </div>
+        <!-- Button -->
+        <div class="btn-wrapper">
+          <button class="btn" type="submit">Save Category</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "CategoryCreate",
+
+  data() {
+    return {
+      form: {
+        category_name: "",
+        slug: "",
+        description: "",
+        status: "",
+        category_image: null,
+      },
+    };
+  },
+
+  methods: {
+    handleImage(event) {
+      this.form.category_image = event.target.files[0];
+    },
+
+    async submitForm() {
+      const formData = new FormData();
+      formData.append("category_name", this.form.category_name);
+      formData.append("slug", this.form.slug);
+      formData.append("description", this.form.description);
+      formData.append("status", this.form.status);
+
+      if (this.form.category_image) {
+        formData.append("category_image", this.form.category_image);
+      }
+
+      try {
+        await axios.post(
+          "http://127.0.0.1:8000/api/admin/categories",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        alert("Category added successfully!");
+
+        // Reset form
+        this.form = {
+          category_name: "",
+          slug: "",
+          description: "",
+          status: "",
+          category_image: null,
+        };
+      } catch (error) {
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data);
+        console.log("FULL ERROR:", error);
+
+        alert(
+          error.response?.data?.message ||
+            JSON.stringify(error.response?.data) ||
+            "Unknown error"
+        );
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* ===== PAGE ===== */
 .page {
-  min-height: 75vh;
+  min-height: 60vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 40px 0;
+  padding: 30px 0;
   font-family: "Segoe UI", system-ui, Arial, sans-serif;
   background: #f9fafb;
 }
 
-/* ===== CARD ===== */
 .card {
   width: 100%;
   max-width: 880px;
@@ -71,7 +147,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* ===== TITLE ===== */
 .title {
   text-align: center;
   color: #222;
@@ -80,20 +155,18 @@ export default {
   margin-bottom: 25px;
 }
 
-/* ===== FORM ===== */
 .form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* ===== FIELD ===== */
 .field input,
 .field textarea,
 .field select {
   width: 100%;
   padding: 12px 14px;
-  background: #ffffff; /* changed to white */
+  background: #ffffff;
   border: 1px solid #d1d5db;
   color: #111;
   font-size: 14px;
@@ -114,29 +187,19 @@ export default {
   background: #ffffff;
 }
 
-
-/* FILE */
 .field input[type="file"] {
   padding: 8px;
 }
 
-/* SELECT */
-.field select {
-  background: #ffffff; /* changed to white */
-  color: #111;
-}
-
-/* FIELD ROW (side by side fields) */
 .field-row {
   display: flex;
-  gap: 40px; /* increased gap between fields */
+  gap: 40px;
 }
 
 .field-row .half {
   flex: 1;
 }
 
-/* ===== BUTTON ===== */
 .btn-wrapper {
   display: flex;
   justify-content: center;
@@ -160,7 +223,6 @@ export default {
   background: #2563eb;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .field-row {
     flex-direction: column;

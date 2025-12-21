@@ -45,8 +45,9 @@ class Kernel extends HttpKernel
      *
      * These middleware may be assigned to groups or used individually.
      */
-    protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'role' => \App\Http\Middleware\RoleMiddleware::class, // <-- Add this line
-    ];
+protected $routeMiddleware = [
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    'role' => \App\Http\Middleware\RoleMiddleware::class, // এটা ঠিক আছে
+];
+
 }

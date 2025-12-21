@@ -32,35 +32,29 @@ const router = useRouter()
 
 const handleLogin = async () => {
   loading.value = true
-
-  try {
-    const res = await axios.post('http://127.0.0.1:8000/api/login', {
+  try{
+    const res = await axios.post('http://127.0.0.1:8000/api/login',{
       email: email.value,
       password: password.value
     })
 
-    const user = res.data.user
+    const data = res.data
+    localStorage.setItem("token", data.token)
+    localStorage.setItem("role", data.role)
+    localStorage.setItem("user", JSON.stringify(data.user))
 
-    // Save user info
-    localStorage.setItem("role", user.role)
-    localStorage.setItem("user", JSON.stringify(user))
-
-    // Redirect by role
-    if (user.role === "admin") {
-      router.push("/AdminDefaultLayout")
-    } else if (user.role === "vendor") {
-      router.push("/VendorDefaultLayout")
-    } else {
-      router.push("/CustomerDefaultLayout")
-    }
-
-  } catch (err) {
+    if(data.role==='admin') router.push("/AdminDefaultLayout")
+    else if(data.role==='vendor') router.push("/VendorDefaultLayout")
+    else router.push("/CustomerDefaultLayout")
+  }catch(err){
     alert(err.response?.data?.message || "Login failed")
-  } finally {
-    loading.value = false
+  }finally{
+    loading.value=false
   }
 }
 </script>
+
+
 
 <style scoped>
 .container {
