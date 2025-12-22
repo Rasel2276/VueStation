@@ -1,62 +1,78 @@
 <template>
   <div class="page">
     <div class="card">
-      <h2 class="title">Create Category</h2>
+      <h2 class="title">Create Supplier</h2>
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Name & Slug -->
+        <!-- Supplier Name & Email -->
         <div class="field-row">
           <div class="field">
-            <label>Category Name</label>
+            <label>Supplier Name</label>
             <input
               type="text"
-              placeholder="Enter category name"
-              v-model="form.category_name"
+              placeholder="Enter supplier name"
+              v-model="form.supplier_name"
+              required
             />
           </div>
 
           <div class="field">
-            <label>Slug</label>
+            <label>Email</label>
             <input
-              type="text"
-              placeholder="Auto-generated if empty"
-              v-model="form.slug"
+              type="email"
+              placeholder="Enter supplier email"
+              v-model="form.email"
             />
           </div>
         </div>
 
-        <!-- Description -->
-        <div class="field">
-          <label>Description</label>
-          <textarea
-            rows="4"
-            placeholder="Write short description"
-            v-model="form.description"
-          ></textarea>
+        <!-- Phone & Contact Person -->
+        <div class="field-row">
+          <div class="field">
+            <label>Phone</label>
+            <input
+              type="text"
+              placeholder="Enter phone number"
+              v-model="form.phone"
+            />
+          </div>
+
+          <div class="field">
+            <label>Contact Person</label>
+            <input
+              type="text"
+              placeholder="Enter contact person"
+              v-model="form.contact_person"
+            />
+          </div>
         </div>
 
-        <!-- Status & Image -->
+        <!-- Address & Status -->
         <div class="field-row">
+          <div class="field">
+            <label>Address</label>
+            <textarea
+              rows="3"
+              placeholder="Enter supplier address"
+              v-model="form.address"
+            ></textarea>
+          </div>
+
           <div class="field">
             <label>Status</label>
-            <select v-model="form.status">
+            <select v-model="form.status" required>
               <option value="">Select Status</option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
-          </div>
-
-          <div class="field">
-            <label>Category Image</label>
-            <input type="file" @change="handleImage" />
           </div>
         </div>
 
         <!-- Button -->
         <div class="btn-wrapper">
           <button class="btn" type="submit">
-            Save Category
+            Save Supplier
           </button>
         </div>
 
@@ -69,62 +85,51 @@
 import axios from "axios";
 
 export default {
-  name: "CategoryCreate",
+  name: "SupplierCreate",
 
   data() {
     return {
       form: {
-        category_name: "",
-        slug: "",
-        description: "",
+        supplier_name: "",
+        email: "",
+        phone: "",
+        contact_person: "",
+        address: "",
         status: "",
-        category_image: null,
       },
     };
   },
 
   methods: {
-    handleImage(event) {
-      this.form.category_image = event.target.files[0];
-    },
-
     async submitForm() {
-      const formData = new FormData();
-      formData.append("category_name", this.form.category_name);
-      formData.append("slug", this.form.slug);
-      formData.append("description", this.form.description);
-      formData.append("status", this.form.status);
-
-      if (this.form.category_image) {
-        formData.append("category_image", this.form.category_image);
-      }
-
       try {
         await axios.post(
-          "http://127.0.0.1:8000/api/admin/categories",
-          formData,
+          "http://127.0.0.1:8000/api/admin/suppliers",
+          this.form,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
 
-        alert("Category added successfully!");
+        alert("Supplier added successfully!");
 
+        // Reset form
         this.form = {
-          category_name: "",
-          slug: "",
-          description: "",
+          supplier_name: "",
+          email: "",
+          phone: "",
+          contact_person: "",
+          address: "",
           status: "",
-          category_image: null,
         };
       } catch (error) {
         alert(
           error.response?.data?.message ||
-          JSON.stringify(error.response?.data) ||
-          "Unknown error"
+            JSON.stringify(error.response?.data) ||
+            "Unknown error"
         );
       }
     },

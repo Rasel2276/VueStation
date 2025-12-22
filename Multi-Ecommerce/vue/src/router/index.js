@@ -18,6 +18,12 @@ import CategoryCreate from '../Dashboard/Admindashboard/Admincomponents/Category
 import CategoryManage from '../Dashboard/Admindashboard/Admincomponents/CategoryManage.vue'
 import SubCategoryCreate from '../Dashboard/Admindashboard/Admincomponents/SubCategoryCreate.vue'
 import SubcategoryManage from '../Dashboard/Admindashboard/Admincomponents/SubcategoryManage.vue'
+import SupplierAdd from '../Dashboard/Admindashboard/Admincomponents/SupplierAdd.vue'
+import SupplierManage from '../Dashboard/Admindashboard/Admincomponents/SupplierManage.vue'
+import SupplierProductAdd from '../Dashboard/Admindashboard/Admincomponents/SupplierProductAdd.vue'
+import SupplierProductManage from '../Dashboard/Admindashboard/Admincomponents/SupplierProductManage.vue'
+import AdminPurchase from '../Dashboard/Admindashboard/Admincomponents/AdminPurchase.vue'
+import AdminPurchasePayment from '../Dashboard/Admindashboard/Admincomponents/AdminPurchasePayment.vue'
 
 
 // ===== WEBSITE PAGES =====
@@ -25,6 +31,12 @@ import ProductPage from '../Website/WebsitePages/ProductPage.vue'
 import AboutPage from '../Website/WebsitePages/AboutPage.vue'
 import ContactPage from '../Website/WebsitePages/ContactPage.vue'
 import HomePage from '../Website/WebsitePages/HomePage.vue'
+
+
+
+
+
+
 
 
 
@@ -47,6 +59,12 @@ const routes = [
       { path: '/category/manage_category', component: CategoryManage },
       { path: '/sub-category/add_category', component: SubCategoryCreate },
       { path: '/sub-category/manage_category', component: SubcategoryManage },
+      { path: '/supplier/add-supplier', component: SupplierAdd },
+      { path: '/supplier/manage-supplier', component: SupplierManage },
+      { path: '/supplier/supplier-product', component: SupplierProductAdd },
+      { path: '/supplier/manage-product', component: SupplierProductManage },
+      { path: '/inventory/Purchase', component: AdminPurchase },
+      { path: '/inventory/purchase-payment', component: AdminPurchasePayment },
     ],
   },
 

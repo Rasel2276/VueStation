@@ -98,6 +98,7 @@
         children: [
         { icon: '🛒', label: 'Purchase', to: '/inventory/Purchase' },
         { icon: '📋', label: 'Purchase Record', to: '/inventory/purchase-record' },
+        { icon: '📋', label: 'Purchase Payment', to: '/inventory/purchase-payment' },
         { icon: '↩️', label: 'Purchase Return', to: '/inventory/purchase-return' },
         { icon: '📋', label: 'Return Record', to: '/inventory/return-record' },
         { icon: '🗃️', label: 'My Stock', to: '/inventory/my-stock' },

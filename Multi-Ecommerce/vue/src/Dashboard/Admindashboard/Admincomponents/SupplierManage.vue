@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="card">
-      <h2 class="title">Manage Subcategories</h2>
+      <h2 class="title">Manage Suppliers</h2>
 
       <div class="table-responsive">
         <input
@@ -15,35 +15,29 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Parent Category</th>
-              <th>Subcategory Name</th>
-              <th>Slug</th>
-              <th>Description</th>
+              <th>Supplier Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Contact Person</th>
+              <th>Address</th>
               <th>Status</th>
-              <th>Image</th>
               <th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr v-for="sub in filteredSubcategories" :key="sub.id">
-              <td>{{ sub.id }}</td>
-              <td>{{ sub.category?.category_name }}</td>
-              <td>{{ sub.subcategory_name }}</td>
-              <td>{{ sub.slug }}</td>
-              <td>{{ sub.description }}</td>
-              <td>{{ sub.status }}</td>
-              <td>
-                <img
-                  v-if="sub.subcategory_image"
-                  :src="imageUrl(sub.subcategory_image)"
-                  class="category-image"
-                />
-              </td>
+            <tr v-for="sup in filteredSuppliers" :key="sup.id">
+              <td>{{ sup.id }}</td>
+              <td>{{ sup.supplier_name }}</td>
+              <td>{{ sup.email }}</td>
+              <td>{{ sup.phone }}</td>
+              <td>{{ sup.contact_person }}</td>
+              <td>{{ sup.address }}</td>
+              <td>{{ sup.status }}</td>
               <td>
                 <button
                   class="dropdown-btn"
-                  @click="toggleDropdown(sub.id, $event)"
+                  @click="toggleDropdown(sup.id, $event)"
                 >
                   Actions ▾
                 </button>
@@ -52,19 +46,19 @@
                 <teleport to="body">
                   <transition name="fade">
                     <div
-                      v-if="dropdownOpen === sub.id"
+                      v-if="dropdownOpen === sup.id"
                       class="dropdown-menu-absolute"
                       :style="dropdownPosition"
                     >
                       <button
                         class="edit-btn"
-                        @click="editSubcategory(sub)"
+                        @click="editSupplier(sup)"
                       >
                         Edit
                       </button>
                       <button
                         class="delete-btn"
-                        @click="deleteSubcategory(sub.id)"
+                        @click="deleteSupplier(sup.id)"
                       >
                         Delete
                       </button>
@@ -81,89 +75,83 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue"
-import axios from "axios"
+import { ref, computed, onMounted, nextTick } from "vue";
+import axios from "axios";
 
-const search = ref("")
-const subcategories = ref([])
-const dropdownOpen = ref(null)
-const dropdownPosition = ref({})
-const token = localStorage.getItem("token")
+const search = ref("");
+const suppliers = ref([]);
+const dropdownOpen = ref(null);
+const dropdownPosition = ref({});
+const token = localStorage.getItem("token");
 
-// Fetch subcategories
-const fetchSubcategories = async () => {
+// Fetch suppliers
+const fetchSuppliers = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/subcategories",
+      "http://127.0.0.1:8000/api/admin/suppliers",
       { headers: { Authorization: `Bearer ${token}` } }
-    )
-    subcategories.value = res.data
+    );
+    suppliers.value = res.data;
   } catch (err) {
-    console.error(err.response?.data || err)
+    console.error(err.response?.data || err);
   }
-}
+};
 
-onMounted(fetchSubcategories)
+onMounted(fetchSuppliers);
 
 // Search filter
-const filteredSubcategories = computed(() => {
-  if (!search.value.trim()) return subcategories.value
-  const s = search.value.toLowerCase()
-
-  return subcategories.value.filter(sub =>
-    sub.subcategory_name.toLowerCase().includes(s) ||
-    sub.slug.toLowerCase().includes(s) ||
-    (sub.description && sub.description.toLowerCase().includes(s)) ||
-    sub.status.toLowerCase().includes(s) ||
-    (sub.parent_category?.category_name.toLowerCase().includes(s))
-  )
-})
-
-// Image path (READY TO USE)
-const imageUrl = (file) =>
-  `http://127.0.0.1:8000/subcategory_images/${file}`
+const filteredSuppliers = computed(() => {
+  if (!search.value.trim()) return suppliers.value;
+  const s = search.value.toLowerCase();
+  return suppliers.value.filter(sup =>
+    (sup.supplier_name && sup.supplier_name.toLowerCase().includes(s)) ||
+    (sup.email && sup.email.toLowerCase().includes(s)) ||
+    (sup.phone && sup.phone.toLowerCase().includes(s)) ||
+    (sup.contact_person && sup.contact_person.toLowerCase().includes(s)) ||
+    (sup.address && sup.address.toLowerCase().includes(s)) ||
+    (sup.status && sup.status.toLowerCase().includes(s))
+  );
+});
 
 // Dropdown toggle
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
-    dropdownOpen.value = null
-    return
+    dropdownOpen.value = null;
+    return;
   }
-
-  dropdownOpen.value = id
-  await nextTick()
-
-  const rect = event.target.getBoundingClientRect()
+  dropdownOpen.value = id;
+  await nextTick();
+  const rect = event.target.getBoundingClientRect();
   dropdownPosition.value = {
     position: "absolute",
     top: `${rect.bottom + window.scrollY}px`,
     left: `${rect.left + window.scrollX}px`,
     zIndex: 9999
-  }
-}
+  };
+};
 
-// Delete
-const deleteSubcategory = async (id) => {
-  if (!confirm("Are you sure you want to delete this subcategory?")) return
+// Delete supplier
+const deleteSupplier = async (id) => {
+  if (!confirm("Are you sure you want to delete this supplier?")) return;
 
   try {
     await axios.delete(
-      `http://127.0.0.1:8000/api/admin/subcategories/${id}`,
+      `http://127.0.0.1:8000/api/admin/suppliers/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
-    )
-    subcategories.value = subcategories.value.filter(s => s.id !== id)
-    dropdownOpen.value = null
-    alert("Subcategory deleted successfully")
+    );
+    suppliers.value = suppliers.value.filter(s => s.id !== id);
+    dropdownOpen.value = null;
+    alert("Supplier deleted successfully");
   } catch (err) {
-    console.error(err.response?.data || err)
-    alert("Failed to delete subcategory")
+    console.error(err.response?.data || err);
+    alert("Failed to delete supplier");
   }
-}
+};
 
 // Edit placeholder
-const editSubcategory = (subcategory) => {
-  alert(`Edit "${subcategory.subcategory_name}" functionality here`)
-}
+const editSupplier = (supplier) => {
+  alert(`Edit "${supplier.supplier_name}" functionality here`);
+};
 </script>
 
 <style scoped>
@@ -217,12 +205,6 @@ const editSubcategory = (subcategory) => {
 }
 .custom-category-table tbody tr:hover {
   background: #dbeafe;
-}
-.category-image {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 4px;
 }
 
 /* Dropdown */
