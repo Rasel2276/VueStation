@@ -19,6 +19,13 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     Route::post('/admin/categories', [CategoryController::class,'store']);
     Route::get('/admin/categories', [CategoryController::class,'index']);
     Route::delete('/admin/categories/{id}', [CategoryController::class,'destroy']);
+
+
+    Route::post('/admin/subcategories', [SubcategoryController::class,'store']);
+    Route::get('/admin/subcategories', [SubcategoryController::class,'index']);
+    Route::get('/admin/subcategories/{id}', [SubcategoryController::class,'show']);
+    Route::put('/admin/subcategories/{id}', [SubcategoryController::class,'update']);
+    Route::delete('/admin/subcategories/{id}', [SubcategoryController::class,'destroy']);
 });
 
 // Vendor routes with role
