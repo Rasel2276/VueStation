@@ -47,7 +47,7 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     Route::delete('admin/products/{id}', [ProductController::class,'delete']);
 
     // Product routes
-    Route::post('/admin/purchase/complete', [AdminPurchaseController::class, 'store']);
+    Route::post('/admin/purchase', [AdminPurchaseController::class, 'store']);
 });
 
 // Vendor routes with role

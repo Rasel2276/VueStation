@@ -52,6 +52,7 @@
           <div class="btn-wrapper">
             <button type="button" class="add-btn" @click="addRow">+ Add Product</button>
           </div>
+
           <hr />
         </div>
 
@@ -73,7 +74,13 @@ export default {
       suppliers: [],
       products: [],
       purchases: [
-        { supplier_id: "", product_id: "", quantity: 0, purchase_price: 0, vendor_sale_price: 0 },
+        {
+          supplier_id: "",
+          product_id: "",
+          quantity: 0,
+          purchase_price: 0,
+          vendor_sale_price: 0,
+        },
       ],
     };
   },
@@ -83,7 +90,13 @@ export default {
   },
   methods: {
     addRow() {
-      this.purchases.push({ supplier_id: "", product_id: "", quantity: 0, purchase_price: 0, vendor_sale_price: 0 });
+      this.purchases.push({
+        supplier_id: "",
+        product_id: "",
+        quantity: 0,
+        purchase_price: 0,
+        vendor_sale_price: 0,
+      });
     },
     purchaseTotal(purchase) {
       return (purchase.quantity || 0) * (purchase.purchase_price || 0);
@@ -115,18 +128,98 @@ export default {
 </script>
 
 <style scoped>
-.page { min-height: 50vh; display: flex; justify-content: center; padding: 40px 15px; }
-.card { width: 100%; max-width: 950px; background: #fff; padding: 35px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-.title { text-align: center; font-size: 24px; margin-bottom: 30px; font-weight: 600; }
-.form { display: flex; flex-direction: column; gap: 20px; }
-.field-row { display: flex; gap: 20px; flex-wrap: wrap; }
-.field { flex: 1; display: flex; flex-direction: column; }
-.field label { font-size: 14px; margin-bottom: 6px; color: #374151; }
-.field input, .field select { padding: 12px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 14px; }
-.field input:focus, .field select:focus { outline: none; border-color: #3b82f6; }
-.btn-wrapper { display: flex; justify-content: flex-end; margin-top: 10px; }
-.btn, .add-btn { background: #3b82f6; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.3s; }
-.btn:hover, .add-btn:hover { background: #2563eb; }
-hr { margin: 20px 0; border: 0.5px solid #e5e7eb; }
-@media (max-width: 768px) { .field-row { flex-direction: column; } }
+.page {
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 15px;
+}
+
+.card {
+  width: 100%;
+  max-width: 950px;
+  background: #fff;
+  padding: 35px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.field input,
+.field select {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn,
+.add-btn {
+  background: #3b82f6;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn:hover,
+.add-btn:hover {
+  background: #2563eb;
+}
+
+hr {
+  margin: 20px 0;
+  border: 0.5px solid #e5e7eb;
+}
+
+@media (max-width: 768px) {
+  .field-row {
+    flex-direction: column;
+  }
+}
 </style>

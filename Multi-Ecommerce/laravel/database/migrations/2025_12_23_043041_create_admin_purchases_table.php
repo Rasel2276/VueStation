@@ -13,9 +13,9 @@ return new class extends Migration {
             $table->foreignId('supplier_id')->constrained('suppliers');
             $table->foreignId('product_id')->constrained('products');
             $table->integer('quantity');
-            $table->decimal('purchase_price',10,2);
-            $table->decimal('vendor_sale_price',10,2)->default(0);
-            $table->decimal('total',10,2);
+            $table->decimal('purchase_price',20,2);
+            $table->decimal('vendor_sale_price',20,2)->default(0);
+            $table->decimal('total',20,2);
             $table->enum('status',['Pending','Completed','Cancelled'])->default('Pending');
             $table->timestamp('purchase_date')->useCurrent();
             $table->timestamps();

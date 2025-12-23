@@ -24,6 +24,7 @@ import SupplierProductAdd from '../Dashboard/Admindashboard/Admincomponents/Supp
 import SupplierProductManage from '../Dashboard/Admindashboard/Admincomponents/SupplierProductManage.vue'
 import AdminPurchase from '../Dashboard/Admindashboard/Admincomponents/AdminPurchase.vue'
 import AdminPurchasePayment from '../Dashboard/Admindashboard/Admincomponents/AdminPurchasePayment.vue'
+import AdminPurchaseManage from '../Dashboard/Admindashboard/Admincomponents/AdminPurchaseManage.vue'
 
 
 // ===== WEBSITE PAGES =====
@@ -31,6 +32,7 @@ import ProductPage from '../Website/WebsitePages/ProductPage.vue'
 import AboutPage from '../Website/WebsitePages/AboutPage.vue'
 import ContactPage from '../Website/WebsitePages/ContactPage.vue'
 import HomePage from '../Website/WebsitePages/HomePage.vue'
+
 
 
 
@@ -65,6 +67,7 @@ const routes = [
       { path: '/supplier/manage-product', component: SupplierProductManage },
       { path: '/inventory/Purchase', component: AdminPurchase },
       { path: '/inventory/purchase-payment', component: AdminPurchasePayment },
+      { path: '/inventory/purchase-record', component: AdminPurchaseManage },
     ],
   },
 
