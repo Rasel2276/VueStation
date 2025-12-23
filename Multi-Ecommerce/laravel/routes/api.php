@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SubcategoryController;
+use App\Http\Controllers\Admin\AdminPurchaseController;
 
 // Auth routes
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
@@ -44,6 +45,9 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     Route::post('admin/products', [ProductController::class,'store']);
     Route::post('admin/products/update/{id}', [ProductController::class,'update']);
     Route::delete('admin/products/{id}', [ProductController::class,'delete']);
+
+    // Product routes
+    Route::post('/admin/purchase/complete', [AdminPurchaseController::class, 'store']);
 });
 
 // Vendor routes with role
