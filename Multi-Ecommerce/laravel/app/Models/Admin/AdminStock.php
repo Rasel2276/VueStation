@@ -2,7 +2,9 @@
 
 namespace App\Models\Admin;
 
+use App\Models\Admin\Product;
 use Illuminate\Database\Eloquent\Model;
+
 
 class AdminStock extends Model
 {
@@ -15,4 +17,13 @@ class AdminStock extends Model
         'vendor_sale_price',
         'status'
     ];
+
+    /**
+     * Product relation
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }
+

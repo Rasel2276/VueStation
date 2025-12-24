@@ -48,6 +48,13 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
 
     // Product routes
     Route::post('/admin/purchase', [AdminPurchaseController::class, 'store']);
+    Route::get('/admin/purchase', [AdminPurchaseController::class, 'index']);
+    Route::get('/admin/stock', [AdminPurchaseController::class, 'stockIndex']);
+    Route::delete('/admin/purchase/{id}', [AdminPurchaseController::class, 'deletePurchase']);
+    Route::delete('/admin/stock/{id}', [AdminPurchaseController::class, 'deleteStock']);
+    // Supplier return product
+    Route::post('/admin/stock/return/{productId}', [AdminPurchaseController::class, 'returnStock']);
+
 });
 
 // Vendor routes with role

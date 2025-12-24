@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="card">
-      <h2 class="title">Manage Purchases</h2>
+      <h2 class="title">Manage Stock</h2>
 
       <div class="table-responsive">
         <input
@@ -15,59 +15,51 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Supplier</th>
               <th>Product</th>
               <th>Image</th>
               <th>Quantity</th>
               <th>Purchase Price</th>
               <th>Vendor Sale Price</th>
-              <th>Total</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr v-for="p in filteredPurchases" :key="p.id">
-              <td>{{ p.id }}</td>
-              <td>{{ p.supplier?.supplier_name }}</td>
-              <td>{{ p.product?.product_name }}</td>
-
-              <!-- IMAGE -->
+            <tr v-for="stock in filteredStocks" :key="stock.id">
+              <td>{{ stock.id }}</td>
+              <td>{{ stock.product?.product_name }}</td>
               <td>
                 <img
-                  v-if="p.product?.product_image"
-                  :src="imageUrl(p.product.product_image)"
+                  v-if="stock.product?.product_image"
+                  :src="imageUrl(stock.product.product_image)"
                   class="category-image"
                 />
               </td>
-
-              <td>{{ p.quantity }}</td>
-              <td>{{ p.purchase_price }}</td>
-              <td>{{ p.vendor_sale_price }}</td>
-              <td>{{ p.total }}</td>
-              <td>{{ p.status }}</td>
+              <td>{{ stock.quantity }}</td>
+              <td>{{ stock.purchase_price }}</td>
+              <td>{{ stock.vendor_sale_price }}</td>
+              <td>{{ stock.status }}</td>
 
               <td>
                 <button
                   class="dropdown-btn"
-                  @click="toggleDropdown(p.id, $event)"
+                  @click="toggleDropdown(stock.id, $event)"
                 >
                   Actions ▾
                 </button>
 
-                <!-- Dropdown -->
                 <teleport to="body">
                   <transition name="fade">
                     <div
-                      v-if="dropdownOpen === p.id"
+                      v-if="dropdownOpen === stock.id"
                       class="dropdown-menu-absolute"
                       :style="dropdownPosition"
                     >
-                      <button class="edit-btn" @click="viewPurchase(p)">
+                      <button class="edit-btn" @click="viewStock(stock)">
                         View
                       </button>
-                      <button class="delete-btn" @click="deletePurchase(p.id)">
+                      <button class="delete-btn" @click="deleteStock(stock.id)">
                         Delete
                       </button>
                     </div>
@@ -87,34 +79,33 @@ import { ref, computed, onMounted, nextTick } from "vue"
 import axios from "axios"
 
 const search = ref("")
-const purchases = ref([])
+const stocks = ref([])
 const dropdownOpen = ref(null)
 const dropdownPosition = ref({})
 const token = localStorage.getItem("token")
 
-// FETCH PURCHASES
-const fetchPurchases = async () => {
+// FETCH STOCKS
+const fetchStocks = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/purchase",
+      "http://127.0.0.1:8000/api/admin/stock",
       { headers: { Authorization: `Bearer ${token}` } }
     )
-    purchases.value = res.data
+    stocks.value = res.data
   } catch (err) {
     console.error(err.response?.data || err)
   }
 }
 
-onMounted(fetchPurchases)
+onMounted(fetchStocks)
 
 // SEARCH FILTER
-const filteredPurchases = computed(() => {
-  if (!search.value.trim()) return purchases.value
+const filteredStocks = computed(() => {
+  if (!search.value.trim()) return stocks.value
   const s = search.value.toLowerCase()
-  return purchases.value.filter(p =>
-    p.status.toLowerCase().includes(s) ||
-    p.product?.product_name.toLowerCase().includes(s) ||
-    p.supplier?.supplier_name.toLowerCase().includes(s)
+  return stocks.value.filter(stock =>
+    stock.status.toLowerCase().includes(s) ||
+    stock.product?.product_name.toLowerCase().includes(s)
   )
 })
 
@@ -139,29 +130,28 @@ const toggleDropdown = async (id, event) => {
 }
 
 // DELETE LOGIC
-const deletePurchase = async (id) => {
-  if (!confirm("Are you sure you want to delete this purchase?")) return
+const deleteStock = async (id) => {
+  if (!confirm("Are you sure you want to delete this stock?")) return
   try {
     await axios.delete(
-      `http://127.0.0.1:8000/api/admin/purchase/${id}`,
+      `http://127.0.0.1:8000/api/admin/stock/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
-    purchases.value = purchases.value.filter(p => p.id !== id)
+    stocks.value = stocks.value.filter(s => s.id !== id)
     dropdownOpen.value = null
-    alert("Purchase deleted successfully")
+    alert("Stock deleted successfully")
   } catch {
-    alert("Failed to delete purchase")
+    alert("Failed to delete stock")
   }
 }
 
 // VIEW
-const viewPurchase = (purchase) => {
-  alert(`Purchase ID: ${purchase.id}`)
+const viewStock = (stock) => {
+  alert(`Stock ID: ${stock.id}`)
 }
 </script>
 
 <style scoped>
-/* ===== EXACT SAME STYLE (NO CHANGE) ===== */
 .page {
   min-height: 50vh;
   display: flex;
