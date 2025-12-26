@@ -5,7 +5,7 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Purchase ID & Product -->
+        <!-- Admin Purchase ID & Product -->
         <div class="field-row">
           <div class="field">
             <label>Admin Purchase ID</label>
@@ -78,34 +78,34 @@ export default {
   },
 
   mounted() {
-    this.loadProducts();
-    this.loadSuppliers();
+    this.loadProductsAndSuppliers();
   },
 
   methods: {
-    async loadProducts() {
+    async loadProductsAndSuppliers() {
       try {
         const res = await axios.get("http://127.0.0.1:8000/api/admin/purchase", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        // products map: only purchased products
-        this.products = res.data.map(p => ({
-          id: p.product_id,
-          name: p.product.name // assuming relation exists
-        }));
-      } catch (err) {
-        alert("Failed to load products");
-      }
-    },
 
-    async loadSuppliers() {
-      try {
-        const res = await axios.get("http://127.0.0.1:8000/api/admin/suppliers", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        this.suppliers = res.data;
+        // Map products & suppliers from purchased items
+        let products = res.data.map(p => ({
+          id: p.product_id,
+          name: p.product?.product_name || "Unknown Product" // <-- fix applied here
+        }));
+
+        let suppliers = res.data.map(p => ({
+          id: p.supplier_id,
+          name: p.supplier?.supplier_name || "Unknown Supplier"
+        }));
+
+        // Remove duplicates
+        this.products = [...new Map(products.map(item => [item.id, item])).values()];
+        this.suppliers = [...new Map(suppliers.map(item => [item.id, item])).values()];
+
       } catch (err) {
-        alert("Failed to load suppliers");
+        alert("Failed to load products or suppliers");
+        console.error(err);
       }
     },
 
@@ -137,7 +137,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .page {

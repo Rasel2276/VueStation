@@ -4,10 +4,10 @@
       <h2 class="title">Manage Stock</h2>
 
       <div class="table-responsive">
-        <input
-          type="text"
-          v-model="search"
-          placeholder="Search"
+        <input 
+          type="text" 
+          v-model="search" 
+          placeholder="Search" 
           class="search-input"
         />
 
@@ -26,42 +26,37 @@
           </thead>
 
           <tbody>
-            <tr v-for="stock in filteredStocks" :key="stock.id">
-              <td>{{ stock.id }}</td>
+            <tr v-for="stock in filteredStocks" :key="stock.product_id">
+              <td>{{ stock.product_id }}</td>
               <td>{{ stock.product?.product_name }}</td>
               <td>
-                <img
-                  v-if="stock.product?.product_image"
-                  :src="imageUrl(stock.product.product_image)"
+                <img 
+                  v-if="stock.product?.product_image" 
+                  :src="imageUrl(stock.product.product_image)" 
                   class="category-image"
                 />
               </td>
-              <td>{{ stock.quantity }}</td>
+              <td>{{ stock.totalQuantity }}</td>
               <td>{{ stock.purchase_price }}</td>
               <td>{{ stock.vendor_sale_price }}</td>
               <td>{{ stock.status }}</td>
-
               <td>
-                <button
-                  class="dropdown-btn"
-                  @click="toggleDropdown(stock.id, $event)"
+                <button 
+                  class="dropdown-btn" 
+                  @click="toggleDropdown(stock.product_id, $event)"
                 >
                   Actions ▾
                 </button>
 
                 <teleport to="body">
                   <transition name="fade">
-                    <div
-                      v-if="dropdownOpen === stock.id"
-                      class="dropdown-menu-absolute"
+                    <div 
+                      v-if="dropdownOpen === stock.product_id" 
+                      class="dropdown-menu-absolute" 
                       :style="dropdownPosition"
                     >
-                      <button class="edit-btn" @click="viewStock(stock)">
-                        View
-                      </button>
-                      <button class="delete-btn" @click="deleteStock(stock.id)">
-                        Delete
-                      </button>
+                      <button class="edit-btn" @click="viewStock(stock)">View</button>
+                      <button class="delete-btn" @click="deleteStock(stock.product_id)">Delete</button>
                     </div>
                   </transition>
                 </teleport>
@@ -75,14 +70,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue"
-import axios from "axios"
+import { ref, computed, onMounted, nextTick } from "vue";
+import axios from "axios";
 
-const search = ref("")
-const stocks = ref([])
-const dropdownOpen = ref(null)
-const dropdownPosition = ref({})
-const token = localStorage.getItem("token")
+const search = ref("");
+const stocks = ref([]);
+const dropdownOpen = ref(null);
+const dropdownPosition = ref({});
+const token = localStorage.getItem("token");
 
 // FETCH STOCKS
 const fetchStocks = async () => {
@@ -90,162 +85,160 @@ const fetchStocks = async () => {
     const res = await axios.get(
       "http://127.0.0.1:8000/api/admin/stock",
       { headers: { Authorization: `Bearer ${token}` } }
-    )
-    stocks.value = res.data
-  } catch (err) {
-    console.error(err.response?.data || err)
-  }
-}
+    );
 
-onMounted(fetchStocks)
+    // Merge by product
+    const merged = {};
+    res.data.forEach(s => {
+      if (!merged[s.product_id]) {
+        merged[s.product_id] = { ...s, totalQuantity: s.quantity };
+      } else {
+        merged[s.product_id].totalQuantity += s.quantity;
+      }
+    });
+    stocks.value = Object.values(merged);
+  } catch (err) {
+    console.error(err.response?.data || err);
+  }
+};
+
+onMounted(fetchStocks);
 
 // SEARCH FILTER
 const filteredStocks = computed(() => {
-  if (!search.value.trim()) return stocks.value
-  const s = search.value.toLowerCase()
+  if (!search.value.trim()) return stocks.value;
+  const s = search.value.toLowerCase();
   return stocks.value.filter(stock =>
     stock.status.toLowerCase().includes(s) ||
     stock.product?.product_name.toLowerCase().includes(s)
-  )
-})
+  );
+});
 
 // IMAGE PATH
-const imageUrl = (file) => `http://127.0.0.1:8000/product_images/${file}`
+const imageUrl = (file) => `http://127.0.0.1:8000/product_images/${file}`;
 
 // DROPDOWN
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
-    dropdownOpen.value = null
-    return
+    dropdownOpen.value = null;
+    return;
   }
-  dropdownOpen.value = id
-  await nextTick()
-  const rect = event.target.getBoundingClientRect()
+  dropdownOpen.value = id;
+  await nextTick();
+  const rect = event.target.getBoundingClientRect();
   dropdownPosition.value = {
     position: "absolute",
     top: `${rect.bottom + window.scrollY}px`,
     left: `${rect.left + window.scrollX}px`,
     zIndex: 9999
-  }
-}
+  };
+};
 
 // DELETE LOGIC
-const deleteStock = async (id) => {
-  if (!confirm("Are you sure you want to delete this stock?")) return
+const deleteStock = async (productId) => {
+  if (!confirm("Are you sure you want to delete this stock?")) return;
   try {
     await axios.delete(
-      `http://127.0.0.1:8000/api/admin/stock/${id}`,
+      `http://127.0.0.1:8000/api/admin/stock/${productId}`,
       { headers: { Authorization: `Bearer ${token}` } }
-    )
-    stocks.value = stocks.value.filter(s => s.id !== id)
-    dropdownOpen.value = null
-    alert("Stock deleted successfully")
+    );
+    stocks.value = stocks.value.filter(s => s.product_id !== productId);
+    dropdownOpen.value = null;
+    alert("Stock deleted successfully");
   } catch {
-    alert("Failed to delete stock")
+    alert("Failed to delete stock");
   }
-}
+};
 
 // VIEW
 const viewStock = (stock) => {
-  alert(`Stock ID: ${stock.id}`)
-}
+  alert(`Stock Product ID: ${stock.product_id}`);
+};
 </script>
 
 <style scoped>
-.page {
-  min-height: 50vh;
-  display: flex;
-  justify-content: center;
-  padding: 40px 0;
-  font-family: "Segoe UI", sans-serif;
+.page { 
+  min-height:50vh; 
+  display:flex; 
+  justify-content:center; 
+  padding:40px 0; 
+  font-family:"Segoe UI",sans-serif;
 }
-.card {
-  width: 100%;
-  max-width: 1100px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.card { 
+  width:100%; 
+  max-width:1100px; 
+  background:#fff; 
+  border-radius:8px; 
+  padding:2rem; 
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
-.title {
-  text-align: center;
-  font-size: 26px;
-  margin-bottom: 30px;
+.title { 
+  text-align:center; 
+  font-size:26px; 
+  margin-bottom:30px;
 }
-.search-input {
-  width: 100%;
-  max-width: 220px;
-  padding: 0.5rem 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #d2d6da;
-  border-radius: 6px;
+.search-input { 
+  width:100%; 
+  max-width:220px; 
+  padding:0.5rem 1rem; 
+  margin-bottom:1rem; 
+  border:1px solid #d2d6da; 
+  border-radius:6px;
 }
-.table-responsive {
-  overflow-x: auto;
-  background: #fff;
-  padding: 0.5rem;
+.table-responsive { 
+  overflow-x:auto; 
+  background:#fff; 
+  padding:0.5rem;
 }
-.custom-category-table {
-  width: 100%;
-  min-width: 700px;
-  border-collapse: collapse;
+.custom-category-table { 
+  width:100%; 
+  min-width:700px; 
+  border-collapse:collapse;
 }
-.custom-category-table th,
-.custom-category-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 14px;
+.custom-category-table th, .custom-category-table td { 
+  padding:12px 15px; 
+  border-bottom:1px solid #e5e7eb; 
+  font-size:14px;
 }
-.custom-category-table th {
-  background: #f3f4f6;
-  font-weight: 600;
+.custom-category-table th { 
+  background:#f3f4f6; 
+  font-weight:600;
 }
-.custom-category-table tbody tr:hover {
-  background: #dbeafe;
+.custom-category-table tbody tr:hover { 
+  background:#dbeafe;
 }
-.category-image {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 4px;
+.category-image { 
+  width:50px; 
+  height:50px; 
+  object-fit:cover; 
+  border-radius:4px;
 }
-
-/* Dropdown */
-.dropdown-btn {
-  padding: 6px 12px;
-  background: #2563eb;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
+.dropdown-btn { 
+  padding:6px 12px; 
+  background:#2563eb; 
+  border:none; 
+  border-radius:4px; 
+  color:white; 
+  font-weight:600; 
+  cursor:pointer;
 }
-.dropdown-menu-absolute {
-  background: #f9fafb;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  border-radius: 6px;
-  min-width: 140px;
+.dropdown-menu-absolute { 
+  background:#f9fafb; 
+  box-shadow:0 4px 8px rgba(0,0,0,0.15); 
+  border-radius:6px; 
+  min-width:140px;
 }
-.dropdown-menu-absolute button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
+.dropdown-menu-absolute button { 
+  width:100%; 
+  padding:10px; 
+  border:none; 
+  background:none; 
+  text-align:left; 
+  cursor:pointer;
 }
-.edit-btn { color: #065f46; }
-.delete-btn { color: #b91c1c; }
-.dropdown-menu-absolute button:hover {
-  background: #e0e7ff;
-}
-
-/* Animation */
-.fade-enter-active, .fade-leave-active {
-  transition: 0.2s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(-5px);
-}
+.edit-btn { color:#065f46;}
+.delete-btn { color:#b91c1c;}
+.dropdown-menu-absolute button:hover { background:#e0e7ff;}
+.fade-enter-active, .fade-leave-active { transition:0.2s ease;}
+.fade-enter-from, .fade-leave-to { opacity:0; transform:translateY(-5px);}
 </style>
