@@ -52,8 +52,9 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     Route::get('/admin/stock', [AdminPurchaseController::class, 'stockIndex']);
     Route::delete('/admin/purchase/{id}', [AdminPurchaseController::class, 'deletePurchase']);
     Route::delete('/admin/stock/{id}', [AdminPurchaseController::class, 'deleteStock']);
+
     // Supplier return product
-    Route::post('/admin/stock/return/{productId}', [AdminPurchaseController::class, 'returnStock']);
+    Route::post('/admin/purchase/return', [AdminPurchaseController::class, 'supplierReturn']);
 
 });
 

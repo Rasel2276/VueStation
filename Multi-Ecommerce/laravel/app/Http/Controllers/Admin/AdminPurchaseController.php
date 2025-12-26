@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Admin\AdminPurchase;
-use App\Models\Admin\AdminStock;
 use DB;
+use Illuminate\Http\Request;
+use App\Models\Admin\AdminStock;
+use App\Models\Admin\AdminPurchase;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\SupplierPurchaseReturn;
 
 class AdminPurchaseController extends Controller
 {
@@ -113,37 +114,49 @@ class AdminPurchaseController extends Controller
 
 
     // SUPPLIER RETURN (NEW FUNCTION)
-public function returnStock(Request $request, $productId)
-{
+   public function supplierReturn(Request $request)
+   {
     $request->validate([
-        'quantity' => 'required|integer|min:1'
+        'admin_purchase_id' => 'required|exists:admin_purchases,id',
+        'product_id' => 'required|exists:products,id',
+        'supplier_id' => 'required|exists:suppliers,id',
+        'quantity' => 'required|integer|min:1',
+        'reason' => 'nullable|string'
     ]);
 
-    $stock = AdminStock::where('product_id', $productId)->first();
+    DB::transaction(function () use ($request) {
 
-    if (!$stock) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Stock not found for this product'
-        ], 404);
-    }
+        // 1️⃣ Stock check
+        $stock = AdminStock::where('product_id', $request->product_id)->first();
 
-    if ($stock->quantity < $request->quantity) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Return quantity exceeds available stock'
-        ], 400);
-    }
+        if (!$stock) {
+            abort(404, 'Stock not found');
+        }
 
-    // Reduce stock quantity
-    $stock->quantity -= $request->quantity;
-    $stock->save();
+        if ($stock->quantity < $request->quantity) {
+            abort(400, 'Return quantity exceeds stock');
+        }
+
+        // 2️⃣ Reduce admin stock
+        $stock->quantity -= $request->quantity;
+        $stock->save();
+
+        // 3️⃣ Insert return log
+        SupplierPurchaseReturn::create([
+            'admin_purchase_id' => $request->admin_purchase_id,
+            'admin_id' => Auth::id(),
+            'supplier_id' => $request->supplier_id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity,
+            'reason' => $request->reason,
+            'status' => 'Completed',
+            'return_date' => now()
+        ]);
+    });
 
     return response()->json([
         'success' => true,
-        'message' => "Stock returned successfully. Remaining stock: {$stock->quantity}",
-        'stock' => $stock
+        'message' => 'Product returned to supplier successfully'
     ]);
-}
-
+   }
 }
