@@ -66,10 +66,10 @@
         icon: '📦',
         label: 'Inventory',
         children: [
-        { icon: '🛒', label: 'Purchase', to: '/inventory/purchase' },
-        { icon: '📋', label: 'Purchase Record', to: '/inventory/purchase-record' },
-        { icon: '↩️', label: 'Purchase Return', to: '/inventory/purchase-return' },
-        { icon: '📋', label: 'Return Record', to: '/inventory/return-record' },
+        { icon: '🛒', label: 'Purchase', to: '/vendor-inventory/vendor_purchase' },
+        { icon: '📋', label: 'Purchase Record', to: '/vendor-inventory/vendor_purchase-record' },
+        { icon: '↩️', label: 'Purchase Return', to: '/vendor-inventory/vendor_purchase-return' },
+        { icon: '📋', label: 'Return Record', to: '/vendor-inventory/vendor_return-record' },
         ],
     },
 
@@ -88,7 +88,7 @@
         icon: '🛍️',
         label: 'Admin Product',
         children: [
-        { icon: '📦', label: 'Admin Product', to: '/admin-products/admin-product' },
+        { icon: '📦', label: 'Admin Product', to: '/admin-products-list/admin-product-list' },
         ],
     },
 
