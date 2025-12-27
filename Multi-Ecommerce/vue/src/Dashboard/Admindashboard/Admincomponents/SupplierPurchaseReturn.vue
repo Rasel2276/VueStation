@@ -5,46 +5,58 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Admin Purchase ID & Product -->
+        <!-- Product & Supplier -->
         <div class="field-row">
           <div class="field">
-            <label>Admin Purchase ID</label>
-            <input type="number" placeholder="Enter admin purchase id" v-model="form.admin_purchase_id" />
+            <label>Product</label>
+            <select v-model="form.product_id" @change="autoSelectSupplier">
+              <option value="">Select Product</option>
+              <option
+                v-for="product in products"
+                :key="product.id"
+                :value="product.id"
+              >
+                {{ product.name }} (Stock: {{ product.stock }})
+              </option>
+            </select>
           </div>
 
           <div class="field">
-            <label>Product</label>
-            <select v-model="form.product_id">
-              <option value="">Select Product</option>
-              <option v-for="product in products" :key="product.id" :value="product.id">
-                {{ product.name }}
+            <label>Supplier (Auto)</label>
+            <select v-model="form.supplier_id" disabled>
+              <option value="">Auto Selected</option>
+              <option
+                v-for="supplier in suppliers"
+                :key="supplier.id"
+                :value="supplier.id"
+              >
+                {{ supplier.name }}
               </option>
             </select>
           </div>
         </div>
 
-        <!-- Supplier & Quantity -->
+        <!-- Quantity -->
         <div class="field-row">
           <div class="field">
-            <label>Supplier</label>
-            <select v-model="form.supplier_id">
-              <option value="">Select Supplier</option>
-              <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.id">
-                {{ supplier.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="field">
             <label>Return Quantity</label>
-            <input type="number" placeholder="Enter return quantity" v-model="form.quantity" />
+            <input
+              type="number"
+              min="1"
+              placeholder="Enter return quantity"
+              v-model="form.quantity"
+            />
           </div>
         </div>
 
         <!-- Reason -->
         <div class="field">
           <label>Return Reason</label>
-          <textarea rows="4" placeholder="Write return reason (optional)" v-model="form.reason"></textarea>
+          <textarea
+            rows="4"
+            placeholder="Write return reason (optional)"
+            v-model="form.reason"
+          ></textarea>
         </div>
 
         <!-- Button -->
@@ -67,8 +79,9 @@ export default {
     return {
       products: [],
       suppliers: [],
+      productSupplierMap: {},
+      stocks: {},
       form: {
-        admin_purchase_id: "",
         product_id: "",
         supplier_id: "",
         quantity: "",
@@ -78,35 +91,62 @@ export default {
   },
 
   mounted() {
+    this.loadStocks();
     this.loadProductsAndSuppliers();
   },
 
   methods: {
+    async loadStocks() {
+      const res = await axios.get("http://127.0.0.1:8000/api/admin/stock", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const map = {};
+      res.data.forEach(s => {
+        map[s.product_id] = (map[s.product_id] || 0) + Number(s.quantity);
+      });
+
+      this.stocks = map;
+    },
+
     async loadProductsAndSuppliers() {
-      try {
-        const res = await axios.get("http://127.0.0.1:8000/api/admin/purchase", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+      const res = await axios.get("http://127.0.0.1:8000/api/admin/purchase", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-        // Map products & suppliers from purchased items
-        let products = res.data.map(p => ({
+      const productMap = {};
+      const supplierMap = {};
+      const productSupplier = {};
+
+      res.data.forEach(p => {
+        productMap[p.product_id] = {
           id: p.product_id,
-          name: p.product?.product_name || "Unknown Product" // <-- fix applied here
-        }));
+          name: p.product?.product_name || "Unknown Product",
+          stock: this.stocks[p.product_id] || 0,
+        };
 
-        let suppliers = res.data.map(p => ({
+        supplierMap[p.supplier_id] = {
           id: p.supplier_id,
-          name: p.supplier?.supplier_name || "Unknown Supplier"
-        }));
+          name: p.supplier?.supplier_name || "Unknown Supplier",
+        };
 
-        // Remove duplicates
-        this.products = [...new Map(products.map(item => [item.id, item])).values()];
-        this.suppliers = [...new Map(suppliers.map(item => [item.id, item])).values()];
+        // ⭐ map product -> supplier
+        productSupplier[p.product_id] = p.supplier_id;
+      });
 
-      } catch (err) {
-        alert("Failed to load products or suppliers");
-        console.error(err);
-      }
+      this.products = Object.values(productMap);
+      this.suppliers = Object.values(supplierMap);
+      this.productSupplierMap = productSupplier;
+    },
+
+    // ⭐ AUTO SUPPLIER SELECT
+    autoSelectSupplier() {
+      this.form.supplier_id =
+        this.productSupplierMap[this.form.product_id] || "";
     },
 
     async submitForm() {
@@ -114,29 +154,30 @@ export default {
         await axios.post(
           "http://127.0.0.1:8000/api/admin/purchase/return",
           this.form,
-          { headers: { Accept: "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
 
         alert("Product returned to supplier successfully!");
 
         this.form = {
-          admin_purchase_id: "",
           product_id: "",
           supplier_id: "",
           quantity: "",
           reason: "",
         };
       } catch (error) {
-        alert(
-          error.response?.data?.message ||
-          JSON.stringify(error.response?.data) ||
-          "Something went wrong"
-        );
+        alert(error.response?.data?.message || "Something went wrong");
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 .page {
@@ -145,7 +186,6 @@ export default {
   justify-content: center;
   padding: 40px 15px;
 }
-
 .card {
   width: 100%;
   max-width: 900px;
@@ -154,77 +194,46 @@ export default {
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
-
 .title {
   text-align: center;
   font-size: 24px;
   margin-bottom: 30px;
-  font-weight: 600;
 }
-
 .form {
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
-
 .field-row {
   display: flex;
   gap: 25px;
 }
-
 .field {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-
 .field label {
   font-size: 14px;
   margin-bottom: 6px;
-  color: #374151;
 }
-
 .field input,
 .field select,
 .field textarea {
   padding: 12px;
   border-radius: 6px;
   border: 1px solid #d1d5db;
-  font-size: 14px;
 }
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  outline: none;
-  border-color: #3b82f6;
-}
-
 .btn-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
 }
-
 .btn {
   background: #3b82f6;
-  color: #ffffff;
+  color: #fff;
   padding: 12px 28px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  background: #2563eb;
-}
-
-@media (max-width: 768px) {
-  .field-row {
-    flex-direction: column;
-  }
 }
 </style>

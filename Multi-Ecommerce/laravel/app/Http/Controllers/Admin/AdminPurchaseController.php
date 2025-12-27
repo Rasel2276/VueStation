@@ -114,10 +114,9 @@ class AdminPurchaseController extends Controller
 
 
     // SUPPLIER RETURN (NEW FUNCTION)
-   public function supplierReturn(Request $request)
-   {
+public function supplierReturn(Request $request)
+{
     $request->validate([
-        'admin_purchase_id' => 'required|exists:admin_purchases,id',
         'product_id' => 'required|exists:products,id',
         'supplier_id' => 'required|exists:suppliers,id',
         'quantity' => 'required|integer|min:1',
@@ -126,24 +125,48 @@ class AdminPurchaseController extends Controller
 
     DB::transaction(function () use ($request) {
 
-        // 1️⃣ Stock check
-        $stock = AdminStock::where('product_id', $request->product_id)->first();
+        // 🔹 Auto find purchase
+        $purchase = AdminPurchase::where('product_id', $request->product_id)
+            ->where('supplier_id', $request->supplier_id)
+            ->latest()
+            ->first();
 
-        if (!$stock) {
-            abort(404, 'Stock not found');
+        if (!$purchase) {
+            abort(404, 'Purchase record not found for this product');
         }
 
-        if ($stock->quantity < $request->quantity) {
+        // 🔹 Total stock check
+        $totalStock = AdminStock::where('product_id', $request->product_id)
+            ->sum('quantity');
+
+        if ($totalStock < $request->quantity) {
             abort(400, 'Return quantity exceeds stock');
         }
 
-        // 2️⃣ Reduce admin stock
-        $stock->quantity -= $request->quantity;
-        $stock->save();
+        // 🔹 Reduce stock FIFO
+        $remainingQty = $request->quantity;
 
-        // 3️⃣ Insert return log
+        $stocks = AdminStock::where('product_id', $request->product_id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        foreach ($stocks as $stock) {
+            if ($remainingQty <= 0) break;
+
+            if ($stock->quantity >= $remainingQty) {
+                $stock->quantity -= $remainingQty;
+                $stock->save();
+                break;
+            } else {
+                $remainingQty -= $stock->quantity;
+                $stock->quantity = 0;
+                $stock->save();
+            }
+        }
+
+        // 🔹 Save return
         SupplierPurchaseReturn::create([
-            'admin_purchase_id' => $request->admin_purchase_id,
+            'admin_purchase_id' => $purchase->id,
             'admin_id' => Auth::id(),
             'supplier_id' => $request->supplier_id,
             'product_id' => $request->product_id,
@@ -158,5 +181,16 @@ class AdminPurchaseController extends Controller
         'success' => true,
         'message' => 'Product returned to supplier successfully'
     ]);
-   }
+}
+
+        // 🔹 Supplier Return History
+    public function returnHistory()
+    {
+        $returns = SupplierPurchaseReturn::with(['product','supplier'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($returns);
+    }
+
 }

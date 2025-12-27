@@ -55,6 +55,7 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
 
     // Supplier return product
     Route::post('/admin/purchase/return', [AdminPurchaseController::class, 'supplierReturn']);
+    Route::get('/admin/purchase/return-history', [AdminPurchaseController::class, 'returnHistory']);
 
 });
 
