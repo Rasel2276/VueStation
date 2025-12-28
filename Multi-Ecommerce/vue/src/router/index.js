@@ -34,6 +34,9 @@ import ProductPage from '../Website/WebsitePages/ProductPage.vue'
 import AboutPage from '../Website/WebsitePages/AboutPage.vue'
 import ContactPage from '../Website/WebsitePages/ContactPage.vue'
 import HomePage from '../Website/WebsitePages/HomePage.vue'
+import VendorProductsList from '../Dashboard/Vendordashboard/Vendor-components/VendorProductsList.vue'
+import VendorPurchase from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchase.vue'
+import VendorPurchaseManage from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchaseManage.vue'
 
 
 
@@ -94,6 +97,9 @@ const routes = [
     component: VendorDefaultLayout,
     children: [
       { path: '', component: VendorDashboard },
+      { path: '/admin-products-list/admin-product-list', component: VendorProductsList },
+      { path: '/vendor-inventory/vendor_purchase', component: VendorPurchase },
+      { path: '/vendor-inventory/vendor_purchase-record', component: VendorPurchaseManage },
     ],
   },
 
@@ -133,9 +139,9 @@ router.beforeEach((to, from, next) => {
 
   if (!role) return next('/')
 
-  if (to.path.startsWith('/admin') && role !== 'admin') return next('/login')
-  if (to.path.startsWith('/vendor') && role !== 'vendor') return next('/login')
-  if (to.path.startsWith('/customer') && role !== 'customer') return next('/login')
+  if (to.path.startsWith('/AdminDefaultLayout') && role !== 'admin') return next('/login')
+  if (to.path.startsWith('/VendorDefaultLayout') && role !== 'vendor') return next('/login')
+  if (to.path.startsWith('/CustomerDefaultLayout') && role !== 'customer') return next('/login')
 
   next()
 })

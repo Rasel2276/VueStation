@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SubcategoryController;
+use App\Http\Controllers\Vendor\VendorStockController;
 use App\Http\Controllers\Admin\AdminPurchaseController;
+use App\Http\Controllers\Vendor\VendorPurchaseController;
 
 // Auth routes
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
@@ -59,12 +61,21 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
 
 });
 
+
+
 // Vendor routes with role
 Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/dashboard', function(){
-        return "Vendor Dashboard";
+        return response()->json(['message'=>'Vendor Dashboard']);
     });
+    Route::get('/vendor/admin-stocks', [VendorStockController::class, 'index']);
+    Route::post('/vendor/purchases', [VendorPurchaseController::class, 'store']);
+    Route::get('/vendor/purchases', [VendorPurchaseController::class, 'index']);
+
 });
+
+
+
 
 // Customer routes with role
 Route::middleware(['auth:sanctum','role:customer'])->group(function(){

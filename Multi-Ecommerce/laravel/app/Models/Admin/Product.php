@@ -2,11 +2,12 @@
 
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Admin\Category;
-use App\Models\Admin\Subcategory;
 use App\Models\Admin\Supplier;
+use App\Models\Admin\AdminStock;
+use App\Models\Admin\Subcategory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -41,6 +42,11 @@ class Product extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function adminStocks()
+    {
+        return $this->hasMany(AdminStock::class, 'product_id');
     }
 }
 
