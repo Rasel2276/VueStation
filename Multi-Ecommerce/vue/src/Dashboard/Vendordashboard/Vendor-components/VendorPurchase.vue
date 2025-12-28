@@ -52,21 +52,24 @@ import axios from 'axios'
 const purchases = ref([{ admin_stock_id: '', quantity: 1, price: 0 }])
 const adminStocks = ref([])
 
+// টোকেন নাম যাই হোক এটা হ্যান্ডেল করবে
+const getAuthToken = () => localStorage.getItem('vendortoken') || localStorage.getItem('token');
+
 const addRow = () => {
   purchases.value.push({ admin_stock_id: '', quantity: 1, price: 0 })
 }
 
-const purchaseTotal = (purchase) => (Number(purchase.quantity) || 0) * (Number(purchase.price) || 0)
+const purchaseTotal = (p) => (Number(p.quantity) || 0) * (Number(p.price) || 0)
 
 const fetchAdminStocks = async () => {
   try {
-    const token = localStorage.getItem('token')
+    const token = getAuthToken();
     const res = await axios.get('http://127.0.0.1:8000/api/vendor/admin-stocks', {
       headers: { Authorization: `Bearer ${token}` }
     })
     adminStocks.value = res.data
   } catch (err) {
-    alert('Failed to fetch products')
+    console.error('Fetch Error:', err)
   }
 }
 
@@ -80,19 +83,18 @@ const setPrice = (index) => {
 
 const submitForm = async () => {
   const isValid = purchases.value.every(p => p.admin_stock_id && p.quantity > 0)
-  if (!isValid) return alert('Please fill all fields correctly')
+  if (!isValid) return alert('সবগুলো ঘর ঠিকভাবে পূরণ করুন')
 
   try {
-    const token = localStorage.getItem('token')
+    const token = getAuthToken();
     await axios.post('http://127.0.0.1:8000/api/vendor/purchases', purchases.value, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    alert('All purchases submitted successfully!')
+    alert('সবগুলো পারচেজ সফলভাবে সম্পন্ন হয়েছে!')
     purchases.value = [{ admin_stock_id: '', quantity: 1, price: 0 }]
   } catch (err) {
-    console.error(err.response?.data)
-    alert('Failed to submit purchase')
+    alert('এরর: ' + (err.response?.data?.message || 'সাবমিট ব্যর্থ হয়েছে'))
   }
 }
 

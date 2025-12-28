@@ -11,6 +11,7 @@ class VendorStock extends Model
     use HasFactory;
 
     protected $table = 'vendor_stock';
+    public $timestamps = false; // আপনার মাইগ্রেশনে timestamps() নেই
 
     protected $fillable = [
         'vendor_id',
@@ -19,8 +20,6 @@ class VendorStock extends Model
         'price',
         'status',
     ];
-
-    public $timestamps = false;
 
     public function adminStock() {
         return $this->belongsTo(AdminStock::class, 'admin_stock_id');

@@ -11,18 +11,17 @@ class VendorPurchase extends Model
     use HasFactory;
 
     protected $table = 'vendor_purchases';
+    public $timestamps = false; // আপনার মাইগ্রেশনে timestamps() নেই
 
     protected $fillable = [
         'vendor_id',
         'admin_stock_id',
         'quantity',
         'price',
+        'status', // এটা অ্যাড করলাম
     ];
-
-    public $timestamps = false;
 
     public function adminStock() {
         return $this->belongsTo(AdminStock::class, 'admin_stock_id');
     }
 }
-
