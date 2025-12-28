@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Vendor\VendorStockController;
 use App\Http\Controllers\Admin\AdminPurchaseController;
+use App\Http\Controllers\Vendor\VendorReturnController;
 use App\Http\Controllers\Vendor\VendorPurchaseController;
 
 // Auth routes
@@ -71,6 +72,14 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/admin-stocks', [VendorStockController::class, 'index']);
     Route::post('/vendor/purchases', [VendorPurchaseController::class, 'store']);
     Route::get('/vendor/purchases', [VendorPurchaseController::class, 'index']);
+    Route::delete('/vendor/purchases/{id}', [VendorPurchaseController::class, 'destroy']);
+    Route::get('/vendor/my-stocks', [VendorStockController::class, 'myStock']);
+    Route::delete('/vendor/stocks/{id}',[VendorStockController::class, 'destroyVendorStock']);
+
+
+    Route::get('/vendor/returns', [VendorReturnController::class, 'index']);
+    Route::post('/vendor/returns', [VendorReturnController::class, 'store']);
+    Route::delete('/vendor/returns/{id}', [VendorReturnController::class, 'destroy']);
 
 });
 

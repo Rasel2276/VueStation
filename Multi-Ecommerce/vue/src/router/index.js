@@ -37,6 +37,8 @@ import HomePage from '../Website/WebsitePages/HomePage.vue'
 import VendorProductsList from '../Dashboard/Vendordashboard/Vendor-components/VendorProductsList.vue'
 import VendorPurchase from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchase.vue'
 import VendorPurchaseManage from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchaseManage.vue'
+import VendorStockList from '../Dashboard/Vendordashboard/Vendor-components/VendorStockList.vue'
+import VendorPurchaseReturn from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchaseReturn.vue'
 
 
 
@@ -100,6 +102,8 @@ const routes = [
       { path: '/admin-products-list/admin-product-list', component: VendorProductsList },
       { path: '/vendor-inventory/vendor_purchase', component: VendorPurchase },
       { path: '/vendor-inventory/vendor_purchase-record', component: VendorPurchaseManage },
+      { path: '/ui-product/mystock', component: VendorStockList },
+      { path: '/vendor-inventory/vendor_purchase-return', component: VendorPurchaseReturn },
     ],
   },
 

@@ -3,8 +3,13 @@
     <div class="card">
       <h2 class="title">My Purchases</h2>
 
-      <div class="table-responsive" ref="tableWrapper">
-        <input type="text" v-model="search" placeholder="Search" class="search-input" />
+      <div class="table-responsive">
+        <input
+          type="text"
+          v-model="search"
+          placeholder="Search by product name..."
+          class="search-input"
+        />
 
         <table class="custom-category-table">
           <thead>
@@ -22,17 +27,28 @@
 
           <tbody>
             <tr v-for="purchase in filteredPurchases" :key="purchase.id">
-              <td>{{ purchase.id }}</td>
-              <td>{{ purchase.product_name }}</td>
+              <td>#{{ purchase.id }}</td>
+              <td style="font-weight:600">{{ purchase.product_name }}</td>
               <td>{{ purchase.quantity }}</td>
               <td>{{ purchase.price }}</td>
-              <td>{{ purchase.total }}</td>
+              <td>{{ (purchase.quantity * purchase.price).toFixed(2) }}</td>
               <td>
-                <img v-if="purchase.product_image" :src="imageUrl(purchase.product_image)" class="category-image" />
+                <img
+                  v-if="purchase.product_image"
+                  :src="imageUrl(purchase.product_image)"
+                  class="category-image"
+                />
+                <span v-else>No Image</span>
               </td>
               <td>{{ formatDate(purchase.purchase_date) }}</td>
               <td>
-                <button @click="toggleDropdown(purchase.id)" class="dropdown-btn">Actions ▾</button>
+                <button
+                  class="dropdown-btn"
+                  @click="toggleDropdown(purchase.id, $event)"
+                >
+                  Actions ▾
+                </button>
+
                 <teleport to="body">
                   <transition name="fade">
                     <div
@@ -40,11 +56,28 @@
                       class="dropdown-menu-absolute"
                       :style="dropdownPosition"
                     >
-                      <button @click="viewPurchase(purchase)" class="edit-btn">View</button>
-                      <button @click="deletePurchase(purchase.id)" class="delete-btn">Delete</button>
+                      <button
+                        class="edit-btn"
+                        @click="viewPurchase(purchase)"
+                      >
+                        View Details
+                      </button>
+
+                      <button
+                        class="delete-btn"
+                        @click="deletePurchase(purchase.id)"
+                      >
+                        Delete Record
+                      </button>
                     </div>
                   </transition>
                 </teleport>
+              </td>
+            </tr>
+
+            <tr v-if="filteredPurchases.length === 0">
+              <td colspan="8" style="text-align:center;padding:20px">
+                No purchases found.
               </td>
             </tr>
           </tbody>
@@ -62,51 +95,60 @@ const search = ref('')
 const purchases = ref([])
 const dropdownOpen = ref(null)
 const dropdownPosition = ref({})
-const token = localStorage.getItem('token')
-const tableWrapper = ref(null)
 
-// Fetch vendor purchases
+const token =
+  localStorage.getItem('vendortoken') ||
+  localStorage.getItem('token')
+
+// ✅ Fetch purchases
 const fetchPurchases = async () => {
   try {
-    const res = await axios.get(`http://127.0.0.1:8000/api/vendor/purchases`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const res = await axios.get(
+      'http://127.0.0.1:8000/api/vendor/purchases',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+
     purchases.value = res.data.map(p => ({
       id: p.id,
-      product_name: p.adminStock.product_name,
-      product_image: p.adminStock.product_image,
+      product_name: p.admin_stock?.product?.product_name || 'Unknown',
+      product_image: p.admin_stock?.product?.product_image || null,
       quantity: p.quantity,
       price: p.price,
-      total: p.quantity * p.price,
       purchase_date: p.created_at
     }))
   } catch (err) {
-    console.error(err.response?.data || err)
-    alert('Failed to fetch purchases')
+    console.error(err)
   }
 }
 
 onMounted(fetchPurchases)
 
-// Filtered purchases
+// ✅ Search filter
 const filteredPurchases = computed(() => {
   if (!search.value.trim()) return purchases.value
-  const s = search.value.toLowerCase()
   return purchases.value.filter(p =>
-    p.product_name.toLowerCase().includes(s)
+    p.product_name.toLowerCase().includes(search.value.toLowerCase())
   )
 })
 
-// Format date
-const formatDate = (date) => {
+// ✅ Helpers
+const formatDate = date => {
   const d = new Date(date)
-  return d.toLocaleString()
+  return (
+    d.toLocaleDateString() +
+    ' ' +
+    d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  )
 }
 
-// Image URL
-const imageUrl = (filename) => `http://127.0.0.1:8000/product_images/${filename}`
+const imageUrl = img =>
+  `http://127.0.0.1:8000/product_images/${img}`
 
-// Dropdown toggle
+// ✅ Dropdown logic
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
     dropdownOpen.value = null
@@ -116,41 +158,48 @@ const toggleDropdown = async (id, event) => {
   dropdownOpen.value = id
   await nextTick()
 
-  const button = event?.target || document.querySelector('.dropdown-btn')
-  if (!button) return
-
-  const rect = button.getBoundingClientRect()
+  const rect = event.target.getBoundingClientRect()
   dropdownPosition.value = {
     position: 'absolute',
     top: `${rect.bottom + window.scrollY}px`,
-    left: `${rect.left + window.scrollX}px`,
+    left: `${rect.left + window.scrollX - 50}px`,
     zIndex: 9999
   }
 }
 
-// View purchase (placeholder)
-const viewPurchase = (purchase) => {
-  alert(`Viewing details for "${purchase.product_name}"`)
+const viewPurchase = purchase => {
+  alert(
+    `Product: ${purchase.product_name}\nQuantity: ${purchase.quantity}\nPrice: ${purchase.price}`
+  )
+  dropdownOpen.value = null
 }
 
-// Delete purchase
-const deletePurchase = async (id) => {
-  if (!confirm('Are you sure you want to delete this purchase?')) return
+// ✅ DELETE (only purchase history)
+const deletePurchase = async id => {
+  if (!confirm('Are you sure? This will only delete the purchase record.'))
+    return
+
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/vendor/purchases/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    await axios.delete(
+      `http://127.0.0.1:8000/api/vendor/purchases/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+
+    // UI থেকে remove
     purchases.value = purchases.value.filter(p => p.id !== id)
-    alert('Purchase deleted successfully')
     dropdownOpen.value = null
   } catch (err) {
-    console.error(err.response?.data || err)
-    alert('Failed to delete purchase')
+    alert('Delete failed')
   }
 }
 </script>
 
 <style scoped>
+/* 🔒 EXACT SAME DESIGN – NO CHANGE */
 .page {
   min-height: 100vh;
   display:flex;
@@ -243,21 +292,16 @@ const deletePurchase = async (id) => {
   cursor:pointer;
   text-align:left;
   font-size:14px;
-  transition:0.2s;
 }
-.edit-btn {
-  color:#065f46;
-}
-.delete-btn {
-  color:#b91c1c;
-}
+.edit-btn { color:#065f46; }
+.delete-btn { color:#b91c1c; }
 .dropdown-menu-absolute button:hover {
   background:#e0e7ff;
 }
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,.fade-leave-active {
   transition: all 0.2s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,.fade-leave-to {
   opacity:0;
   transform: translateY(-5px);
 }
