@@ -142,7 +142,7 @@ export default {
   min-height: 50vh;
   display: flex;
   justify-content: center;
-  padding: 40px 15px;
+  padding: 20px 15px;
 }
 
 .card {

@@ -39,6 +39,10 @@ import VendorPurchase from '../Dashboard/Vendordashboard/Vendor-components/Vendo
 import VendorPurchaseManage from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchaseManage.vue'
 import VendorStockList from '../Dashboard/Vendordashboard/Vendor-components/VendorStockList.vue'
 import VendorPurchaseReturn from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchaseReturn.vue'
+import VendorPurchasePayment from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchasePayment.vue'
+import VendorReturnRecord from '../Dashboard/Vendordashboard/Vendor-components/VendorReturnRecord.vue'
+
+
 
 
 
@@ -104,6 +108,8 @@ const routes = [
       { path: '/vendor-inventory/vendor_purchase-record', component: VendorPurchaseManage },
       { path: '/ui-product/mystock', component: VendorStockList },
       { path: '/vendor-inventory/vendor_purchase-return', component: VendorPurchaseReturn },
+      { path: '/vendor-inventory/vendor_return-record', component: VendorReturnRecord },
+      { path: '/vendor-inventory/vendor_purchase-payment', component: VendorPurchasePayment },
     ],
   },
 

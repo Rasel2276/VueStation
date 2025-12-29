@@ -168,11 +168,10 @@ export default {
 
 <style scoped>
 .page {
-  min-height: 80vh;
-  background: #f3f4f6;
+  min-height: 60vh;
   display: flex;
   justify-content: center;
-  padding: 40px 15px;
+  padding: 20px 15px;
 }
 
 .card {
