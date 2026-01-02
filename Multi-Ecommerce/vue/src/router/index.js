@@ -42,6 +42,7 @@ import VendorPurchaseReturn from '../Dashboard/Vendordashboard/Vendor-components
 import VendorPurchasePayment from '../Dashboard/Vendordashboard/Vendor-components/VendorPurchasePayment.vue'
 import VendorReturnRecord from '../Dashboard/Vendordashboard/Vendor-components/VendorReturnRecord.vue'
 import ProductDetails from '../Website/WebsitePages/ProductDetails.vue'
+import CheckoutPage from '../Website/WebsitePages/CheckoutPage.vue'
 
 
 
@@ -124,6 +125,7 @@ const routes = [
       { path: 'about', component: AboutPage },
       { path: 'contact', component: ContactPage },
       { path: 'product_details', component: ProductDetails },
+      { path: 'checkoutpage', component: CheckoutPage },
     ],
   },
 ]
@@ -145,7 +147,8 @@ router.beforeEach((to, from, next) => {
     to.path === '/register'||
     to.path === '/about'||
     to.path === '/contact'||
-    to.path === '/product_details'
+    to.path === '/product_details'||
+    to.path === '/checkoutpage'
   ) {
     return next()
   }

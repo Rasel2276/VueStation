@@ -77,7 +77,9 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router'; // Router ইমপোর্ট করা হয়েছে
 
+const router = useRouter(); // Router ব্যবহার করার জন্য
 const qty = ref(1);
 const toast = reactive({ active: false, msg: "" });
 
@@ -96,8 +98,9 @@ const addToCart = () => {
   setTimeout(() => (toast.active = false), 2200);
 };
 
+// Buy Now ফাংশন যা checkoutpage এ নিয়ে যাবে
 const buyNow = () => {
-  alert("Redirecting to checkout page...");
+  router.push('/checkoutpage');
 };
 </script>
 
