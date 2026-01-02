@@ -155,10 +155,17 @@ const paginatedProducts = computed(() => {
 });
 
 const toast = reactive({ show: false, text: "" });
+
+
 function addToCart(product) {
+
   toast.text = `${product.name} is added to cart!`;
   toast.show = true;
   setTimeout(() => (toast.show = false), 2200);
+
+ 
+  const event = new CustomEvent('add-to-cart', { detail: product });
+  window.dispatchEvent(event);
 }
 
 const rangePercent = computed(() => (Math.min(filters.maxPrice, priceMax) / priceMax) * 100);
@@ -170,6 +177,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -365,7 +373,7 @@ onMounted(() => {
   border: none;
   border-radius: 50%;
   color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1));
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -378,8 +386,6 @@ onMounted(() => {
   background: #333;
   color: #fff;
 }
-
-/* dot class and related style remove kora hoyeche */
 
 .card-info {
   padding: 10px 15px 15px;
@@ -485,11 +491,13 @@ onMounted(() => {
   .mobile-top {
     display: flex;
   }
+
   .content {
     flex-direction: column;
     padding: 12px;
     margin: 0;
   }
+
   .sidebar {
     position: fixed;
     left: -100%;
@@ -500,19 +508,24 @@ onMounted(() => {
     max-width: 300px;
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
   }
+
   .sidebar.open {
     left: 0;
   }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+
   .img-wrap {
     height: 140px;
   }
+
   .price {
     font-size: 18px;
   }
+
   .brand-name {
     font-size: 13px;
   }
