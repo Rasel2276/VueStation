@@ -1,7 +1,6 @@
 <template>
   <div class="product-page">
-    <div class="wide-container">
-      
+    <div class="wide-container" v-if="product">
       <div class="horizontal-card">
         
         <div class="visual-side">
@@ -63,7 +62,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <Transition name="pop">
@@ -76,30 +74,66 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router'; // Router ইমপোর্ট করা হয়েছে
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter(); // Router ব্যবহার করার জন্য
+const router = useRouter();
 const qty = ref(1);
 const toast = reactive({ active: false, msg: "" });
+const product = ref(null);
 
-const product = ref({
-  id: 1,
-  name: "iPhone 17 Pro Max 1TB Gold Premium",
-  brand: "Apple Store",
-  price: 150000,
-  oldPrice: 165000,
-  image: "/assets/product-images/iphone1.jpg"
+onMounted(() => {
+  const savedProduct = localStorage.getItem('selectedProduct');
+  if (savedProduct) {
+    product.value = JSON.parse(savedProduct);
+  } else {
+    router.push('/'); 
+  }
 });
 
+// কার্টে প্রোডাক্ট সেভ করার জন্য কমন ফাংশন
+const processAddToCart = () => {
+  // আগের কার্ট ডেটা আনা
+  let currentCart = JSON.parse(localStorage.getItem('shopping_cart') || '[]');
+  
+  // প্রোডাক্টটি অলরেডি কার্টে আছে কিনা দেখা
+  const existingItemIndex = currentCart.findIndex(item => item.id === product.value.id);
+  
+  if (existingItemIndex !== -1) {
+    // থাকলে শুধু পরিমাণ বাড়ানো
+    currentCart[existingItemIndex].qty += qty.value;
+  } else {
+    // না থাকলে নতুন করে পুশ করা
+    currentCart.push({
+      id: product.value.id,
+      name: product.value.name,
+      price: product.value.price,
+      image: product.value.image,
+      qty: qty.value
+    });
+  }
+
+  // localStorage-এ আপডেট করা
+  localStorage.setItem('shopping_cart', JSON.stringify(currentCart));
+
+  // Navbar এবং অন্য পেজকে আপডেট জানানোর জন্য গ্লোবাল ইভেন্ট
+  const event = new CustomEvent('add-to-cart', { 
+    detail: { ...product.value, qty: qty.value } 
+  });
+  window.dispatchEvent(event);
+};
+
 const addToCart = () => {
+  processAddToCart();
   toast.msg = "Added to your shopping bag!";
   toast.active = true;
   setTimeout(() => (toast.active = false), 2200);
 };
 
-// Buy Now ফাংশন যা checkoutpage এ নিয়ে যাবে
 const buyNow = () => {
+  // প্রথমে কার্টে অ্যাড করবে
+  processAddToCart();
+  // তারপর সরাসরি চেকআউট পেজে চলে যাবে
   router.push('/checkoutpage');
 };
 </script>
@@ -129,7 +163,6 @@ const buyNow = () => {
   max-height: 480px;
 }
 
-/* Image Side */
 .visual-side {
   flex: 0.9;
   background: #ffffff;
@@ -144,10 +177,8 @@ const buyNow = () => {
   max-width: 100%;
   max-height: 350px;
   object-fit: contain;
-  transition: transform 0.3s;
 }
 
-/* Info Side */
 .content-side {
   flex: 1.2;
   padding: 40px;
@@ -209,7 +240,6 @@ const buyNow = () => {
   margin-left: 12px;
 }
 
-/* Interaction Area */
 .interaction-area {
   display: flex;
   align-items: flex-end;
@@ -259,7 +289,6 @@ const buyNow = () => {
   font-size: 16px;
 }
 
-/* Actions with Full Text Buttons */
 .action-btns {
   display: flex;
   gap: 12px;
@@ -283,10 +312,6 @@ const buyNow = () => {
   transition: 0.3s;
 }
 
-.add-btn:hover {
-  background: #fff5f5;
-}
-
 .buy-btn {
   flex: 1;
   height: 52px;
@@ -297,7 +322,6 @@ const buyNow = () => {
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(228, 0, 43, 0.15);
   transition: 0.3s;
 }
 
@@ -316,18 +340,13 @@ const buyNow = () => {
 
 .mini-footer span {
   font-size: 11px;
-  color: #666;
+  color: #2ec501;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.mini-footer i {
-  color: #2ecc71;
-}
-
-/* Toast */
 .toast-notif {
   position: fixed;
   top: 30px;
@@ -343,30 +362,13 @@ const buyNow = () => {
   box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-.pop-enter-active, .pop-leave-active {
-  transition: 0.4s ease;
-}
-
-.pop-enter-from, .pop-leave-to {
-  transform: scale(0.9) translateY(-20px);
-  opacity: 0;
-}
+.pop-enter-active, .pop-leave-active { transition: 0.4s ease; }
+.pop-enter-from, .pop-leave-to { transform: scale(0.9) translateY(-20px); opacity: 0; }
 
 @media (max-width: 992px) {
-  .horizontal-card {
-    max-height: none;
-    flex-direction: column;
-  }
-  .visual-side {
-    border-right: none;
-    border-bottom: 1px solid #f2f2f2;
-  }
-  .interaction-area {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .action-btns {
-    width: 100%;
-  }
+  .horizontal-card { max-height: none; flex-direction: column; }
+  .visual-side { border-right: none; border-bottom: 1px solid #f2f2f2; }
+  .interaction-area { flex-direction: column; align-items: stretch; }
+  .action-btns { width: 100%; }
 }
 </style>

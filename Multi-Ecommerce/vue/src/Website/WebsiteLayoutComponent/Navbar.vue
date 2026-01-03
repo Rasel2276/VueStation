@@ -135,31 +135,53 @@ export default {
     toggleMenu() { this.menuOpen = !this.menuOpen; },
     toggleCart() { this.cartOpen = !this.cartOpen; },
     closeCart() { this.cartOpen = false; },
+    
     removeItem(index) {
       this.cartItems.splice(index, 1);
+      this.saveCart();
+
+      window.dispatchEvent(new CustomEvent('cart-updated'));
     },
+
+    saveCart() {
+      localStorage.setItem('shopping_cart', JSON.stringify(this.cartItems));
+    },
+
+    loadCart() {
+      const saved = localStorage.getItem('shopping_cart');
+      if (saved) {
+        this.cartItems = JSON.parse(saved);
+      }
+    },
+
     handleGlobalAddToCart(event) {
       const product = event.detail;
       const existingItem = this.cartItems.find(item => item.id === product.id);
       
       if (existingItem) {
-        existingItem.qty++;
+        existingItem.qty += (product.qty || 1);
       } else {
         this.cartItems.push({
           id: product.id,
           name: product.name,
           price: product.price,
           image: product.image,
-          qty: 1
+          qty: product.qty || 1
         });
       }
+      this.saveCart();
+      window.dispatchEvent(new CustomEvent('cart-updated'));
     }
   },
   mounted() {
+    this.loadCart();
     window.addEventListener('add-to-cart', this.handleGlobalAddToCart);
+
+    window.addEventListener('cart-updated', this.loadCart);
   },
   unmounted() {
     window.removeEventListener('add-to-cart', this.handleGlobalAddToCart);
+    window.removeEventListener('cart-updated', this.loadCart);
   },
   directives: {
     clickOutside: {
@@ -180,7 +202,6 @@ export default {
 </script>
 
 <style scoped>
-
 .navbar {
   width: 100%;
   display: flex;
@@ -193,24 +214,20 @@ export default {
   top: 0;
   z-index: 999;
 }
-
 .left .logo {
   font-size: 28px;
   font-weight: 700;
   color: white;
 }
-
 .logo-red {
   color: #e4002b;
 }
-
 .center-menu {
   display: flex;
   gap: 35px;
   flex: 1;
   justify-content: center;
 }
-
 .nav-link {
   position: relative;
   color: white;
@@ -219,7 +236,6 @@ export default {
   padding: 5px 0;
   transition: color 0.3s;
 }
-
 .nav-link::after {
   content: "";
   position: absolute;
@@ -232,26 +248,20 @@ export default {
   transform-origin: left;
   transition: transform 0.3s ease;
 }
-
 .nav-link:hover::after {
   transform: scaleX(1);
 }
-
 .router-link-exact-active::after {
   transform: scaleX(1);
 }
-
 .right {
   display: flex;
   align-items: center;
   gap: 20px;
 }
-
-
 .search-container {
   position: relative;
 }
-
 .search-container input {
   padding: 6px 35px 6px 12px;
   border-radius: 20px;
@@ -260,7 +270,6 @@ export default {
   font-size: 14px;
   background: white;
 }
-
 .search-container i {
   position: absolute;
   right: 10px;
@@ -268,8 +277,6 @@ export default {
   transform: translateY(-50%);
   color: #050e3c;
 }
-
-/* Sign In Button */
 .signin {
   background: #e4002b;
   color: white;
@@ -279,12 +286,9 @@ export default {
   font-weight: 500;
   transition: 0.3s;
 }
-
-
 .cart-wrapper {
   position: relative;
 }
-
 .cart {
   font-size: 22px;
   color: white;
@@ -292,11 +296,9 @@ export default {
   position: relative;
   transition: color 0.3s;
 }
-
 .cart:hover {
   color: #e4002b;
 }
-
 .cart-count {
   position: absolute;
   top: -8px;
@@ -312,7 +314,6 @@ export default {
   border-radius: 50%;
   font-weight: bold;
 }
-
 .cart-dropdown {
   position: absolute;
   top: 45px;
@@ -327,17 +328,14 @@ export default {
   z-index: 1000;
   border: 1px solid #eee;
 }
-
 .cart-dropdown.show {
   display: flex;
   animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 .cart-header {
   padding: 15px;
   background: #fdfdfd;
@@ -346,21 +344,17 @@ export default {
   border-bottom: 1px solid #eee;
   text-align: center;
 }
-
 .cart-items-list {
   max-height: 280px;
   overflow-y: auto;
 }
-
 .custom-scroll::-webkit-scrollbar {
   width: 4px;
 }
-
 .custom-scroll::-webkit-scrollbar-thumb {
   background: #e4002b;
   border-radius: 10px;
 }
-
 .cart-item {
   display: flex;
   align-items: center;
@@ -369,11 +363,9 @@ export default {
   border-bottom: 1px solid #f5f5f5;
   transition: background 0.2s;
 }
-
 .cart-item:hover {
   background: #fafafa;
 }
-
 .cart-item img {
   width: 45px;
   height: 45px;
@@ -381,25 +373,21 @@ export default {
   border-radius: 6px;
   background: #eee;
 }
-
 .item-info {
   flex: 1;
 }
-
 .item-name {
   font-size: 14px;
   color: #333;
   font-weight: 600;
   margin: 0;
 }
-
 .item-price {
   font-size: 13px;
   color: #e4002b;
   margin: 2px 0 0 0;
   font-weight: 500;
 }
-
 .remove-item-btn {
   background: none;
   border: none;
@@ -409,25 +397,21 @@ export default {
   font-size: 16px;
   transition: 0.3s;
 }
-
 .remove-item-btn:hover {
   color: #e4002b;
   transform: scale(1.1);
 }
-
 .empty-msg {
   padding: 40px 20px;
   text-align: center;
   color: #999;
   font-size: 14px;
 }
-
 .cart-footer {
   padding: 15px;
   background: #fff;
   border-top: 1px solid #eee;
 }
-
 .total-summary {
   display: flex;
   justify-content: space-between;
@@ -435,7 +419,6 @@ export default {
   font-weight: 700;
   color: #050e3c;
 }
-
 .view-cart-btn {
   display: block;
   background: #050e3c;
@@ -448,19 +431,15 @@ export default {
   font-weight: 600;
   transition: background 0.3s;
 }
-
 .view-cart-btn:hover {
   background: #e4002b;
 }
-
-
 .hamburger {
   display: none;
   font-size: 24px;
   color: white;
   cursor: pointer;
 }
-
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -476,33 +455,27 @@ export default {
   z-index: 200;
   color: white;
 }
-
 .mobile-menu.open {
   left: 0;
 }
-
 .mobile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .mobile-links {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 .mobile-links a {
   color: white;
   font-size: 18px;
   text-decoration: none;
 }
-
 .mobile-search {
   position: relative;
 }
-
 .mobile-search input {
   width: 100%;
   padding: 8px 12px;
@@ -510,7 +483,6 @@ export default {
   border: none;
   box-sizing: border-box;
 }
-
 .overlay {
   position: fixed;
   top: 0;
@@ -520,18 +492,9 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   z-index: 150;
 }
-
-
 @media (max-width: 768px) {
-  .center-menu,
-  .right {
-    display: none;
-  }
-  .hamburger {
-    display: block;
-  }
-  .navbar {
-    padding: 12px 20px;
-  }
+  .center-menu, .right { display: none; }
+  .hamburger { display: block; }
+  .navbar { padding: 12px 20px; }
 }
 </style>

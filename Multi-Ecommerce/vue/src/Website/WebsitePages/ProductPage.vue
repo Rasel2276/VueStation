@@ -26,11 +26,11 @@
         <div class="widget">
           <h4>Category</h4>
           <label class="chk">
-            <input type="checkbox" v-model="filters.categories" value="ALL" @change="onCategoryAll('ALL')"> 
+            <input type="checkbox" v-model="filters.categories" value="ALL" @change="onCategoryAll('ALL')">
             <span>ALL</span>
           </label>
           <label v-for="c in categories" :key="c" class="chk">
-            <input type="checkbox" :value="c" v-model="filters.categories" @change="applyFilters" /> 
+            <input type="checkbox" :value="c" v-model="filters.categories" @change="applyFilters" />
             <span>{{ c }}</span>
           </label>
         </div>
@@ -48,7 +48,9 @@
           <p class="price-range-text">Price Range: ৳{{ priceMin }} - ৳{{ filters.maxPrice }}</p>
           <div class="range-wrap">
             <input type="range" min="0" :max="priceMax" v-model.number="filters.maxPrice" @input="applyFilters" />
-            <div class="range-line"><span :style="{ width: rangePercent + '%' }"></span></div>
+            <div class="range-line">
+              <span :style="{ width: rangePercent + '%' }"></span>
+            </div>
           </div>
         </div>
 
@@ -63,10 +65,9 @@
                 <i class="fa-solid fa-cart-plus"></i>
               </button>
               <div class="img-inner-bg"></div>
-              
               <img :src="product.image" :alt="product.name" />
             </div>
-            
+
             <div class="card-info">
               <h4 class="brand-name">{{ product.brand.toUpperCase() }}</h4>
               <h3 class="title" :title="product.name">{{ product.name }}</h3>
@@ -77,18 +78,31 @@
                 <i class="fa-solid fa-star"></i>
                 <i class="fa-solid fa-star gray"></i>
               </div>
-              <p class="price" :style="{ color: product.color || '#e4002b' }">৳{{ product.price }}</p>
+              <p class="price" :style="{ color: product.color || '#e4002b' }">
+                ৳{{ product.price }}
+              </p>
             </div>
-            
-            <router-link to="/product_details" class="order-btn" :style="{ background: product.color || '#e4002b' }">
+
+            <button 
+              @click="goToDetails(product)" 
+              class="order-btn" 
+              :style="{ background: product.color || '#e4002b', border: 'none', cursor: 'pointer' }"
+            >
               Order Now
-            </router-link>
+            </button>
           </div>
         </div>
 
         <div class="pagination" v-if="pages > 1">
           <button :disabled="page === 1" @click="page--">Prev</button>
-          <button v-for="p in pages" :key="p" :class="{ active: p === page }" @click="page = p">{{ p }}</button>
+          <button 
+            v-for="p in pages" 
+            :key="p" 
+            :class="{ active: p === page }" 
+            @click="page = p"
+          >
+            {{ p }}
+          </button>
           <button :disabled="page === pages" @click="page++">Next</button>
         </div>
       </main>
@@ -102,25 +116,27 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const isMobile = ref(false);
 const mobileMenuOpen = ref(false);
 const page = ref(1);
 const perPage = 8;
 
 const products = ref([
-  { id: 1, name: "Redmi 15C 4GB/64GB", price: 11500, image: "/assets/product-images/phone3.webp", category: "PHONE", brand: "Sony", color: "#1abc9c" },
-  { id: 2, name: "Hoco W46 Wireless Headphone", price: 2700, image: "/assets/product-images/audio3.jpg", category: "AUDIO", brand: "Microsoft", color: "#ff4d4d" },
-  { id: 3, name: "Xbox One Wireless Controller", price: 5300, image: "/assets/product-images/game1.jpg", category: "GAMING", brand: "Logitech", color: "#f39c12" },
-  { id: 4, name: "Pico 4 Ultra VR Headset", price: 9000, image: "/assets/product-images/game3.jpg", category: "GAMING", brand: "Sony", color: "#1abc9c" },
-  { id: 5, name: "Xiaomi 55″ QLED A Pro Smart TV", price: 6500, image: "/assets/product-images/tv3.webp", category: "TV", brand: "Urbanista", color: "#ff4d4d" },
-  { id: 6, name: "Xiaomi Wired Earphones Black", price: 2100, image: "/assets/product-images/audio1.jpg", category: "AUDIO", brand: "Xiaomi", color: "#f39c12" },
-  { id: 7, name: "Hisense 85″ 4K QLED TV 2025", price: 7500, image: "/assets/product-images/tv4.webp", category: "TV", brand: "boAt", color: "#1abc9c" },
-  { id: 8, name: "Casio modern watch Series 5", price: 750, image: "/assets/product-images/watch2.jpg", category: "WATCH", brand: "Samsung", color: "#ff4d4d" },
-  { id: 9, name: "iphone 17 pro max 1TB Gold", price: 150000, image: "/assets/product-images/iphone1.jpg", category: "PHONE", brand: "Apple", color: "#f39c12" },
-  { id: 10, name: "JBL Wave Flex 2 Earbuds TWS", price: 2300, image: "/assets/product-images/audio2.jpg", category: "AUDIO", brand: "JBL", color: "#1abc9c" },
-  { id: 11, name: "Winter New Hudi Premium", price: 1300, image: "/assets/product-images/hudi.jpg", category: "CLOTH", brand: "BrandY", color: "#ff4d4d" },
-  { id: 12, name: "Baggy pant for Men Blue", price: 950, image: "/assets/product-images/pant.jpg", category: "CLOTH", brand: "BrandY", color: "#f39c12" },
+  { id: 1, name: "Redmi 15C 4GB/64GB", price: 11500, oldPrice: 13000, image: "/assets/product-images/phone3.webp", category: "PHONE", brand: "Sony", color: "#1abc9c" },
+  { id: 2, name: "Hoco W46 Wireless Headphone", price: 2700, oldPrice: 3200, image: "/assets/product-images/audio3.jpg", category: "AUDIO", brand: "Microsoft", color: "#ff4d4d" },
+  { id: 3, name: "Xbox One Wireless Controller", price: 5300, oldPrice: 6000, image: "/assets/product-images/game1.jpg", category: "GAMING", brand: "Logitech", color: "#f39c12" },
+  { id: 4, name: "Pico 4 Ultra VR Headset", price: 9000, oldPrice: 10500, image: "/assets/product-images/game3.jpg", category: "GAMING", brand: "Sony", color: "#1abc9c" },
+  { id: 5, name: "Xiaomi 55″ QLED A Pro Smart TV", price: 6500, oldPrice: 8000, image: "/assets/product-images/tv3.webp", category: "TV", brand: "Urbanista", color: "#ff4d4d" },
+  { id: 6, name: "Xiaomi Wired Earphones Black", price: 2100, oldPrice: 2500, image: "/assets/product-images/audio1.jpg", category: "AUDIO", brand: "Xiaomi", color: "#f39c12" },
+  { id: 7, name: "Hisense 85″ 4K QLED TV 2025", price: 7500, oldPrice: 9000, image: "/assets/product-images/tv4.webp", category: "TV", brand: "boAt", color: "#1abc9c" },
+  { id: 8, name: "Casio modern watch Series 5", price: 750, oldPrice: 1200, image: "/assets/product-images/watch2.jpg", category: "WATCH", brand: "Samsung", color: "#ff4d4d" },
+  { id: 9, name: "iphone 17 pro max 1TB Gold", price: 150000, oldPrice: 165000, image: "/assets/product-images/iphone1.jpg", category: "PHONE", brand: "Apple", color: "#f39c12" },
+  { id: 10, name: "JBL Wave Flex 2 Earbuds TWS", price: 2300, oldPrice: 2800, image: "/assets/product-images/audio2.jpg", category: "AUDIO", brand: "JBL", color: "#1abc9c" },
+  { id: 11, name: "Winter New Hudi Premium", price: 1300, oldPrice: 1800, image: "/assets/product-images/hudi.jpg", category: "CLOTH", brand: "BrandY", color: "#ff4d4d" },
+  { id: 12, name: "Baggy pant for Men Blue", price: 950, oldPrice: 1400, image: "/assets/product-images/pant.jpg", category: "CLOTH", brand: "BrandY", color: "#f39c12" },
 ]);
 
 const categories = computed(() => Array.from(new Set(products.value.map(p => p.category))));
@@ -128,12 +144,27 @@ const brands = computed(() => Array.from(new Set(products.value.map(p => p.brand
 const priceMin = 0;
 const priceMax = 500000;
 
-const filters = reactive({ search: "", categories: ["ALL"], brand: "", maxPrice: priceMax });
+const filters = reactive({ 
+  search: "", 
+  categories: ["ALL"], 
+  brand: "", 
+  maxPrice: priceMax 
+});
 
-function applyFilters() { page.value = 1; }
-function onCategoryAll() { if (filters.categories.includes("ALL")) filters.categories = ["ALL"]; applyFilters(); }
+function applyFilters() { 
+  page.value = 1; 
+}
+
+function onCategoryAll() { 
+  if (filters.categories.includes("ALL")) filters.categories = ["ALL"]; 
+  applyFilters(); 
+}
+
 function resetFilters() {
-  filters.search = ""; filters.categories = ["ALL"]; filters.brand = ""; filters.maxPrice = priceMax;
+  filters.search = ""; 
+  filters.categories = ["ALL"]; 
+  filters.brand = ""; 
+  filters.maxPrice = priceMax;
   applyFilters();
 }
 
@@ -156,28 +187,29 @@ const paginatedProducts = computed(() => {
 
 const toast = reactive({ show: false, text: "" });
 
-
 function addToCart(product) {
-
   toast.text = `${product.name} is added to cart!`;
   toast.show = true;
   setTimeout(() => (toast.show = false), 2200);
-
- 
   const event = new CustomEvent('add-to-cart', { detail: product });
   window.dispatchEvent(event);
+}
+
+function goToDetails(product) {
+  localStorage.setItem('selectedProduct', JSON.stringify(product));
+  router.push('/product_details');
 }
 
 const rangePercent = computed(() => (Math.min(filters.maxPrice, priceMax) / priceMax) * 100);
 
 onMounted(() => {
   const check = () => (isMobile.value = window.innerWidth <= 768);
-  check(); window.addEventListener("resize", check);
+  check(); 
+  window.addEventListener("resize", check);
 });
 </script>
 
 <style scoped>
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -373,7 +405,7 @@ onMounted(() => {
   border: none;
   border-radius: 50%;
   color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -491,13 +523,11 @@ onMounted(() => {
   .mobile-top {
     display: flex;
   }
-
   .content {
     flex-direction: column;
     padding: 12px;
     margin: 0;
   }
-
   .sidebar {
     position: fixed;
     left: -100%;
@@ -508,24 +538,19 @@ onMounted(() => {
     max-width: 300px;
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
   }
-
   .sidebar.open {
     left: 0;
   }
-
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-
   .img-wrap {
     height: 140px;
   }
-
   .price {
     font-size: 18px;
   }
-
   .brand-name {
     font-size: 13px;
   }

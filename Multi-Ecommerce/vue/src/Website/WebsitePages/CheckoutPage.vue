@@ -156,24 +156,11 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-const cartItems = ref([
-  { 
-    id: 1, 
-    name: "iPhone 17 Pro Max 1TB Gold", 
-    price: 150000, 
-    qty: 1, 
-    image: "assets/product-images/audio1.jpg" 
-  },
-  { 
-    id: 2, 
-    name: "Xbox One Wireless Controller", 
-    price: 5300, 
-    qty: 1, 
-    image: "assets/product-images/audio2.jpg" 
-  }
-]);
+const router = useRouter();
+const cartItems = ref([]);
 
 const form = reactive({ 
   name: "", 
@@ -185,6 +172,25 @@ const form = reactive({
 });
 
 const shipping = ref(100); 
+
+
+const loadCart = () => {
+  const saved = localStorage.getItem('shopping_cart');
+  if (saved) {
+    cartItems.value = JSON.parse(saved);
+  }
+};
+
+
+const saveCart = () => {
+  localStorage.setItem('shopping_cart', JSON.stringify(cartItems.value));
+
+  window.dispatchEvent(new CustomEvent('cart-updated'));
+};
+
+onMounted(() => {
+  loadCart();
+});
 
 const subtotal = computed(() => {
   return cartItems.value.reduce((acc, item) => acc + (item.price * item.qty), 0);
@@ -202,12 +208,14 @@ const updateQty = (index, val) => {
   const newQty = cartItems.value[index].qty + val;
   if (newQty >= 1) {
     cartItems.value[index].qty = newQty;
+    saveCart();
   }
 };
 
 const removeItem = (index) => {
   if(confirm("Remove this item from bag?")) {
     cartItems.value.splice(index, 1);
+    saveCart();
   }
 };
 
@@ -216,9 +224,13 @@ const handleCheckout = () => {
     return alert("Please provide full delivery information!");
   }
   alert(`Order Placed Successfully!\nTotal: ৳${grandTotal.value}`);
+
+  cartItems.value = [];
+  saveCart();
+  router.push('/');
 };
 
-const goShopping = () => alert("Redirecting to Products...");
+const goShopping = () => router.push('/products');
 </script>
 
 <style scoped>
@@ -233,12 +245,10 @@ const goShopping = () => alert("Redirecting to Products...");
   padding: 20px;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
-
 .container {
   width: 100%;
   max-width: 1200px;
 }
-
 .wide-checkout-card {
   display: grid;
   grid-template-columns: 1fr 1.2fr 1fr;
@@ -248,20 +258,15 @@ const goShopping = () => alert("Redirecting to Products...");
   overflow: hidden;
   min-height: 600px;
 }
-
-.cart-column, 
-.form-column, 
-.payment-column {
+.cart-column, .form-column, .payment-column {
   padding: 45px 35px;
 }
-
 .column-header {
   margin-bottom: 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
 .column-header h3 {
   font-size: 19px;
   font-weight: 800;
@@ -270,11 +275,7 @@ const goShopping = () => alert("Redirecting to Products...");
   align-items: center;
   gap: 12px;
 }
-
-.column-header h3 i {
-  color: #e4002b;
-}
-
+.column-header h3 i { color: #e4002b; }
 .count-badge {
   background: #fef2f2;
   color: #e4002b;
@@ -283,13 +284,11 @@ const goShopping = () => alert("Redirecting to Products...");
   font-size: 12px;
   font-weight: 700;
 }
-
 .scroll-area {
   max-height: 420px;
   overflow-y: auto;
   padding-right: 10px;
 }
-
 .p-card {
   background: #f8fafc;
   border-radius: 24px;
@@ -300,12 +299,10 @@ const goShopping = () => alert("Redirecting to Products...");
   border: 1px solid #f1f5f9;
   transition: 0.3s;
 }
-
 .p-card:hover {
   border-color: #e2e8f0;
   transform: scale(1.02);
 }
-
 .p-thumb {
   width: 75px;
   height: 75px;
@@ -314,26 +311,22 @@ const goShopping = () => alert("Redirecting to Products...");
   padding: 5px;
   flex-shrink: 0;
 }
-
 .p-thumb img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-
 .p-info {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
 .p-main {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
-
 .p-name {
   font-size: 13px;
   font-weight: 700;
@@ -341,7 +334,6 @@ const goShopping = () => alert("Redirecting to Products...");
   max-width: 140px;
   line-height: 1.4;
 }
-
 .trash-btn {
   border: none;
   background: none;
@@ -349,24 +341,18 @@ const goShopping = () => alert("Redirecting to Products...");
   cursor: pointer;
   transition: 0.2s;
 }
-
-.trash-btn:hover {
-  color: #ef4444;
-}
-
+.trash-btn:hover { color: #ef4444; }
 .p-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
 }
-
 .price-tag {
   font-weight: 800;
   color: #e4002b;
   font-size: 15px;
 }
-
 .stepper-modern {
   display: flex;
   align-items: center;
@@ -376,7 +362,6 @@ const goShopping = () => alert("Redirecting to Products...");
   border-radius: 12px;
   border: 1px solid #e2e8f0;
 }
-
 .stepper-modern button {
   border: none;
   background: none;
@@ -385,7 +370,6 @@ const goShopping = () => alert("Redirecting to Products...");
   cursor: pointer;
   font-size: 16px;
 }
-
 .stepper-modern span {
   font-size: 13px;
   font-weight: 800;
@@ -393,32 +377,22 @@ const goShopping = () => alert("Redirecting to Products...");
   min-width: 15px;
   text-align: center;
 }
-
 .form-column {
   border-left: 1px solid #f1f5f9;
   border-right: 1px solid #f1f5f9;
 }
-
 .modern-input-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
 }
-
 .field-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
-.field-group.full {
-  width: 100%;
-}
-
-.field-group.half {
-  width: calc(50% - 9px);
-}
-
+.field-group.full { width: 100%; }
+.field-group.half { width: calc(50% - 9px); }
 .field-group label {
   font-size: 11px;
   font-weight: 800;
@@ -427,7 +401,6 @@ const goShopping = () => alert("Redirecting to Products...");
   letter-spacing: 0.5px;
   margin-left: 5px;
 }
-
 .input-with-icon {
   display: flex;
   align-items: center;
@@ -437,12 +410,7 @@ const goShopping = () => alert("Redirecting to Products...");
   padding: 0 15px;
   transition: 0.3s;
 }
-
-.input-with-icon i {
-  color: #cbd5e1;
-  font-size: 14px;
-}
-
+.input-with-icon i { color: #cbd5e1; font-size: 14px; }
 .input-with-icon input {
   border: none;
   background: none;
@@ -453,28 +421,19 @@ const goShopping = () => alert("Redirecting to Products...");
   color: #1e293b;
   font-weight: 600;
 }
-
-.input-with-icon input:focus {
-  outline: none;
-}
-
+.input-with-icon input:focus { outline: none; }
 .input-with-icon:focus-within {
   border-color: #e4002b;
   background: #fff;
   box-shadow: 0 10px 25px rgba(228,0,43,0.04);
 }
-
-.input-with-icon:focus-within i {
-  color: #e4002b;
-}
-
+.input-with-icon:focus-within i { color: #e4002b; }
 .side-title {
   font-size: 22px;
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 25px;
 }
-
 .cost-summary-card {
   background: #0f172a;
   color: #fff;
@@ -482,7 +441,6 @@ const goShopping = () => alert("Redirecting to Products...");
   border-radius: 28px;
   margin-bottom: 25px;
 }
-
 .cost-row {
   display: flex;
   justify-content: space-between;
@@ -491,42 +449,30 @@ const goShopping = () => alert("Redirecting to Products...");
   font-weight: 500;
   opacity: 0.8;
 }
-
-.free-text {
-  color: #2ecc71;
-  font-weight: 700;
-}
-
+.free-text { color: #2ecc71; font-weight: 700; }
 .line-divider {
   height: 1px;
   background: rgba(255,255,255,0.1);
   margin: 15px 0;
 }
-
 .grand-total {
   font-size: 20px;
   font-weight: 800;
   opacity: 1;
 }
-
-.grand-total span:last-child {
-  color: #e4002b;
-}
-
+.grand-total span:last-child { color: #e4002b; }
 .section-hint {
   font-size: 13px;
   font-weight: 700;
   color: #64748b;
   margin-bottom: 15px;
 }
-
 .method-stack {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 30px;
 }
-
 .method-stack label {
   display: flex;
   align-items: center;
@@ -538,42 +484,21 @@ const goShopping = () => alert("Redirecting to Products...");
   cursor: pointer;
   transition: 0.3s;
 }
-
 .method-info {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
-.method-info i {
-  font-size: 18px;
-  color: #94a3b8;
-}
-
-.method-info span {
-  font-size: 14px;
-  font-weight: 700;
-  color: #475569;
-}
-
-.method-stack input {
-  display: none;
-}
-
+.method-info i { font-size: 18px; color: #94a3b8; }
+.method-info span { font-size: 14px; font-weight: 700; color: #475569; }
+.method-stack input { display: none; }
 .method-stack label.active {
   border-color: #e4002b;
   background: #fff5f5;
 }
-
 .method-stack label.active .method-info i, 
-.method-stack label.active .method-info span {
-  color: #e4002b;
-}
-
-.method-stack label.active > i {
-  color: #e4002b;
-}
-
+.method-stack label.active .method-info span { color: #e4002b; }
+.method-stack label.active > i { color: #e4002b; }
 .confirm-order-btn {
   width: 100%;
   padding: 20px;
@@ -587,12 +512,10 @@ const goShopping = () => alert("Redirecting to Products...");
   transition: 0.3s;
   box-shadow: 0 10px 30px rgba(228,0,43,0.2);
 }
-
 .confirm-order-btn:hover {
   background: #c50025;
   transform: translateY(-3px);
 }
-
 .trust-note {
   text-align: center;
   font-size: 11px;
@@ -600,21 +523,18 @@ const goShopping = () => alert("Redirecting to Products...");
   margin-top: 15px;
   font-weight: 600;
 }
-
 .empty-ui {
   text-align: center;
   padding: 100px;
   background: #fff;
   border-radius: 40px;
 }
-
 .empty-ui i {
   font-size: 80px;
   color: #f1f5f9;
   margin-bottom: 25px;
   display: block;
 }
-
 .back-shop-btn {
   padding: 15px 40px;
   background: #0f172a;
@@ -624,22 +544,15 @@ const goShopping = () => alert("Redirecting to Products...");
   font-weight: 700;
   cursor: pointer;
 }
-
 @media (max-width: 1050px) {
-  .wide-checkout-card {
-    grid-template-columns: 1fr;
-  }
+  .wide-checkout-card { grid-template-columns: 1fr; }
   .form-column {
     border: none;
     border-top: 1px solid #f1f5f9;
     border-bottom: 1px solid #f1f5f9;
   }
 }
-
-.scroll-area::-webkit-scrollbar {
-  width: 4px;
-}
-
+.scroll-area::-webkit-scrollbar { width: 4px; }
 .scroll-area::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 10px;
