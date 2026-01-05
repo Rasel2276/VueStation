@@ -67,7 +67,7 @@ const routes = [
   { path: '/login', name: 'login', component: Login },
   { path: '/register', name: 'register', component: Registration },
 
-  // ===== ADMIN =====
+  // ===== ADMIN ===== //
   {
     path: '/AdminDefaultLayout',
     component: AdminDefaultLayout,
@@ -115,7 +115,7 @@ const routes = [
     ],
   },
 
-  // ===== WEBSITE =====
+  // ===== WEBSITE ===== //
   {
     path: '/',
     component: WebsiteDefaultLayout,
