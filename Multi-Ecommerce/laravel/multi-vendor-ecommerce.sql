@@ -183,18 +183,25 @@ CREATE TABLE vendor_stock (
 -- =======================
 CREATE TABLE customer_products (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    
     vendor_stock_id INT NOT NULL,
     product_id INT NOT NULL,
     vendor_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    brand VARCHAR(100) DEFAULT NULL,
+    category VARCHAR(50) DEFAULT NULL,
     price DECIMAL(10,2) NOT NULL,
-    quantity INT NOT NULL,
+    old_price DECIMAL(10,2) DEFAULT NULL,
+    quantity INT NOT NULL DEFAULT 1,
     details TEXT,
     image VARCHAR(255),
-    status ENUM('Active','Inactive') DEFAULT 'Active',
+    theme_color VARCHAR(10) DEFAULT '#e4002b',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (vendor_stock_id) REFERENCES vendor_stock(id),
-    FOREIGN KEY (vendor_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (vendor_stock_id) REFERENCES vendor_stock(id) ON DELETE CASCADE,
+    FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 

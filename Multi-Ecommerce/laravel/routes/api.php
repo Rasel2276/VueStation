@@ -11,6 +11,7 @@ use App\Http\Controllers\Vendor\VendorStockController;
 use App\Http\Controllers\Admin\AdminPurchaseController;
 use App\Http\Controllers\Vendor\VendorReturnController;
 use App\Http\Controllers\Vendor\VendorPurchaseController;
+use App\Http\Controllers\Vendor\CustomerProductController;
 
 // Auth routes
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
@@ -81,6 +82,14 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::post('/vendor/returns', [VendorReturnController::class, 'store']);
     Route::delete('/vendor/returns/{id}', [VendorReturnController::class, 'destroy']);
 
+
+    // ✅ Customer Products Routes (Alada Alada)
+    Route::get('/vendor/customer-products', [CustomerProductController::class, 'index']);
+    Route::post('/vendor/customer-products', [CustomerProductController::class, 'store']);
+    Route::get('/vendor/customer-products/{id}', [CustomerProductController::class, 'show']);
+    Route::put('/vendor/customer-products/{id}', [CustomerProductController::class, 'update']);
+    Route::delete('/vendor/customer-products/{id}', [CustomerProductController::class, 'destroy']);
+    Route::get('vendor/get-stocks', [CustomerProductController::class, 'getVendorStocks']);
 });
 
 
