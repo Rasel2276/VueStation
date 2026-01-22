@@ -1,43 +1,37 @@
 <template>
-  <div class="slider">
-    <!-- SLIDES -->
-    <div
-      class="slides"
-      :class="{ noTransition }"
-      :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-    >
-      <!-- REAL SLIDES -->
+  <div class="slider-wrapper">
+    <div class="slider">
       <div
-        class="slide"
-        v-for="(slide, index) in slides"
-        :key="index"
-        :style="{ backgroundImage: `url(${slide.image})` }"
+        class="slides"
+        :class="{ noTransition }"
+        :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
       >
-        <div class="overlay">
-          <h1>{{ slide.title }}</h1>
-          <p>{{ slide.text }}</p>
-          <button>Shop Now</button>
+        <div
+          class="slide"
+          v-for="(slide, index) in slides"
+          :key="index"
+          :style="{ backgroundImage: `url(${slide.image})` }"
+        >
+          <div class="overlay">
+            <h1>{{ slide.title }}</h1>
+            <p>{{ slide.text }}</p>
+            <button>Shop Now</button>
+          </div>
+        </div>
+
+        <div
+          class="slide"
+          :style="{ backgroundImage: `url(${slides[0].image})` }"
+        >
+          <div class="overlay">
+            <h1>{{ slides[0].title }}</h1>
+            <p>{{ slides[0].text }}</p>
+            <button>Shop Now</button>
+          </div>
         </div>
       </div>
 
-      <!-- CLONE FIRST SLIDE -->
-      <div
-        class="slide"
-        :style="{ backgroundImage: `url(${slides[0].image})` }"
-      >
-        <div class="overlay">
-          <h1>{{ slides[0].title }}</h1>
-          <p>{{ slides[0].text }}</p>
-          <button>Shop Now</button>
-        </div>
       </div>
-    </div>
-
-    <!-- LEFT ARROW (BACK) -->
-    <button class="nav left" @click="prevSlide">❮</button>
-
-    <!-- RIGHT ARROW (NEXT) -->
-    <button class="nav right" @click="nextSlide">❯</button>
   </div>
 </template>
 
@@ -92,7 +86,6 @@ export default {
 
       this.currentIndex++
 
-      // when clone slide reached
       if (this.currentIndex === this.slides.length) {
         setTimeout(() => {
           this.noTransition = true
@@ -130,12 +123,21 @@ export default {
 </script>
 
 <style scoped>
+.slider-wrapper {
+  max-width: 1500px; 
+  margin: 0 auto;
+  padding: 0 5%; 
+  background-color: #ffffff; 
+}
+
 /* ===== SLIDER ===== */
 .slider {
   width: 100%;
-  height: 45vh;
+  height: 50vh; /* Fixed height for slider */
   overflow: hidden;
   position: relative;
+   
+  margin-top: 1px;
 }
 
 /* ===== SLIDES ===== */
@@ -152,8 +154,9 @@ export default {
 /* ===== SLIDE ===== */
 .slide {
   min-width: 100%;
-  height: 100%;
-  background-size: cover;
+  height: 100%; /* Slider-er height-er sathe exact match */
+  background-size: 100% 100%; /* Image height/width 1 pixel-o barbe na, slider-e fit hobe */
+  background-repeat: no-repeat;
   background-position: center;
   position: relative;
 }
@@ -173,6 +176,7 @@ export default {
 .overlay h1 {
   font-size: 2.2rem;
   margin-bottom: 10px;
+  font-weight: 800;
 }
 
 .overlay p {
@@ -191,36 +195,13 @@ export default {
   cursor: pointer;
 }
 
-/* ===== ARROWS ===== */
-.nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border: none;
-  font-size: 26px;
-  padding: 10px 14px;
-  cursor: pointer;
-  border-radius: 50%;
-  z-index: 10;
-  transition: 0.3s;
-}
-
-.nav:hover {
-  background: rgba(0,0,0,0.8);
-}
-
-.left {
-  left: 20px;
-}
-
-.right {
-  right: 20px;
-}
-
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .slider-wrapper { padding: 0 5%; }
+}
+
 @media (max-width: 768px) {
+  .slider-wrapper { padding: 0 15px; }
   .slider { height: 28vh; }
   .overlay h1 { font-size: 1.6rem; }
 }

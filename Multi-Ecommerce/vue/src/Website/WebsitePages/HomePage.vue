@@ -7,8 +7,8 @@
   
 
     
-     <div class="productslider">
-       <ProductSlider />
+     <div class="homeproduct">
+       <HomeProducts />
      </div>
    
 
@@ -19,7 +19,7 @@
 <script setup>
 
 import HomeSlider from './HomeSlider.vue'
-import ProductSlider from './ProductSlider.vue'
+import HomeProducts from './HomeProducts.vue'
 
 
 </script>
