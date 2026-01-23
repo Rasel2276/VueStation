@@ -10,6 +10,10 @@
      <div class="homeproduct">
        <HomeProducts />
      </div>
+
+     <div class="customerreviews">
+      <CustomerReviews />
+     </div>
    
 
 
@@ -20,6 +24,7 @@
 
 import HomeSlider from './HomeSlider.vue'
 import HomeProducts from './HomeProducts.vue'
+import CustomerReviews from './CustomerReviews.vue'
 
 
 </script>
