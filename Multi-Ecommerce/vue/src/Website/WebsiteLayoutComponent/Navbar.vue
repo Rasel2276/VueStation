@@ -2,7 +2,7 @@
   <header class="navbar">
     <div class="left-section">
       <div class="logo">
-        <span class="logo-red">Z</span>aptro
+        <span class="logo-red">R</span>YZE
       </div>
       <div class="search-container desktop-search">
         <input type="text" placeholder="Search..." v-model="search" />
@@ -69,7 +69,7 @@
     <div :class="['mobile-menu', { open: menuOpen }]">
       <div class="mobile-header">
         <div class="logo">
-          <span class="logo-red">Z</span>aptro
+          <span class="logo-red">R</span>YZE
         </div>
         <div class="close" @click="toggleMenu">
           <i class="fa-solid fa-xmark"></i>

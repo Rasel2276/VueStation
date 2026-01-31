@@ -5,7 +5,7 @@
       <!-- CONTACT -->
       <div class="footer-column">
         <h3>CONTACT</h3>
-        <p>Street: 2017 Harron Drive</p>
+        <p>Street: 42/2c RND Road Lalbagh</p>
         <p>City: Dhaka</p>
         <p>State Full: Bangladesh</p>
         <p>Zip Code: 1211</p>
@@ -54,7 +54,7 @@
 
     <!-- COPYRIGHT -->
     <div class="copyright">
-      <p>© 2025 Coaching. Built using WordPress and Mesmerize Theme.</p>
+      <p>© 2026 RYZE. Built for Excellence and Premium Shopping Experience.</p>
     </div>
   </footer>
 </template>

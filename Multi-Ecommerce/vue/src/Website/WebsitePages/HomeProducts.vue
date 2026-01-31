@@ -17,7 +17,6 @@
           <div class="dark-overlay"></div>
           <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="h-full-bg" alt="Headphone" />
           
-          
           <div class="h-content-flex">
             <div class="h-text-area">
               <span class="h-badge">Limited Series</span>
@@ -31,7 +30,7 @@
         <div class="hero-column">
           <div class="hero-item side-item dark-blue">
             <div class="dark-overlay-sm"></div>
-            <img src="/assets/product-images/game3.jpg" class="h-full-bg" alt="Watch" />
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="h-full-bg" alt="Watch" />
             <div class="h-content-flex sm-flex">
               <div class="h-text-area">
                 <h3 class="side-title">Smart Tech</h3>
@@ -107,14 +106,14 @@ export default {
     return {
       isAnimating: false,
       productItems: [
-        { uid: 1, name: 'Wireless Headphone', price: 129, oldPrice: 150, category: 'Audio', desc: 'High fidelity sound with noise cancellation.', img: '/assets/product-images/audio3.jpg', rating: 4.8, sale: true, saleText: 'Sale' },
+        { uid: 1, name: 'Wireless Headphone', price: 129, oldPrice: 150, category: 'Audio', desc: 'High fidelity sound with noise cancellation.', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', rating: 4.8, sale: true, saleText: 'Sale' },
         { uid: 2, name: 'Smart Watch Z', price: 199, category: 'Wearables', desc: 'Monitor your health 24/7 with sensors.', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500', rating: 4.9, sale: false },
         { uid: 3, name: 'Gaming Mouse', price: 59, oldPrice: 80, category: 'Accessories', desc: 'Ultra-fast response for pro gaming.', img: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500', rating: 4.7, sale: true, saleText: 'Best Seller' },
         { uid: 4, name: 'Mechanical Keyboard', price: 149, category: 'Accessories', desc: 'RGB backlit mechanical keys.', img: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=500', rating: 4.9, sale: false },
         { uid: 5, name: 'Bluetooth Speaker', price: 89, category: 'Audio', desc: 'Waterproof portable bass speaker.', img: 'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=500', rating: 4.6, sale: true, saleText: '10% Off' },
         { uid: 6, name: 'Tech Backpack', price: 110, category: 'Travel', desc: 'Anti-theft bag with USB port.', img: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500', rating: 4.5, sale: false },
         { uid: 7, name: 'VR Headset', price: 299, category: 'Gadgets', desc: 'Immersive virtual reality kit.', img: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=500', rating: 4.8, sale: false },
-        { uid: 8, name: 'Fast Charger', price: 25, category: 'Power', desc: 'Dual port 65W charging adapter.', img: '/assets/product-images/audio3.jpg', rating: 4.9, sale: true, saleText: 'New' },
+        { uid: 8, name: 'Fast Charger', price: 25, category: 'Power', desc: 'Dual port 65W charging adapter.', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', rating: 4.9, sale: true, saleText: 'New' },
       ],
       services: [
         { icon: '🚀', title: 'Express', desc: 'Ships in 24h' },
@@ -169,7 +168,6 @@ export default {
   padding: 0 5%;
 }
 
-/* Service Strip */
 .service-strip {
   display: flex;
   justify-content: space-between;
@@ -202,7 +200,6 @@ export default {
   color: #718096;
 }
 
-/* HERO SECTION */
 .hero-mosaic {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
@@ -340,7 +337,6 @@ export default {
   gap: 15px;
 }
 
-/* PRODUCT SECTION */
 .product-section {
   margin-top: 20px;
 }
@@ -553,7 +549,6 @@ export default {
   gap: 10px;
 }
 
-/* --- MOBILE RESPONSIVE PRECISE WORK --- */
 @media (max-width: 768px) {
   .service-strip {
     flex-wrap: wrap;
@@ -572,19 +567,9 @@ export default {
     gap: 5px;
   }
 
-  .s-info h5 {
-    font-size: 11px;
-    line-height: 1.2;
-  }
-
-  .s-info p {
-    font-size: 9px;
-    opacity: 0.8;
-  }
-
-  .s-icon {
-    font-size: 20px;
-  }
+  .s-info h5 { font-size: 11px; line-height: 1.2; }
+  .s-info p { font-size: 9px; opacity: 0.8; }
+  .s-icon { font-size: 20px; }
 
   .p-image-box {
     height: 145px;
@@ -604,55 +589,36 @@ export default {
     gap: 8px;
   }
 
-  .hero-title {
-    font-size: 18px;
-    margin: 5px 0;
-  }
+  .hero-title { font-size: 18px; margin: 5px 0; }
+  .hero-desc { font-size: 10px; line-height: 1.3; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .h-badge { font-size: 8px; padding: 2px 8px; }
+  .h-btn-premium { padding: 8px 12px; font-size: 10px; border-radius: 5px; }
+  .h-content-flex { padding: 0 15px; }
+  .side-title { font-size: 14px; }
+  .side-desc { font-size: 9px; margin-bottom: 8px; }
+  .h-link-premium { font-size: 9px; }
 
-  .hero-desc {
-    font-size: 10px;
-    line-height: 1.3;
-    margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  /* IPHONE SE / SMALL SCREEN FIX - PRODUCT SECTION */
+  .product-row {
+    gap: 12px; /* Gap ektu komano hoyeche jeno container-e fit hoy */
   }
-
-  .h-badge {
-    font-size: 8px;
-    padding: 2px 8px;
-  }
-
-  .h-btn-premium {
-    padding: 8px 12px;
-    font-size: 10px;
-    border-radius: 5px;
-  }
-
-  .h-content-flex {
-    padding: 0 15px;
-  }
-
-  .side-title {
-    font-size: 14px;
-  }
-
-  .side-desc {
-    font-size: 9px;
-    margin-bottom: 8px;
-  }
-
-  .h-link-premium {
-    font-size: 9px;
-  }
-
   .p-card {
-    flex: 0 0 calc(50% - 10px);
+    flex: 0 0 calc(50% - 6px); /* 10px gap chilo seta 6px kora hoyeche space rakhar jonno */
+    min-width: 140px; /* Minimum width set kora hoyeche jate kete na jay */
   }
-
+  
   .main-container {
     padding: 0 15px;
+  }
+}
+
+/* 320px screen width-er jonno extra safety */
+@media (max-width: 330px) {
+  .p-card {
+    flex: 0 0 calc(50% - 6px);
+  }
+  .product-row {
+    gap: 6px;
   }
 }
 </style>

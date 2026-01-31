@@ -173,7 +173,6 @@ const form = reactive({
 
 const shipping = ref(100); 
 
-
 const loadCart = () => {
   const saved = localStorage.getItem('shopping_cart');
   if (saved) {
@@ -181,10 +180,8 @@ const loadCart = () => {
   }
 };
 
-
 const saveCart = () => {
   localStorage.setItem('shopping_cart', JSON.stringify(cartItems.value));
-
   window.dispatchEvent(new CustomEvent('cart-updated'));
 };
 
@@ -224,7 +221,6 @@ const handleCheckout = () => {
     return alert("Please provide full delivery information!");
   }
   alert(`Order Placed Successfully!\nTotal: ৳${grandTotal.value}`);
-
   cartItems.value = [];
   saveCart();
   router.push('/');
@@ -544,14 +540,59 @@ const goShopping = () => router.push('/products');
   font-weight: 700;
   cursor: pointer;
 }
+
 @media (max-width: 1050px) {
-  .wide-checkout-card { grid-template-columns: 1fr; }
+  .wide-checkout-card { 
+    grid-template-columns: 1fr; 
+    border-radius: 30px;
+  }
   .form-column {
     border: none;
     border-top: 1px solid #f1f5f9;
     border-bottom: 1px solid #f1f5f9;
   }
 }
+
+/* --- IPHONE SE / MOBILE FIX --- */
+@media (max-width: 768px) {
+  .checkout-wrapper {
+    padding: 10px;
+  }
+  .cart-column, .form-column, .payment-column {
+    padding: 30px 15px; 
+  }
+  .wide-checkout-card {
+    border-radius: 25px;
+  }
+  .modern-input-grid {
+    gap: 12px;
+  }
+  .field-group.half {
+    width: 100%; 
+  }
+  .p-card {
+    padding: 12px;
+    gap: 10px;
+  }
+  .p-name {
+    max-width: 100%; 
+  }
+}
+
+@media (max-width: 330px) {
+  
+  .cart-column, .form-column, .payment-column {
+    padding: 20px 10px;
+  }
+  .grand-total {
+    font-size: 18px;
+  }
+  .confirm-order-btn {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
 .scroll-area::-webkit-scrollbar { width: 4px; }
 .scroll-area::-webkit-scrollbar-thumb {
   background: #e2e8f0;
