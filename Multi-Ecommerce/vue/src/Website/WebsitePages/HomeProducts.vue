@@ -134,7 +134,7 @@ export default {
     slideRight() {
       if (this.isAnimating) return;
       this.isAnimating = true;
-      const moveCount = window.innerWidth <= 768 ? 1 : 4;
+      const moveCount = window.innerWidth <= 768 ? 2 : 4;
       const itemsToMove = this.productItems.splice(0, moveCount);
       this.productItems.push(...itemsToMove);
       setTimeout(() => { this.isAnimating = false; }, 600);
@@ -142,7 +142,7 @@ export default {
     slideLeft() {
       if (this.isAnimating) return;
       this.isAnimating = true;
-      const moveCount = window.innerWidth <= 768 ? 1 : 4;
+      const moveCount = window.innerWidth <= 768 ? 2 : 4;
       const itemsToMove = this.productItems.splice(-moveCount);
       this.productItems.unshift(...itemsToMove);
       setTimeout(() => { this.isAnimating = false; }, 600);
@@ -598,27 +598,29 @@ export default {
   .side-desc { font-size: 9px; margin-bottom: 8px; }
   .h-link-premium { font-size: 9px; }
 
-  /* IPHONE SE / SMALL SCREEN FIX - PRODUCT SECTION */
-  .product-row {
-    gap: 12px; /* Gap ektu komano hoyeche jeno container-e fit hoy */
-  }
-  .p-card {
-    flex: 0 0 calc(50% - 6px); /* 10px gap chilo seta 6px kora hoyeche space rakhar jonno */
-    min-width: 140px; /* Minimum width set kora hoyeche jate kete na jay */
-  }
-  
+  /* PRODUCT SECTION ALIGNMENT FIX */
   .main-container {
-    padding: 0 15px;
+    padding: 0 15px; /* Container-er left padding */
+  }
+
+  .product-row {
+    gap: 12px; /* Dui card-er moddhe gap */
+  }
+
+  .p-card {
+    /* (100% width - card gap 12px) / 2 = Exact 2 cards per row */
+    flex: 0 0 calc((100% - 12px) / 2);
+    min-width: 0; /* Box-sizing safety */
   }
 }
 
-/* 320px screen width-er jonno extra safety */
+/* 320px screens safety */
 @media (max-width: 330px) {
-  .p-card {
-    flex: 0 0 calc(50% - 6px);
-  }
   .product-row {
-    gap: 6px;
+    gap: 8px;
+  }
+  .p-card {
+    flex: 0 0 calc((100% - 8px) / 2);
   }
 }
 </style>
