@@ -1,112 +1,108 @@
 <template>
   <div class="page">
     <div class="card">
-      <div class="card-header">
-        <div class="icon-circle"><i class="fa-solid fa-cart-plus"></i></div>
-        <div>
-          <h2 class="title">Add Customer Product</h2>
-          <p class="subtitle">মাইগ্রেশন অনুযায়ী আপনার কাস্টমার লিস্টিং তৈরি করুন</p>
-        </div>
-      </div>
+      <h2 class="title">Add Customer Product</h2>
 
-      <form class="form" @submit.prevent="submitForm">
-        <div class="form-section stock-box">
-          <h3 class="section-title"><i class="fa-solid fa-boxes-stacked"></i> ১. আপনার স্টক ইনভেন্টরি</h3>
-          <div class="field">
-            <label>প্রোডাক্ট সিলেক্ট করুন</label>
-            <select v-model="selectedStockId" @change="onStockSelect" class="stock-select" required>
-              <option value="">-- ড্রপডাউন থেকে প্রোডাক্ট বেছে নিন --</option>
-              <option v-for="stock in vendorStocks" :key="stock.id" :value="stock.id">
-                {{ stock.admin_stock?.product?.product_name || stock.admin_stock?.product?.name || 'নাম পাওয়া যায়নি' }} 
-                (স্টক আছে: {{ stock.quantity }} টি)
-              </option>
-            </select>
-          </div>
-          
-          <div v-if="selectedStockId" class="info-grid mt-15">
-             <div class="info-card">
-                <span class="info-label">ক্যাটাগরি</span>
-                <span class="info-value">{{ form.category || 'N/A' }}</span>
-             </div>
-             <div class="info-card highlight">
-                <span class="info-label">আপনার ক্রয়মূল্য</span>
-                <span class="info-value">৳ {{ purchasePrice }}</span>
-             </div>
-             <div class="info-card danger">
-                <span class="info-label">এভেইলেবল স্টক</span>
-                <span class="info-value">{{ maxQty }} টি</span>
-             </div>
-          </div>
-        </div>
-
-        <div v-if="selectedStockId" class="form-container mt-30">
-          <h3 class="section-title"><i class="fa-solid fa-edit"></i> ২. বিক্রয় ও ডিসপ্লে তথ্য</h3>
+      <form @submit.prevent="submitForm">
+        <div v-for="(item, index) in productList" :key="index" class="product-wrapper">
           
           <div class="field-row">
             <div class="field flex-2">
-              <label>প্রোডাক্টের নাম (Name)</label>
-              <input type="text" v-model="form.name" required />
+              <label>Select Product</label>
+              <select v-model="item.selectedStockId" @change="onStockSelect(index)" required>
+                <option value="">-- Choose from stock --</option>
+                <option v-for="stock in vendorStocks" :key="stock.id" :value="stock.id">
+                  {{ stock.admin_stock?.product?.product_name || stock.admin_stock?.product?.name }} 
+                  (Stock: {{ stock.quantity }})
+                </option>
+              </select>
             </div>
+
             <div class="field flex-1">
-              <label>ব্র্যান্ড (Brand)</label>
-              <input type="text" v-model="form.brand" />
+              <label>Quantity</label>
+              <input type="number" v-model.number="item.form.quantity" :max="item.maxQty" min="1" required />
             </div>
-          </div>
 
-          <div class="field-row mt-15">
-            <div class="field">
-              <label>বিক্রয় মূল্য (Price)</label>
-              <div class="input-with-icon">
-                <span class="currency-label">৳</span>
-                <input type="number" step="0.01" v-model.number="form.price" @input="calculateOldPrice" required />
-              </div>
-            </div>
-            <div class="field">
-              <label>পুরাতন মূল্য (Old Price)</label>
-              <div class="input-with-icon">
-                <span class="currency-label">৳</span>
-                <input type="number" step="0.01" v-model.number="form.old_price" />
-              </div>
-            </div>
-            <div class="field">
-              <label>বিক্রয় পরিমাণ (Quantity)</label>
-              <input type="number" v-model.number="form.quantity" :max="maxQty" min="1" required />
-            </div>
-          </div>
-
-          <div class="field-row mt-15">
-            <div class="field flex-2">
-              <label>বিস্তারিত বিবরণ (Details)</label>
-              <textarea v-model="form.details" rows="3" placeholder="প্রোডাক্ট সম্পর্কে লিখুন..."></textarea>
-            </div>
             <div class="field flex-1">
-              <label>থিম কালার (Theme Color)</label>
-              <div class="color-picker-box">
-                <input type="color" v-model="form.theme_color" class="color-input" />
-                <span class="color-code">{{ form.theme_color.toUpperCase() }}</span>
+              <label>Buy Price</label>
+              <input type="text" :value="item.purchasePrice ? '৳ ' + item.purchasePrice : '৳ 0'" readonly class="readonly-input" />
+            </div>
+            
+            <button v-if="productList.length > 1" type="button" @click="productList.splice(index, 1)" class="remove-row-btn">×</button>
+          </div>
+
+          <div v-if="item.selectedStockId" class="detail-section">
+            <hr />
+            
+            <div class="field-row">
+              <div class="field flex-2">
+                <label>Product Name (Customer Display)</label>
+                <input type="text" v-model="item.form.name" required />
+              </div>
+              <div class="field flex-1">
+                <label>Brand</label>
+                <input type="text" v-model="item.form.brand" />
+              </div>
+              <div class="field flex-1">
+                <label>Category</label>
+                <input type="text" v-model="item.form.category" readonly class="readonly-input" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Sale Price (৳)</label>
+                <input type="number" step="0.01" v-model.number="item.form.price" @input="calculateOldPrice(index)" required />
+              </div>
+              <div class="field">
+                <label>Old Price (৳)</label>
+                <input type="number" step="0.01" v-model.number="item.form.old_price" />
+              </div>
+              
+              <div class="field flex-1">
+                <label>Theme Color (Default: Red)</label>
+                <div class="color-palette">
+                  <button 
+                    v-for="color in presetColors" 
+                    :key="color" 
+                    type="button"
+                    class="color-circle" 
+                    :style="{ backgroundColor: color }"
+                    :class="{ active: item.form.theme_color === color }"
+                    @click="item.form.theme_color = color"
+                  ></button>
+                  <input type="color" v-model="item.form.theme_color" class="custom-color-input" title="Custom Color" />
+                </div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field flex-2">
+                <label>Product Details</label>
+                <textarea v-model="item.form.details" rows="3" placeholder="Description here..."></textarea>
+              </div>
+              <div class="field flex-1">
+                <label>Product Image</label>
+                <div class="image-upload" @click="triggerFileInput(index)">
+                  <input type="file" :ref="el => fileInputs[index] = el" @change="handleImage($event, index)" accept="image/*" hidden />
+                  <img v-if="item.imagePreview" :src="item.imagePreview" class="preview-img" />
+                  <span v-else>+ Upload Image</span>
+                </div>
               </div>
             </div>
           </div>
+          <div class="row-divider" v-if="index !== productList.length - 1"></div>
+        </div>
 
-          <div class="field mt-15">
-            <label>প্রোডাক্ট ইমেজ (Image)</label>
-            <div class="upload-area" @click="$refs.fileInput.click()">
-              <input type="file" ref="fileInput" @change="handleImage" accept="image/*" hidden />
-              <img v-if="imagePreview" :src="imagePreview" class="preview-img" />
-              <div v-else class="placeholder">
-                <i class="fa-solid fa-image"></i>
-                <p>ছবি আপলোড করতে ক্লিক করুন</p>
-              </div>
-            </div>
-          </div>
+        <div class="add-more-container">
+          <button type="button" @click="addNewProduct" class="add-row-btn">+ Add Another Product</button>
+        </div>
 
-          <div class="form-footer mt-40">
-            <button type="button" class="btn-cancel" @click="resetForm">রিসেট</button>
-            <button class="btn-save" type="submit" :disabled="loading">
-              <span v-if="loading">প্রসেসিং...</span>
-              <span v-else>লিস্টে যুক্ত করুন</span>
-            </button>
-          </div>
+        <div class="action-buttons">
+          <button type="button" class="reset-btn" @click="resetForm">Reset All</button>
+          <button class="submit-btn" type="submit" :disabled="loading">
+            {{ loading ? 'Saving...' : 'Add All to Marketplace' }}
+          </button>
         </div>
       </form>
     </div>
@@ -118,140 +114,136 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const vendorStocks = ref([]);
-const selectedStockId = ref("");
-const maxQty = ref(0);
-const purchasePrice = ref(0);
-const imagePreview = ref(null);
+const fileInputs = ref([]);
 const loading = ref(false);
+const presetColors = ['#e4002b', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'];
 
-// মাইগ্রেশন অনুযায়ী ইনিশিয়াল ডাটা
-const form = ref({
-  vendor_stock_id: null,
-  product_id: null,
-  name: "",
-  brand: "",
-  category: "",
-  price: null,
-  old_price: null,
-  quantity: 1,
-  details: "",
-  image: null,
-  theme_color: "#e4002b"
+const createNewItem = () => ({
+  selectedStockId: "",
+  maxQty: 0,
+  purchasePrice: 0,
+  imagePreview: null,
+  form: {
+    vendor_stock_id: null,
+    product_id: null,
+    name: "",
+    brand: "",
+    category: "",
+    price: null,
+    old_price: null,
+    quantity: 1,
+    details: "",
+    image: null,
+    theme_color: "#e4002b"
+  }
 });
+
+const productList = ref([createNewItem()]);
+
+const addNewProduct = () => {
+  productList.value.push(createNewItem());
+};
 
 const getStocks = async () => {
   try {
     const res = await axios.get("/vendor/my-stocks");
     vendorStocks.value = res.data;
-  } catch (err) {
-    console.error("স্টক লোড হয়নি।");
-  }
+  } catch (err) { console.error(err); }
 };
 
-onMounted(getStocks);
-
-const onStockSelect = () => {
-  const stock = vendorStocks.value.find(s => s.id === selectedStockId.value);
-  if (stock && stock.admin_stock?.product) {
+const onStockSelect = (index) => {
+  const item = productList.value[index];
+  const stock = vendorStocks.value.find(s => s.id === item.selectedStockId);
+  
+  if (stock && stock.admin_stock) {
     const p = stock.admin_stock.product;
-    form.value.vendor_stock_id = stock.id;
-    form.value.product_id = p.id;
-    form.value.category = p.category || "General";
-    form.value.name = p.product_name || p.name;
-    form.value.brand = p.brand || "";
-    purchasePrice.value = stock.price;
-    maxQty.value = stock.quantity;
+    
+    // মেইন ডেটা সেটআপ
+    item.form.vendor_stock_id = stock.id;
+    item.form.product_id = p?.id;
+    item.form.category = p?.category || "General";
+    item.form.name = p?.product_name || p?.name || "";
+    item.form.brand = p?.brand || "";
+    item.maxQty = stock.quantity;
+
+    // আপনার চাহিদা অনুযায়ী AdminStock থেকে কেনা দাম নেওয়া
+    // ফিল্ডের নাম: vendor_sale_price
+    item.purchasePrice = stock.admin_stock.vendor_sale_price || 0;
+  } else {
+    item.purchasePrice = 0;
   }
 };
 
-const handleImage = (e) => {
+const triggerFileInput = (index) => {
+  if (fileInputs.value[index]) fileInputs.value[index].click();
+};
+
+const handleImage = (e, index) => {
   const file = e.target.files[0];
   if (file) {
-    form.value.image = file;
-    imagePreview.value = URL.createObjectURL(file);
+    productList.value[index].form.image = file;
+    productList.value[index].imagePreview = URL.createObjectURL(file);
   }
 };
 
-const calculateOldPrice = () => {
-  if (form.value.price) {
-    form.value.old_price = Math.round(form.value.price * 1.10);
-  }
+const calculateOldPrice = (index) => {
+  const item = productList.value[index];
+  if (item.form.price) item.form.old_price = Math.round(item.form.price * 1.10);
 };
 
 const submitForm = async () => {
-  if (form.value.quantity > maxQty.value) {
-    alert("পর্যাপ্ত স্টক নেই!");
-    return;
-  }
-
   loading.value = true;
-  
-  // যেহেতু ইমেজ আছে, তাই FormData ব্যবহার করতে হবে
-  const formData = new FormData();
-  Object.keys(form.value).forEach(key => {
-    if (form.value[key] !== null) {
-      formData.append(key, form.value[key]);
-    }
-  });
-
   try {
-    await axios.post("/vendor/customer-products", formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    alert("সফলভাবে সেভ হয়েছে!");
+    for (const item of productList.value) {
+      if (!item.selectedStockId) continue;
+      
+      const formData = new FormData();
+      Object.keys(item.form).forEach(key => {
+        if (item.form[key] !== null) formData.append(key, item.form[key]);
+      });
+      await axios.post("/vendor/customer-products", formData);
+    }
+    
+    alert("সবগুলো প্রোডাক্ট সফলভাবে যুক্ত হয়েছে!");
     resetForm();
     getStocks();
-  } catch (err) {
-    alert("সেভ করতে সমস্যা হয়েছে। ডাটা চেক করুন।");
-  } finally {
-    loading.value = false;
+  } catch (err) { 
+    alert("Error saving products!"); 
+  } finally { 
+    loading.value = false; 
   }
 };
 
 const resetForm = () => {
-  selectedStockId.value = "";
-  form.value = { 
-    quantity: 1, name: "", brand: "", category: "", 
-    price: null, old_price: null, details: "", 
-    image: null, theme_color: "#e4002b" 
-  };
-  imagePreview.value = null;
-  purchasePrice.value = 0;
-  maxQty.value = 0;
+  productList.value = [createNewItem()];
 };
+
+onMounted(getStocks);
 </script>
 
 <style scoped>
-/* Scoped CSS for better look */
-.page { padding: 40px 20px; background: #f8fafc; min-height: 100vh; }
-.card { background: #fff; padding: 35px; border-radius: 20px; max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
-.card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
-.icon-circle { width: 60px; height: 60px; background: #4f46e5; color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-.title { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; }
-.subtitle { color: #64748b; font-size: 14px; margin-top: 5px; }
-.stock-box { background: #f1f5f9; padding: 25px; border-radius: 15px; border: 1px solid #cbd5e1; }
-.stock-select { width: 100%; padding: 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-weight: 600; background: white; cursor: pointer; }
-.info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-.info-card { background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
-.info-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-.info-value { font-size: 15px; font-weight: 700; color: #334155; }
-.info-card.highlight { background: #eef2ff; border-color: #c7d2fe; }
-.info-card.danger { background: #fff1f2; border-color: #fecdd3; }
-.field-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.page { padding: 40px; min-height: 100vh; font-family: sans-serif; }
+.card { background: #fff; padding: 30px; border-radius: 8px; max-width: 950px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.title { font-size: 20px; font-weight: 600; margin-bottom: 25px; color: #333; }
+.product-wrapper { margin-bottom: 30px; position: relative; }
+.row-divider { height: 2px; background: #f0f0f0; margin: 40px 0; border-radius: 2px; }
+.field-row { display: flex; gap: 20px; margin-bottom: 20px; align-items: flex-end; }
+.field { flex: 1; display: flex; flex-direction: column; }
+.field label { font-weight: bold; margin-bottom: 8px; font-size: 13px; color: #555; }
+.field input, .field select, .field textarea { padding: 10px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
 .flex-1 { flex: 1; } .flex-2 { flex: 2; }
-.field { display: flex; flex-direction: column; margin-bottom: 20px; flex: 1; }
-.field label { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px; }
-.field input, .field textarea { padding: 12px 15px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; }
-.input-with-icon { position: relative; display: flex; align-items: center; }
-.currency-label { position: absolute; left: 15px; font-weight: 800; color: #94a3b8; }
-.input-with-icon input { padding-left: 35px; width: 100%; }
-.color-picker-box { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 10px; background: #fff; }
-.color-input { width: 40px; height: 30px; border: none; cursor: pointer; }
-.color-code { font-weight: bold; color: #475569; }
-.upload-area { border: 2px dashed #cbd5e1; height: 120px; border-radius: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; background: #f8fafc; }
+.readonly-input { background: #f9f9f9; color: #777; font-weight: bold; }
+.color-palette { display: flex; gap: 8px; align-items: center; height: 40px; }
+.color-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.2s; padding: 0; }
+.color-circle.active { border-color: #000; transform: scale(1.1); }
+.custom-color-input { width: 30px; height: 30px; padding: 0; border: none; background: none; cursor: pointer; }
+.image-upload { border: 2px dashed #ddd; height: 80px; border-radius: 6px; display: flex; justify-content: center; align-items: center; cursor: pointer; background: #fafafa; color: #999; font-size: 13px; overflow: hidden; }
 .preview-img { width: 100%; height: 100%; object-fit: cover; }
-.placeholder { text-align: center; color: #94a3b8; }
-.form-footer { display: flex; justify-content: flex-end; gap: 15px; padding-top: 30px; border-top: 2px solid #f1f5f9; }
-.btn-save { background: #4f46e5; color: white; border: none; padding: 15px 35px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-.btn-cancel { background: #f1f5f9; color: #64748b; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+.add-more-container { margin: 20px 0; padding: 10px 0; }
+.add-row-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+.remove-row-btn { background: #ff4d4d; color: white; border: none; width: 35px; height: 35px; border-radius: 4px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.action-buttons { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 20px; margin-top: 10px; }
+.reset-btn { background: #eee; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.submit-btn { background: #3b82f6; color: white; border: none; padding: 10px 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+hr { border: none; border-top: 1px solid #eee; margin-bottom: 25px; }
 </style>

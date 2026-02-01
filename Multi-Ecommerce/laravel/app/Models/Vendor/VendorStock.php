@@ -11,7 +11,7 @@ class VendorStock extends Model
     use HasFactory;
 
     protected $table = 'vendor_stock';
-    public $timestamps = false; // আপনার মাইগ্রেশনে timestamps() নেই
+    public $timestamps = false; 
 
     protected $fillable = [
         'vendor_id',
