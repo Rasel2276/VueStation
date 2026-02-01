@@ -2,123 +2,111 @@
   <div class="page">
     <div class="card">
       <div class="card-header">
-        <div class="icon-circle">
-          <i class="fa-solid fa-cart-plus"></i>
-        </div>
+        <div class="icon-circle"><i class="fa-solid fa-cart-plus"></i></div>
         <div>
           <h2 class="title">Add Customer Product</h2>
-          <p class="subtitle">Fill in the details to list a new product in your store</p>
+          <p class="subtitle">মাইগ্রেশন অনুযায়ী আপনার কাস্টমার লিস্টিং তৈরি করুন</p>
         </div>
       </div>
 
       <form class="form" @submit.prevent="submitForm">
-        <div class="form-section">
-          <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> Basic Information</h3>
+        <div class="form-section stock-box">
+          <h3 class="section-title"><i class="fa-solid fa-boxes-stacked"></i> ১. আপনার স্টক ইনভেন্টরি</h3>
+          <div class="field">
+            <label>প্রোডাক্ট সিলেক্ট করুন</label>
+            <select v-model="selectedStockId" @change="onStockSelect" class="stock-select" required>
+              <option value="">-- ড্রপডাউন থেকে প্রোডাক্ট বেছে নিন --</option>
+              <option v-for="stock in vendorStocks" :key="stock.id" :value="stock.id">
+                {{ stock.admin_stock?.product?.product_name || stock.admin_stock?.product?.name || 'নাম পাওয়া যায়নি' }} 
+                (স্টক আছে: {{ stock.quantity }} টি)
+              </option>
+            </select>
+          </div>
+          
+          <div v-if="selectedStockId" class="info-grid mt-15">
+             <div class="info-card">
+                <span class="info-label">ক্যাটাগরি</span>
+                <span class="info-value">{{ form.category || 'N/A' }}</span>
+             </div>
+             <div class="info-card highlight">
+                <span class="info-label">আপনার ক্রয়মূল্য</span>
+                <span class="info-value">৳ {{ purchasePrice }}</span>
+             </div>
+             <div class="info-card danger">
+                <span class="info-label">এভেইলেবল স্টক</span>
+                <span class="info-value">{{ maxQty }} টি</span>
+             </div>
+          </div>
+        </div>
+
+        <div v-if="selectedStockId" class="form-container mt-30">
+          <h3 class="section-title"><i class="fa-solid fa-edit"></i> ২. বিক্রয় ও ডিসপ্লে তথ্য</h3>
+          
           <div class="field-row">
             <div class="field flex-2">
-              <label>Product Name</label>
-              <input type="text" v-model="form.name" placeholder="Enter product full name" required />
+              <label>প্রোডাক্টের নাম (Name)</label>
+              <input type="text" v-model="form.name" required />
             </div>
             <div class="field flex-1">
-              <label>Category</label>
-              <select v-model="form.category" required>
-                <option value="">Select Category</option>
-                <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-              </select>
-            </div>
-            <div class="field flex-1">
-              <label>Brand</label>
-              <input type="text" v-model="form.brand" placeholder="e.g. Sony, Apple" required />
+              <label>ব্র্যান্ড (Brand)</label>
+              <input type="text" v-model="form.brand" />
             </div>
           </div>
-        </div>
 
-        <div class="form-section mt-30">
-          <h3 class="section-title"><i class="fa-solid fa-money-bill-wave"></i> Pricing & Inventory</h3>
-          <div class="field-row">
+          <div class="field-row mt-15">
             <div class="field">
-              <label>Current Price (৳)</label>
+              <label>বিক্রয় মূল্য (Price)</label>
               <div class="input-with-icon">
                 <span class="currency-label">৳</span>
-                <input type="number" v-model.number="form.price" placeholder="0.00" required />
+                <input type="number" step="0.01" v-model.number="form.price" @input="calculateOldPrice" required />
               </div>
             </div>
             <div class="field">
-              <label>Old Price (৳)</label>
+              <label>পুরাতন মূল্য (Old Price)</label>
               <div class="input-with-icon">
                 <span class="currency-label">৳</span>
-                <input type="number" v-model.number="form.old_price" placeholder="0.00" />
+                <input type="number" step="0.01" v-model.number="form.old_price" />
               </div>
             </div>
             <div class="field">
-              <label>Stock Quantity</label>
-              <input type="number" v-model.number="form.quantity" min="1" required />
+              <label>বিক্রয় পরিমাণ (Quantity)</label>
+              <input type="number" v-model.number="form.quantity" :max="maxQty" min="1" required />
             </div>
           </div>
-        </div>
 
-        <div class="form-section mt-30">
-          <h3 class="section-title"><i class="fa-solid fa-image"></i> Media & Description</h3>
-          <div class="field-row">
+          <div class="field-row mt-15">
             <div class="field flex-2">
-              <label>Product Details</label>
-              <textarea v-model="form.details" rows="5" placeholder="Write a short description about the product..."></textarea>
+              <label>বিস্তারিত বিবরণ (Details)</label>
+              <textarea v-model="form.details" rows="3" placeholder="প্রোডাক্ট সম্পর্কে লিখুন..."></textarea>
             </div>
             <div class="field flex-1">
-              <label>Product Image</label>
-              <div class="upload-container" :class="{ 'has-image': imagePreview }" @click="$refs.fileInput.click()">
-                <input type="file" ref="fileInput" @change="handleImageUpload" accept="image/*" hidden />
-                <div v-if="!imagePreview" class="upload-hint">
-                  <div class="upload-icon-box">
-                    <i class="fa-solid fa-camera"></i>
-                  </div>
-                  <span>Upload Photo</span>
-                  <small>JPG, PNG or WEBP</small>
-                </div>
-                <div v-else class="preview-wrapper">
-                  <img :src="imagePreview" class="preview-img" />
-                  <div class="change-overlay">Click to Change</div>
-                </div>
+              <label>থিম কালার (Theme Color)</label>
+              <div class="color-picker-box">
+                <input type="color" v-model="form.theme_color" class="color-input" />
+                <span class="color-code">{{ form.theme_color.toUpperCase() }}</span>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="form-section mt-30 visual-theme-box">
-          <div class="theme-header">
-            <h3 class="section-title"><i class="fa-solid fa-palette"></i> Card Theme Color</h3>
-            <span class="badge" :style="{ background: form.color }">{{ form.color.toUpperCase() }}</span>
-          </div>
-          <div class="color-picker-grid">
-            <div class="preset-group">
-              <button 
-                type="button"
-                v-for="c in colorPresets" 
-                :key="c" 
-                :style="{ background: c }"
-                :class="['color-btn', { active: form.color === c }]"
-                @click="form.color = c"
-              ></button>
-            </div>
-            <div class="custom-pick-wrapper">
-              <div class="custom-preview" :style="{ background: form.color }">
-                <input type="color" v-model="form.color" class="color-input-hidden" />
-                <i class="fa-solid fa-plus"></i>
+          <div class="field mt-15">
+            <label>প্রোডাক্ট ইমেজ (Image)</label>
+            <div class="upload-area" @click="$refs.fileInput.click()">
+              <input type="file" ref="fileInput" @change="handleImage" accept="image/*" hidden />
+              <img v-if="imagePreview" :src="imagePreview" class="preview-img" />
+              <div v-else class="placeholder">
+                <i class="fa-solid fa-image"></i>
+                <p>ছবি আপলোড করতে ক্লিক করুন</p>
               </div>
-              <span class="custom-label">Custom Color</span>
             </div>
           </div>
-        </div>
 
-        <div class="form-footer mt-40">
-          <button type="button" class="btn-secondary" @click="resetForm" :disabled="loading">
-            <i class="fa-solid fa-arrow-rotate-left"></i> Reset Fields
-          </button>
-          <button class="btn-primary" type="submit" :disabled="loading">
-            <span v-if="loading">Publishing...</span>
-            <span v-else>Publish Product</span>
-            <i v-if="!loading" class="fa-solid fa-paper-plane"></i>
-          </button>
+          <div class="form-footer mt-40">
+            <button type="button" class="btn-cancel" @click="resetForm">রিসেট</button>
+            <button class="btn-save" type="submit" :disabled="loading">
+              <span v-if="loading">প্রসেসিং...</span>
+              <span v-else>লিস্টে যুক্ত করুন</span>
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -126,17 +114,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const categories = ["PHONE", "AUDIO", "GAMING", "TV", "WATCH", "CLOTH"];
-const colorPresets = ["#e4002b", "#1abc9c", "#3498db", "#9b59b6", "#f39c12", "#2c3e50"];
-
+const vendorStocks = ref([]);
+const selectedStockId = ref("");
+const maxQty = ref(0);
+const purchasePrice = ref(0);
 const imagePreview = ref(null);
-const fileInput = ref(null);
 const loading = ref(false);
 
+// মাইগ্রেশন অনুযায়ী ইনিশিয়াল ডাটা
 const form = ref({
+  vendor_stock_id: null,
+  product_id: null,
   name: "",
   brand: "",
   category: "",
@@ -145,104 +136,122 @@ const form = ref({
   quantity: 1,
   details: "",
   image: null,
-  color: "#e4002b",
-  vendor_stock_id: 1, // আপনার ভেন্ডর স্টকের রিয়েল আইডি এখানে দিতে পারেন
-  product_id: 1       // অরিজিনাল প্রোডাক্টের আইডি
+  theme_color: "#e4002b"
 });
 
-const handleImageUpload = (event) => {
-  const file = event.target.files[0];
+const getStocks = async () => {
+  try {
+    const res = await axios.get("/vendor/my-stocks");
+    vendorStocks.value = res.data;
+  } catch (err) {
+    console.error("স্টক লোড হয়নি।");
+  }
+};
+
+onMounted(getStocks);
+
+const onStockSelect = () => {
+  const stock = vendorStocks.value.find(s => s.id === selectedStockId.value);
+  if (stock && stock.admin_stock?.product) {
+    const p = stock.admin_stock.product;
+    form.value.vendor_stock_id = stock.id;
+    form.value.product_id = p.id;
+    form.value.category = p.category || "General";
+    form.value.name = p.product_name || p.name;
+    form.value.brand = p.brand || "";
+    purchasePrice.value = stock.price;
+    maxQty.value = stock.quantity;
+  }
+};
+
+const handleImage = (e) => {
+  const file = e.target.files[0];
   if (file) {
     form.value.image = file;
     imagePreview.value = URL.createObjectURL(file);
   }
 };
 
+const calculateOldPrice = () => {
+  if (form.value.price) {
+    form.value.old_price = Math.round(form.value.price * 1.10);
+  }
+};
+
 const submitForm = async () => {
-  try {
-    loading.value = true;
-    const formData = new FormData();
-    
-    // ডাটাবেজ কলামের নাম অনুযায়ী ডেটাগুলো পাঠানো হচ্ছে
-    formData.append("vendor_stock_id", form.value.vendor_stock_id);
-    formData.append("product_id", form.value.product_id);
-    formData.append("name", form.value.name);
-    formData.append("brand", form.value.brand || "");
-    formData.append("category", form.value.category);
-    formData.append("price", form.value.price);
-    formData.append("old_price", form.value.old_price || "");
-    formData.append("quantity", form.value.quantity);
-    formData.append("details", form.value.details || "");
-    formData.append("theme_color", form.value.color);
+  if (form.value.quantity > maxQty.value) {
+    alert("পর্যাপ্ত স্টক নেই!");
+    return;
+  }
 
-    if (form.value.image) {
-      formData.append("image", form.value.image);
+  loading.value = true;
+  
+  // যেহেতু ইমেজ আছে, তাই FormData ব্যবহার করতে হবে
+  const formData = new FormData();
+  Object.keys(form.value).forEach(key => {
+    if (form.value[key] !== null) {
+      formData.append(key, form.value[key]);
     }
+  });
 
-    // 🛑 ফিক্স: /api/ যদি baseURL এ থাকে, তবে এখানে শুধু 'vendor/customer-products' দিন
-    const response = await axios.post("vendor/customer-products", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+  try {
+    await axios.post("/vendor/customer-products", formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
-
-    alert("Success! Product added.");
+    alert("সফলভাবে সেভ হয়েছে!");
     resetForm();
-
-  } catch (error) {
-    console.error("Error Detail:", error.response?.data);
-    alert("Error: " + (error.response?.data?.message || "Check Console"));
+    getStocks();
+  } catch (err) {
+    alert("সেভ করতে সমস্যা হয়েছে। ডাটা চেক করুন।");
   } finally {
     loading.value = false;
   }
 };
 
 const resetForm = () => {
-  form.value = {
-    name: "", brand: "", category: "", price: null, old_price: null,
-    quantity: 1, details: "", image: null, color: "#e4002b",
-    vendor_stock_id: 1, product_id: 1
+  selectedStockId.value = "";
+  form.value = { 
+    quantity: 1, name: "", brand: "", category: "", 
+    price: null, old_price: null, details: "", 
+    image: null, theme_color: "#e4002b" 
   };
   imagePreview.value = null;
-  if (fileInput.value) fileInput.value.value = "";
+  purchasePrice.value = 0;
+  maxQty.value = 0;
 };
 </script>
 
 <style scoped>
-/* আপনার আগের CSS এখানে থাকবে */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-.page { padding: 50px 20px; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
-.card { background: #fff; padding: 40px; border-radius: 24px; max-width: 900px; margin: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
-.card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
-.icon-circle { width: 60px; height: 60px; background: #3b82f6; color: #fff; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-.title { font-size: 26px; font-weight: 700; color: #1e293b; margin: 0; }
-.subtitle { color: #64748b; font-size: 14px; margin-top: 4px; }
-.section-title { font-size: 15px; font-weight: 700; color: #334155; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
-.section-title i { color: #3b82f6; }
-.field-row { display: flex; gap: 24px; flex-wrap: wrap; }
-.flex-1 { flex: 1; min-width: 200px; }
-.flex-2 { flex: 2; min-width: 300px; }
-.field { display: flex; flex-direction: column; margin-bottom: 15px; }
-.field label { font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #475569; }
-.field input, .field select, .field textarea { padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; }
+/* Scoped CSS for better look */
+.page { padding: 40px 20px; background: #f8fafc; min-height: 100vh; }
+.card { background: #fff; padding: 35px; border-radius: 20px; max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+.card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
+.icon-circle { width: 60px; height: 60px; background: #4f46e5; color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.title { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; }
+.subtitle { color: #64748b; font-size: 14px; margin-top: 5px; }
+.stock-box { background: #f1f5f9; padding: 25px; border-radius: 15px; border: 1px solid #cbd5e1; }
+.stock-select { width: 100%; padding: 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-weight: 600; background: white; cursor: pointer; }
+.info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.info-card { background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+.info-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+.info-value { font-size: 15px; font-weight: 700; color: #334155; }
+.info-card.highlight { background: #eef2ff; border-color: #c7d2fe; }
+.info-card.danger { background: #fff1f2; border-color: #fecdd3; }
+.field-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.flex-1 { flex: 1; } .flex-2 { flex: 2; }
+.field { display: flex; flex-direction: column; margin-bottom: 20px; flex: 1; }
+.field label { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px; }
+.field input, .field textarea { padding: 12px 15px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; }
 .input-with-icon { position: relative; display: flex; align-items: center; }
-.currency-label { position: absolute; left: 16px; font-weight: 700; color: #64748b; }
+.currency-label { position: absolute; left: 15px; font-weight: 800; color: #94a3b8; }
 .input-with-icon input { padding-left: 35px; width: 100%; }
-.upload-container { height: 155px; border: 2px dashed #cbd5e1; border-radius: 16px; cursor: pointer; background: #f8fafc; position: relative; }
-.upload-hint { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; }
-.preview-wrapper, .preview-img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
-.change-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: #fff; opacity: 0; transition: 0.3s; }
-.preview-wrapper:hover .change-overlay { opacity: 1; }
-.visual-theme-box { background: #f1f5f9; padding: 25px; border-radius: 20px; }
-.theme-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.badge { padding: 4px 12px; border-radius: 20px; color: #fff; font-size: 12px; font-weight: 700; }
-.color-picker-grid { display: flex; align-items: center; gap: 30px; }
-.preset-group { display: flex; gap: 15px; }
-.color-btn { width: 38px; height: 38px; border-radius: 12px; border: 3px solid #fff; cursor: pointer; }
-.color-btn.active { transform: scale(1.2); border-color: #1e293b; }
-.custom-pick-wrapper { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.custom-preview { width: 40px; height: 40px; border-radius: 12px; border: 2.5px solid #fff; position: relative; display: flex; align-items: center; justify-content: center; color: #fff; }
-.color-input-hidden { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.form-footer { display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 30px; }
-.btn-secondary { background: none; border: 1.5px solid #e2e8f0; padding: 12px 24px; border-radius: 12px; cursor: pointer; }
-.btn-primary { background: #3b82f6; color: #fff; border: none; padding: 14px 35px; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 12px; }
-@media (max-width: 768px) { .field-row { flex-direction: column; } .form-footer { flex-direction: column-reverse; gap: 15px; } .btn-primary, .btn-secondary { width: 100%; justify-content: center; } }
+.color-picker-box { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 10px; background: #fff; }
+.color-input { width: 40px; height: 30px; border: none; cursor: pointer; }
+.color-code { font-weight: bold; color: #475569; }
+.upload-area { border: 2px dashed #cbd5e1; height: 120px; border-radius: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; background: #f8fafc; }
+.preview-img { width: 100%; height: 100%; object-fit: cover; }
+.placeholder { text-align: center; color: #94a3b8; }
+.form-footer { display: flex; justify-content: flex-end; gap: 15px; padding-top: 30px; border-top: 2px solid #f1f5f9; }
+.btn-save { background: #4f46e5; color: white; border: none; padding: 15px 35px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+.btn-cancel { background: #f1f5f9; color: #64748b; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 </style>

@@ -51,6 +51,17 @@ class CustomerProductController extends Controller
         ]);
     }
 
+    public function getVendorStocks()
+{
+    // ভেন্ডরের স্টক এবং তার সাথে অ্যাডমিন স্টক ও মেইন প্রোডাক্টের ডাটা নিয়ে আসা
+    $stocks = \App\Models\Vendor\VendorStock::with(['adminStock.product'])
+                ->where('vendor_id', Auth::id())
+                ->where('quantity', '>', 0) // শুধু স্টক আছে এমন প্রোডাক্ট
+                ->get();
+
+    return response()->json($stocks);
+}
+
     // 🔹 Show
     public function show($id)
     {
