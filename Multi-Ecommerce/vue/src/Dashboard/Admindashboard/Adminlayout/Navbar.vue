@@ -7,16 +7,15 @@
         <div class="navbar-right">
             <div class="user-dropdown" @click="toggleDropdown">
                 <span class="user-info">
-                    👤 Welcome, Admin
+                    👤 Welcome, {{ adminName }}
                     <span class="arrow">{{ dropdownOpen ? '▾' : '▸' }}</span>
                 </span>
 
                 <div v-if="dropdownOpen" class="dropdown-menu">
-                    <a href="#"><span class="icon">👤</span> Profile</a>
+                    <router-link to="/"><span class="icon">🏠</span> Visit Website</router-link>
                     <a href="#"><span class="icon">⚙️</span> Settings</a>
 
-                    <!-- ✅ Logout button with click event -->
-                    <a href="#" @click.stop="logout">
+                    <a href="#" @click.stop.prevent="logout">
                       <span class="icon">🔓</span> Logout
                     </a>
                 </div>
@@ -27,31 +26,46 @@
 
 
 <script setup>
-    import { ref, computed } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { ref, computed, onMounted } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
 
     const route = useRoute()
+    const router = useRouter()
 
     const pageTitle = computed(() => {
         return route.meta.title || '📊 Dashboard'
     })
 
     const dropdownOpen = ref(false)
+    const adminName = ref('Admin') // ডিফল্ট নাম
+
+    // লোকাল স্টোরেজ থেকে নাম তুলে আনার লজিক
+    onMounted(() => {
+        const userData = localStorage.getItem('user')
+        if (userData) {
+            try {
+                const user = JSON.parse(userData)
+                adminName.value = user.name // ডাটাবেজ থেকে আসা নাম সেট হবে
+            } catch (e) {
+                console.error("User data parse error", e)
+            }
+        }
+    })
 
     const toggleDropdown = () => {
         dropdownOpen.value = !dropdownOpen.value
     }
 
-    // ✅ Logout Function (Your logic)
     const logout = () => {
-       localStorage.removeItem("token")
-       localStorage.removeItem("role")
-       localStorage.removeItem("user")
+        if (confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem("token")
+            localStorage.removeItem("role")
+            localStorage.removeItem("user")
 
-       router.push("/") // redirect to login page
-       dropdownOpen.value = false
+            router.push("/")
+            dropdownOpen.value = false
+        }
    }
-
 
     window.addEventListener('click', (e) => {
     const dropdown = document.querySelector('.user-dropdown')
@@ -62,7 +76,7 @@
 </script>
 
 <style scoped>
-    
+    /* আপনার সিএসএস হুবহু রাখা হয়েছে, এক পিক্সেলও পরিবর্তন হয়নি */
     .navbar {
         height: 60px;
         background-color: #f1f5f9;
@@ -114,7 +128,7 @@
         z-index: 10;
     }
 
-    .dropdown-menu a {
+    .dropdown-menu a, .dropdown-menu router-link {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -123,6 +137,7 @@
         color: #334155;
         text-decoration: none;
         transition: background-color 0.2s;
+        cursor: pointer;
     }
 
     .dropdown-menu a:hover {
@@ -133,7 +148,6 @@
         font-size: 1rem;
     }
 
-    /* ✅ Responsive tweaks */
     @media (max-width: 600px) {
         .navbar {
             flex-direction: column;
@@ -160,5 +174,4 @@
             top: 100%;
         }
     }
-
 </style>

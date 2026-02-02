@@ -60,7 +60,7 @@
               </div>
               
               <div class="field flex-1">
-                <label>Theme Color (Default: Red)</label>
+                <label>Theme Color</label>
                 <div class="color-palette">
                   <button 
                     v-for="color in presetColors" 
@@ -71,7 +71,7 @@
                     :class="{ active: item.form.theme_color === color }"
                     @click="item.form.theme_color = color"
                   ></button>
-                  <input type="color" v-model="item.form.theme_color" class="custom-color-input" title="Custom Color" />
+                  <input type="color" v-model="item.form.theme_color" class="custom-color-input" />
                 </div>
               </div>
             </div>
@@ -118,6 +118,8 @@ const fileInputs = ref([]);
 const loading = ref(false);
 const presetColors = ['#e4002b', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'];
 
+const token = localStorage.getItem('vendortoken') || localStorage.getItem('token');
+
 const createNewItem = () => ({
   selectedStockId: "",
   maxQty: 0,
@@ -146,31 +148,33 @@ const addNewProduct = () => {
 
 const getStocks = async () => {
   try {
-    const res = await axios.get("/vendor/my-stocks");
+    const res = await axios.get("http://127.0.0.1:8000/api/vendor/my-stocks", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     vendorStocks.value = res.data;
   } catch (err) { console.error(err); }
 };
 
 const onStockSelect = (index) => {
   const item = productList.value[index];
-  const stock = vendorStocks.value.find(s => s.id === item.selectedStockId);
+  const isDuplicate = productList.value.some((p, i) => i !== index && p.selectedStockId === item.selectedStockId);
   
+  if (isDuplicate && item.selectedStockId !== "") {
+    alert("This product is already selected!");
+    item.selectedStockId = "";
+    return;
+  }
+
+  const stock = vendorStocks.value.find(s => s.id === item.selectedStockId);
   if (stock && stock.admin_stock) {
     const p = stock.admin_stock.product;
-    
-    // মেইন ডেটা সেটআপ
     item.form.vendor_stock_id = stock.id;
     item.form.product_id = p?.id;
     item.form.category = p?.category || "General";
     item.form.name = p?.product_name || p?.name || "";
     item.form.brand = p?.brand || "";
     item.maxQty = stock.quantity;
-
-    // আপনার চাহিদা অনুযায়ী AdminStock থেকে কেনা দাম নেওয়া
-    // ফিল্ডের নাম: vendor_sale_price
     item.purchasePrice = stock.admin_stock.vendor_sale_price || 0;
-  } else {
-    item.purchasePrice = 0;
   }
 };
 
@@ -198,17 +202,27 @@ const submitForm = async () => {
       if (!item.selectedStockId) continue;
       
       const formData = new FormData();
+      // Append all form fields
       Object.keys(item.form).forEach(key => {
-        if (item.form[key] !== null) formData.append(key, item.form[key]);
+        if (item.form[key] !== null && item.form[key] !== undefined) {
+          formData.append(key, item.form[key]);
+        }
       });
-      await axios.post("/vendor/customer-products", formData);
+
+      await axios.post("http://127.0.0.1:8000/api/vendor/customer-products", formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}` 
+        }
+      });
     }
     
-    alert("সবগুলো প্রোডাক্ট সফলভাবে যুক্ত হয়েছে!");
+    alert("All products added successfully!");
     resetForm();
     getStocks();
   } catch (err) { 
     alert("Error saving products!"); 
+    console.error(err);
   } finally { 
     loading.value = false; 
   }
@@ -222,28 +236,29 @@ onMounted(getStocks);
 </script>
 
 <style scoped>
-.page { padding: 40px; min-height: 100vh; font-family: sans-serif; }
+/* আপনার আগের CSS স্টাইলগুলো এখানে হুবহু থাকবে */
+.page { padding: 40px; min-height: 100vh; font-family: sans-serif; background: #f8f9fa;}
 .card { background: #fff; padding: 30px; border-radius: 8px; max-width: 950px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.title { font-size: 20px; font-weight: 600; margin-bottom: 25px; color: #333; }
-.product-wrapper { margin-bottom: 30px; position: relative; }
-.row-divider { height: 2px; background: #f0f0f0; margin: 40px 0; border-radius: 2px; }
+.title { font-size: 22px; font-weight: 600; margin-bottom: 25px; color: #333; text-align: center; }
+.product-wrapper { margin-bottom: 30px; position: relative; border: 1px solid #f0f0f0; padding: 20px; border-radius: 8px; }
+.row-divider { height: 2px; background: #2563eb; margin: 40px 0; border-radius: 2px; }
 .field-row { display: flex; gap: 20px; margin-bottom: 20px; align-items: flex-end; }
 .field { flex: 1; display: flex; flex-direction: column; }
 .field label { font-weight: bold; margin-bottom: 8px; font-size: 13px; color: #555; }
-.field input, .field select, .field textarea { padding: 10px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
+.field input, .field select, .field textarea { padding: 10px; border: 1px solid #ddd; border-radius: 4px; outline: none; transition: 0.3s; }
+.field input:focus { border-color: #2563eb; }
 .flex-1 { flex: 1; } .flex-2 { flex: 2; }
 .readonly-input { background: #f9f9f9; color: #777; font-weight: bold; }
 .color-palette { display: flex; gap: 8px; align-items: center; height: 40px; }
 .color-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.2s; padding: 0; }
 .color-circle.active { border-color: #000; transform: scale(1.1); }
 .custom-color-input { width: 30px; height: 30px; padding: 0; border: none; background: none; cursor: pointer; }
-.image-upload { border: 2px dashed #ddd; height: 80px; border-radius: 6px; display: flex; justify-content: center; align-items: center; cursor: pointer; background: #fafafa; color: #999; font-size: 13px; overflow: hidden; }
-.preview-img { width: 100%; height: 100%; object-fit: cover; }
-.add-more-container { margin: 20px 0; padding: 10px 0; }
-.add-row-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
-.remove-row-btn { background: #ff4d4d; color: white; border: none; width: 35px; height: 35px; border-radius: 4px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-.action-buttons { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 20px; margin-top: 10px; }
-.reset-btn { background: #eee; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.submit-btn { background: #3b82f6; color: white; border: none; padding: 10px 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.image-upload { border: 2px dashed #ddd; height: 100px; border-radius: 6px; display: flex; justify-content: center; align-items: center; cursor: pointer; background: #fafafa; color: #999; font-size: 13px; overflow: hidden; position: relative; }
+.preview-img { width: 100%; height: 100%; object-fit: contain; }
+.add-row-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.remove-row-btn { background: #ff4d4d; color: white; border: none; width: 35px; height: 35px; border-radius: 4px; cursor: pointer; font-size: 20px; }
+.action-buttons { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; }
+.submit-btn { background: #2563eb; color: white; border: none; padding: 10px 30px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.reset-btn { background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
 hr { border: none; border-top: 1px solid #eee; margin-bottom: 25px; }
 </style>

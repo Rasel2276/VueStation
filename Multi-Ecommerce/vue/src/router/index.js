@@ -46,6 +46,7 @@ import CheckoutPage from '../Website/WebsitePages/CheckoutPage.vue'
 import AddCustomerProduct from '../Dashboard/Vendordashboard/Vendor-components/AddCustomerProduct.vue'
 import HomeProducts from '../Website/WebsitePages/HomeProducts.vue'
 import CustomerReviews from '../Website/WebsitePages/CustomerReviews.vue'
+import CustomerProductManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerProductManage.vue'
 
 
 
@@ -116,6 +117,7 @@ const routes = [
       { path: '/vendor-inventory/vendor_return-record', component: VendorReturnRecord },
       { path: '/vendor-inventory/vendor_purchase-payment', component: VendorPurchasePayment },
       { path: '/ui-product/add-product', component: AddCustomerProduct },
+      { path: '/ui-product/manage-product', component: CustomerProductManage },
     ],
   },
 
