@@ -17,9 +17,7 @@
               <th>ID</th>
               <th>Product Name</th>
               <th>Image</th>
-              <th>Brand</th>
-              <th>Details</th>
-              <th>Quantity</th>
+              <th>Category</th> <th>Quantity</th>
               <th>Price</th>
               <th>Actions</th>
             </tr>
@@ -33,10 +31,7 @@
                 <img v-if="product.image" :src="imageUrl(product.image)" class="category-image" />
                 <span v-else>No Image</span>
               </td>
-              <td>{{ product.brand || 'N/A' }}</td>
-              <td class="details-text" :title="product.details">
-                {{ truncateText(product.details, 30) }}
-              </td>
+              <td><span class="category-badge">{{ product.category || 'N/A' }}</span></td>
               <td>{{ product.quantity }}</td>
               <td style="font-weight:bold; color:#2563eb">৳ {{ product.price }}</td>
               <td>
@@ -55,7 +50,7 @@
               </td>
             </tr>
             <tr v-if="filteredProducts.length === 0">
-              <td colspan="8" style="text-align:center;padding:20px">No products found.</td>
+              <td colspan="7" style="text-align:center;padding:20px">No products found.</td>
             </tr>
           </tbody>
         </table>
@@ -79,6 +74,27 @@
               <div class="form-group flex-1">
                 <label>Brand</label>
                 <input type="text" v-model="editForm.brand" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Category</label>
+                <input type="text" v-model="editForm.category" required />
+              </div>
+              <div class="form-group flex-1">
+                <label>Theme Color</label>
+                <div class="color-palette">
+                  <button 
+                    v-for="color in presetColors" 
+                    :key="color" 
+                    type="button"
+                    class="color-circle" 
+                    :style="{ backgroundColor: color }"
+                    :class="{ active: editForm.theme_color === color }"
+                    @click="editForm.theme_color = color"
+                  ></button>
+                </div>
               </div>
             </div>
 
@@ -124,11 +140,12 @@ const search = ref('')
 const products = ref([])
 const dropdownOpen = ref(null)
 const dropdownPosition = ref({})
+const presetColors = ['#1abc9c', '#ff4d4d', '#f39c12', '#000000'];
 const token = localStorage.getItem('vendortoken') || localStorage.getItem('token')
 
 const showEditModal = ref(false)
 const updating = ref(false)
-const editForm = ref({ id: null, name: '', brand: '', price: '', quantity: '', details: '', image: null })
+const editForm = ref({ id: null, name: '', brand: '', category: '', price: '', quantity: '', details: '', image: null, theme_color: '' })
 
 const fetchProducts = async () => {
   try {
@@ -142,7 +159,6 @@ const fetchProducts = async () => {
 onMounted(fetchProducts)
 
 const imageUrl = img => `http://127.0.0.1:8000/ui_product_images/${img}`
-const truncateText = (text, length) => (text && text.length > length) ? text.substring(0, length) + '...' : (text || '---')
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) { dropdownOpen.value = null; return; }
@@ -153,7 +169,17 @@ const toggleDropdown = async (id, event) => {
 }
 
 const openEditModal = (product) => {
-  editForm.value = { id: product.id, name: product.name, brand: product.brand, price: product.price, quantity: product.quantity, details: product.details, image: null }
+  editForm.value = { 
+    id: product.id, 
+    name: product.name, 
+    brand: product.brand, 
+    category: product.category || '',
+    price: product.price, 
+    quantity: product.quantity, 
+    details: product.details, 
+    theme_color: product.theme_color || '#1abc9c',
+    image: null 
+  }
   showEditModal.value = true
   dropdownOpen.value = null
 }
@@ -197,34 +223,40 @@ const filteredProducts = computed(() => {
 </script>
 
 <style scoped>
-/* 🔒 EXACT SAME DESIGN - NO CHANGES */
 .page { min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding:40px 0; font-family:"Segoe UI", sans-serif; }
-.card { width:100%; max-width:1000px; background:#fff; border-radius:8px; padding:2rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+.card { width:100%; max-width:1100px; background:#fff; border-radius:8px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
 .title { text-align:center; font-size:26px; font-weight:500; margin-bottom:30px; color:#222; }
-.search-input { width:100%; max-width:220px; padding:0.5rem 1rem; margin-bottom:1rem; border:1px solid #d2d6da; border-radius:.375rem; }
-.table-responsive { width:100%; overflow-x:auto; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05); background:white; padding:0.5rem; }
-.custom-category-table { width:100%; border-collapse:collapse; min-width:600px; }
+.search-input { width:100%; max-width:300px; padding:0.6rem 1rem; margin-bottom:1.5rem; border:1px solid #d2d6da; border-radius:6px; outline:none; }
+.search-input:focus { border-color: #2563eb; }
+.table-responsive { width:100%; overflow-x:auto; border-radius:8px; background:white; }
+.custom-category-table { width:100%; border-collapse:collapse; }
 .custom-category-table th, .custom-category-table td { padding:12px 15px; text-align:left; border-bottom:1px solid #e5e7eb; font-size:14px; }
-.custom-category-table th { background-color:#f3f4f6; font-weight:600; }
-.custom-category-table tbody tr:hover { background-color:#d0e2ff; }
-.category-image { width:50px; height:50px; object-fit:cover; border-radius:4px; }
-.details-text { color: #666; font-size: 13px; max-width: 150px; }
+.custom-category-table th { background-color:#f8f9fa; font-weight:600; color: #444; }
+.category-badge { background: #eef2ff; color: #4338ca; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.category-image { width:45px; height:45px; object-fit:cover; border-radius:4px; border: 1px solid #eee; }
 .dropdown-btn { padding:6px 12px; border:none; border-radius:4px; background:#2563eb; color:white; cursor:pointer; font-weight:600; }
-.dropdown-menu-absolute { background:#f9fafb; box-shadow:0 4px 8px rgba(0,0,0,0.15); border-radius:6px; overflow:hidden; min-width:140px; }
-.dropdown-menu-absolute button { display:block; width:100%; border:none; background:none; padding:10px; cursor:pointer; text-align:left; font-size:14px; }
-.edit-btn { color:#065f46; } .delete-btn { color:#b91c1c; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-.modal-content { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; position: relative; }
+.dropdown-menu-absolute { background:white; box-shadow:0 10px 25px rgba(0,0,0,0.1); border-radius:8px; overflow:hidden; min-width:150px; border: 1px solid #eee; }
+.dropdown-menu-absolute button { display:block; width:100%; border:none; background:none; padding:12px; cursor:pointer; text-align:left; font-size:14px; transition: 0.2s; }
+.dropdown-menu-absolute button:hover { background: #f8f9fa; }
+.edit-btn { color:#2563eb; } .delete-btn { color:#dc2626; }
+
+/* Color Palette in Modal */
+.color-palette { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
+.color-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.2s; padding: 0; }
+.color-circle.active { border-color: #000; transform: scale(1.1); }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+.modal-content { background: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 550px; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.close-modal { background: none; border: none; font-size: 28px; cursor: pointer; color: #888; }
+.close-modal { background: none; border: none; font-size: 24px; cursor: pointer; }
 .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
-.form-group label { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #444; }
-.form-group input, .form-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #555; }
+.form-group input, .form-group textarea { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
 .form-row { display: flex; gap: 15px; }
 .flex-1 { flex: 1; } .flex-2 { flex: 2; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; }
-.cancel-btn { background: #f3f4f6; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-.save-btn { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s, transform 0.2s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-10px); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.cancel-btn { background: #f3f4f6; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+.save-btn { background: #2563eb; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

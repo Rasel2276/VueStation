@@ -53,28 +53,42 @@
             <span class="cart-count" v-if="cartItems.length > 0">{{ cartItems.length }}</span>
           </div>
 
-          <div :class="['cart-dropdown', { show: cartOpen }]">
-            <div class="cart-header">Shopping Cart</div>
-            <div class="cart-items-list custom-scroll" v-if="cartItems.length > 0">
-              <div class="cart-item" v-for="(item, index) in cartItems" :key="index">
-                <img :src="item.image" :alt="item.name" />
-                <div class="item-info">
-                  <p class="item-name">{{ item.name }}</p>
-                  <p class="item-price">৳{{ item.price }} x {{ item.qty }}</p>
+          <div :class="['cart-dropdown-premium', { show: cartOpen }]">
+            <div class="cart-header-modern">
+              <span>Shopping Bag ({{ cartItems.length }})</span>
+              <i class="fa-solid fa-xmark close-cart-mobile" @click="closeCart"></i>
+            </div>
+            
+            <div class="cart-body custom-scroll" v-if="cartItems.length > 0">
+              <div class="cart-item-modern" v-for="(item, index) in cartItems" :key="index">
+                <div class="item-img-box">
+                  <img :src="getImageUrl(item.image)" :alt="item.name" />
                 </div>
-                <button class="remove-item-btn" @click.stop="removeItem(index)">
-                  <i class="fa-solid fa-xmark"></i>
+                <div class="item-details">
+                  <p class="item-name-text">{{ item.name }}</p>
+                  <div class="item-meta">
+                    <span class="item-price-tag">৳{{ item.price }}</span>
+                    <span class="item-qty-tag">Qty: {{ item.qty }}</span>
+                  </div>
+                </div>
+                <button class="remove-btn-modern" @click.stop="removeItem(index)">
+                  <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
             </div>
-            <div class="empty-msg" v-else>Your cart is empty!</div>
-            <div class="cart-footer" v-if="cartItems.length > 0">
-              <div class="total-summary">
-                <span>Total:</span>
-                <span>৳{{ totalPrice }}</span>
+
+            <div class="empty-cart-ui" v-else>
+              <i class="fa-solid fa-basket-shopping"></i>
+              <p>Your bag is empty!</p>
+            </div>
+
+            <div class="cart-footer-modern" v-if="cartItems.length > 0">
+              <div class="total-row">
+                <span>Total Amount:</span>
+                <span class="total-val">৳{{ totalPrice }}</span>
               </div>
-              <router-link to="/checkoutpage" class="view-cart-btn" @click="cartOpen = false">
-                Checkout Now
+              <router-link to="/checkoutpage" class="checkout-btn-modern" @click="cartOpen = false">
+                Proceed to Checkout
               </router-link>
             </div>
           </div>
@@ -88,45 +102,29 @@
 
     <div :class="['mobile-menu', { open: menuOpen }]">
       <div class="mobile-header">
-        <div class="logo">
-          <span class="logo-red">R</span>YZE
-        </div>
-        <div class="close" @click="toggleMenu">
-          <i class="fa-solid fa-xmark"></i>
-        </div>
+        <div class="logo"><span class="logo-red">R</span>YZE</div>
+        <div class="close" @click="toggleMenu"><i class="fa-solid fa-xmark"></i></div>
       </div>
-      
       <div class="mobile-search-area">
         <div class="mobile-search-box">
           <input type="text" placeholder="Search products..." v-model="search" />
           <i class="fa-solid fa-magnifying-glass"></i>
         </div>
       </div>
-
       <nav class="mobile-links">
         <router-link v-for="(link, index) in links" :key="index" :to="link.path" class="nav-link mobile-nav-fix" @click="toggleMenu">
           {{ link.name }}
         </router-link>
-        
-        <button v-if="!isLoggedIn" class="mobile-signin-btn" @click="openLoginFromMobile" style="border:none; cursor:pointer;">
-          Sign in
-        </button>
+        <button v-if="!isLoggedIn" class="mobile-signin-btn" @click="openLoginFromMobile" style="border:none; cursor:pointer; background: #e4002b;">Sign in</button>
         <template v-else>
           <div class="user-profile-container" style="margin-bottom: 10px;">
-            <div class="user-trigger mobile-trigger-style" @click="userMenuOpen = !userMenuOpen">
+            <div class="user-trigger mobile-user-layout">
               <i class="fa-solid fa-circle-user profile-icon"></i>
-              <span class="user-name-text">{{ userName }}</span>
-              <i class="fa-solid fa-chevron-down" :class="{ 'rotate-icon': userMenuOpen }"></i>
-            </div>
-            <div :class="['user-dropdown-premium mobile-dropdown-adjust', { show: userMenuOpen }]">
-              <router-link :to="dashboardPath" class="u-item" @click="toggleMenu(); userMenuOpen = false">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
-              </router-link>
+              <span class="user-name-centered">{{ userName }}</span>
             </div>
           </div>
-          <button @click="handleLogout" class="mobile-signin-btn" style="border:none; cursor:pointer; background: #e4002b;">
-            Logout
-          </button>
+          <router-link :to="dashboardPath" class="mobile-signin-btn" @click="toggleMenu" style="text-decoration: none; background: #007bff; margin-bottom: 10px; display: block;">Dashboard</router-link>
+          <button @click="handleLogout" class="mobile-signin-btn" style="border:none; cursor:pointer; background: #e4002b;">Logout</button>
         </template>
       </nav>
     </div>
@@ -174,6 +172,9 @@ export default {
     closeUserMenu() { this.userMenuOpen = false; },
     openLogin() { this.isLoginModalOpen = true; },
     openLoginFromMobile() { this.menuOpen = false; this.isLoginModalOpen = true; },
+    getImageUrl(img) {
+      return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
+    },
     checkUserAuth() {
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user"));
@@ -240,7 +241,7 @@ export default {
 </script>
 
 <style scoped>
-/* সব CSS হুবহু আপনার দেওয়া কোড থেকে রাখা হয়েছে */
+/* --- ORIGINAL BASE NAVBAR PIXELS --- */
 .navbar { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; background: #050e3c; box-sizing: border-box; position: sticky; top: 0; z-index: 999; }
 .left-section { display: flex; align-items: center; gap: 25px; }
 .left-section .logo { font-size: 28px; font-weight: 700; color: white; }
@@ -254,7 +255,7 @@ export default {
 .nav-link:hover::after, .router-link-exact-active::after { transform: scaleX(1); }
 .signin { background: #e4002b; color: white; padding: 6px 18px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: 0.3s; }
 
-/* প্রোফাইল ড্রপডাউন */
+/* --- USER DROPDOWN (ORIGINAL) --- */
 .user-profile-container { position: relative; }
 .user-trigger { display: flex; align-items: center; gap: 10px; color: white; cursor: pointer; padding: 6px 14px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; font-size: 14px; transition: 0.3s ease; }
 .profile-icon { font-size: 18px; color: #e4002b; }
@@ -266,20 +267,58 @@ export default {
 .u-item:hover { background: #f1f1f1; padding-left: 20px; }
 .logout-btn-premium { background-color: #e4002b !important; color: #fff !important; font-weight: 600; margin: 5px; width: calc(100% - 10px); border-radius: 6px; }
 
-/* মোবাইল স্পেশাল ড্রপডাউন ডিজাইন ফিক্স */
-.mobile-trigger-style { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; justify-content: space-between; box-sizing: border-box; }
-.mobile-dropdown-adjust { position: relative; top: 5px; width: 100%; box-shadow: none; border: 1px solid #eee; }
-
-/* বাকি সব স্টাইল হুবহু আপনার কোড */
+/* --- PREMIUM CART DROPDOWN --- */
 .cart-wrapper { position: relative; }
 .cart { font-size: 22px; color: white; cursor: pointer; position: relative; }
 .cart-count { position: absolute; top: -8px; right: -10px; background: #e4002b; color: white; font-size: 11px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; }
-.cart-dropdown { position: absolute; top: 45px; right: -10px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid #eee; }
-.cart-dropdown.show { display: flex; }
-.cart-header { padding: 15px; color: #050e3c; font-weight: 800; border-bottom: 1px solid #eee; text-align: center; }
-.view-cart-btn { display: block; background: #050e3c; color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-.hamburger { display: none; font-size: 24px; color: white; cursor: pointer; }
 
+.cart-dropdown-premium { 
+  position: absolute; top: 45px; right: -10px; width: 340px; 
+  background: white; border-radius: 16px; 
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); 
+  display: none; flex-direction: column; 
+  z-index: 1000; border: 1px solid #f1f1f1; 
+  overflow: hidden; animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.cart-dropdown-premium.show { display: flex; }
+
+.cart-header-modern { padding: 16px 20px; background: #050e3c; color: white; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+.close-cart-mobile { display: none; cursor: pointer; font-size: 20px; }
+
+.cart-body { max-height: 380px; overflow-y: auto; padding: 10px; }
+.cart-item-modern { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #f8f8f8; transition: 0.2s; }
+.cart-item-modern:hover { background: #f9f9f9; }
+.item-img-box { width: 60px; height: 60px; background: #fff; border-radius: 8px; border: 1px solid #eee; padding: 4px; flex-shrink: 0; }
+.item-img-box img { width: 100%; height: 100%; object-fit: contain; }
+.item-details { flex: 1; }
+.item-name-text { font-size: 13px; font-weight: 700; color: #333; margin: 0 0 4px 0; line-height: 1.3; }
+.item-meta { display: flex; gap: 10px; font-size: 12px; }
+.item-price-tag { color: #e4002b; font-weight: 800; }
+.item-qty-tag { color: #777; font-weight: 500; }
+
+.remove-btn-modern { background: none; border: none; color: #ccc; cursor: pointer; transition: 0.2s; padding: 5px; }
+.remove-btn-modern:hover { color: #e4002b; transform: scale(1.1); }
+
+.empty-cart-ui { padding: 40px 20px; text-align: center; color: #bbb; }
+.empty-cart-ui i { font-size: 50px; margin-bottom: 10px; opacity: 0.3; }
+
+.cart-footer-modern { padding: 20px; background: #fcfcfc; border-top: 1px solid #eee; }
+.total-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 15px; font-weight: 700; color: #333; }
+.total-val { color: #e4002b; font-size: 18px; }
+
+/* FIXED BUTTON BOX-SIZING */
+.checkout-btn-modern { 
+  display: block; width: 100%; background: #e4002b; color: white; 
+  text-align: center; padding: 14px; border-radius: 10px; 
+  text-decoration: none; font-weight: 700; transition: 0.3s; 
+  box-shadow: 0 8px 15px rgba(228, 0, 43, 0.2);
+  box-sizing: border-box; /* Fixed: keeps button within footer container */
+}
+.checkout-btn-modern:hover { background: #c50025; transform: translateY(-2px); }
+
+/* --- ORIGINAL MOBILE SIDEBAR DESIGN --- */
+.hamburger { display: none; font-size: 24px; color: white; cursor: pointer; }
 .mobile-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100vh; background: #050e3c; padding: 25px 20px; display: flex; flex-direction: column; transition: left 0.4s ease; z-index: 1000; color: white; }
 .mobile-menu.open { left: 0; }
 .mobile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -294,7 +333,21 @@ export default {
   .mobile-search-box input { width: 100%; padding: 12px 15px; border-radius: 8px; border: none; background: #fff; color: #050e3c; box-sizing: border-box; }
   .mobile-search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #050e3c; }
   .mobile-links { display: flex; flex-direction: column; gap: 20px; }
-  .mobile-signin-btn { margin-top: -10px; display: block; width: 100%; background: #e4002b; color: white; padding: 14px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 10px rgba(228, 0, 43, 0.3); box-sizing: border-box; }
+  .mobile-signin-btn { display: block; width: 100%; color: white; padding: 14px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); box-sizing: border-box; }
+  
+  .cart-dropdown-premium { position: fixed; top: 0; right: 0; width: 100%; height: 100vh; border-radius: 0; animation: slideLeft 0.3s ease; }
+  @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .close-cart-mobile { display: block; }
+  .cart-body { max-height: calc(100vh - 200px); }
+  .item-name-text { font-size: 15px; }
+
+  .mobile-user-layout { position: relative; display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; box-sizing: border-box; cursor: default; }
+  .user-name-centered { flex: 1; text-align: center; margin-right: 28px; }
   .mobile-nav-fix { width: fit-content; }
 }
+
+/* Custom Scrollbar */
+.custom-scroll::-webkit-scrollbar { width: 5px; }
+.custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
 </style>

@@ -19,6 +19,18 @@ class CustomerProductController extends Controller
         return response()->json($products);
     }
 
+
+
+    public function getAllProducts()
+{
+    // সব ভেন্ডরের প্রোডাক্ট একসাথে নিয়ে আসবে (মার্কেটপ্লেসের জন্য)
+    $products = CustomerProduct::latest()->get();
+    
+    return response()->json($products);
+}
+
+
+
     // 🔹 Store
 public function store(Request $request)
 {

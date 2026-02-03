@@ -45,7 +45,7 @@
               </div>
               <div class="field flex-1">
                 <label>Category</label>
-                <input type="text" v-model="item.form.category" readonly class="readonly-input" />
+                <input type="text" v-model="item.form.category" required placeholder="Enter category" />
               </div>
             </div>
 
@@ -116,7 +116,9 @@ import axios from "axios";
 const vendorStocks = ref([]);
 const fileInputs = ref([]);
 const loading = ref(false);
-const presetColors = ['#e4002b', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'];
+
+// আপনার ডেটা অনুযায়ী ৪টি স্পেসিফিক কালার
+const presetColors = ['#1abc9c', '#ff4d4d', '#f39c12', '#000000'];
 
 const token = localStorage.getItem('vendortoken') || localStorage.getItem('token');
 
@@ -136,7 +138,7 @@ const createNewItem = () => ({
     quantity: 1,
     details: "",
     image: null,
-    theme_color: "#e4002b"
+    theme_color: "#1abc9c" // ডিফল্ট প্রথম কালারটি সেট থাকবে
   }
 });
 
@@ -170,7 +172,7 @@ const onStockSelect = (index) => {
     const p = stock.admin_stock.product;
     item.form.vendor_stock_id = stock.id;
     item.form.product_id = p?.id;
-    item.form.category = p?.category || "General";
+    item.form.category = p?.category || ""; 
     item.form.name = p?.product_name || p?.name || "";
     item.form.brand = p?.brand || "";
     item.maxQty = stock.quantity;
@@ -202,7 +204,6 @@ const submitForm = async () => {
       if (!item.selectedStockId) continue;
       
       const formData = new FormData();
-      // Append all form fields
       Object.keys(item.form).forEach(key => {
         if (item.form[key] !== null && item.form[key] !== undefined) {
           formData.append(key, item.form[key]);
@@ -236,7 +237,7 @@ onMounted(getStocks);
 </script>
 
 <style scoped>
-/* আপনার আগের CSS স্টাইলগুলো এখানে হুবহু থাকবে */
+/* স্টাইল আগের মতোই আছে, শুধু ক্যাটেগরি ইনপুট এবং কালার সেকশন নিখুঁত করা হয়েছে */
 .page { padding: 40px; min-height: 100vh; font-family: sans-serif; background: #f8f9fa;}
 .card { background: #fff; padding: 30px; border-radius: 8px; max-width: 950px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 .title { font-size: 22px; font-weight: 600; margin-bottom: 25px; color: #333; text-align: center; }

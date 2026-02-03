@@ -47,6 +47,7 @@ import AddCustomerProduct from '../Dashboard/Vendordashboard/Vendor-components/A
 import HomeProducts from '../Website/WebsitePages/HomeProducts.vue'
 import CustomerReviews from '../Website/WebsitePages/CustomerReviews.vue'
 import CustomerProductManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerProductManage.vue'
+import CustomerOrderManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerOrderManage.vue'
 
 
 
@@ -118,6 +119,7 @@ const routes = [
       { path: '/vendor-inventory/vendor_purchase-payment', component: VendorPurchasePayment },
       { path: '/ui-product/add-product', component: AddCustomerProduct },
       { path: '/ui-product/manage-product', component: CustomerProductManage },
+      { path: '/customer-hub/customer-order', component: CustomerOrderManage },
     ],
   },
 

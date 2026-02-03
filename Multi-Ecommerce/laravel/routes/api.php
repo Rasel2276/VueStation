@@ -90,6 +90,7 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::put('/vendor/customer-products/{id}', [CustomerProductController::class, 'update']);
     Route::delete('/vendor/customer-products/{id}', [CustomerProductController::class, 'destroy']);
     Route::get('vendor/get-stocks', [CustomerProductController::class, 'getVendorStocks']);
+    Route::get('marketplace/all-products', [CustomerProductController::class, 'getAllProducts']);
 });
 
 
