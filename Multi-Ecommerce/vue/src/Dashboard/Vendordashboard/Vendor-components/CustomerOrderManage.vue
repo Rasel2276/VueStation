@@ -29,7 +29,7 @@
               <td>#{{ order.id }}</td>
               <td style="font-weight:700; color:#2563eb">{{ order.order_id }}</td>
               <td>
-                <img :src="order.image" class="category-image" />
+                <img :src="getImageUrl(order.image)" class="category-image" />
               </td>
               <td style="font-weight:600">{{ order.product_name }}</td>
               <td>{{ order.customer_name }}</td>
@@ -60,6 +60,10 @@
                       <button @click="updateStatus(order.id, 'Delivered')" style="color: #16a34a;">
                         <i class="fa-solid fa-house"></i> Mark Delivered
                       </button>
+                      
+                      <button @click="updateStatus(order.id, 'Cancelled')" style="color: #64748b;">
+                        <i class="fa-solid fa-ban"></i> Cancel Order
+                      </button>
 
                       <button class="delete-btn" @click="deleteOrder(order.id)">
                         <i class="fa-solid fa-trash"></i> Delete Order
@@ -89,7 +93,7 @@
             <div class="detail-section">
               <h4 class="section-title">Product Information</h4>
               <div class="product-preview">
-                <img :src="selectedOrder.image" class="large-preview-img" />
+                <img :src="getImageUrl(selectedOrder.image)" class="large-preview-img" />
                 <div>
                   <p><strong>Product:</strong> {{ selectedOrder.product_name }}</p>
                   <p><strong>Price (Per Unit):</strong> ৳ {{ selectedOrder.price / selectedOrder.qty }}</p>
@@ -134,51 +138,56 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
+import axios from 'axios'
 
 const search = ref('')
 const dropdownOpen = ref(null)
 const dropdownPosition = ref({})
 const showViewModal = ref(false)
 const selectedOrder = ref({})
+const orders = ref([])
 
-const orders = ref([
-  {
-    id: 1,
-    order_id: 'ORD-5521',
-    product_name: 'Premium Leather Wallet',
-    image: 'https://via.placeholder.com/150',
-    customer_name: 'Abir Rahman',
-    phone: '01712345678',
-    thana: 'Mirpur',
-    area: 'DOHS',
-    address: 'Road 5, House 12, Apt 4A',
-    payment_method: 'Cash On Delivery',
-    status: 'Pending',
-    qty: 2,
-    price: 1500
-  },
-  {
-    id: 2,
-    order_id: 'ORD-9902',
-    product_name: 'Wireless Bluetooth Earbuds',
-    image: 'https://via.placeholder.com/150',
-    customer_name: 'Sarah Khan',
-    phone: '01987654321',
-    thana: 'Uttara',
-    area: 'Sector 4',
-    address: 'Road 12, House 3',
-    payment_method: 'bKash',
-    status: 'Confirmed',
-    qty: 1,
-    price: 2200
+const getImageUrl = (img) => {
+  if (!img) return 'https://via.placeholder.com/150';
+  if (img.startsWith('http')) return img;
+  return `http://127.0.0.1:8000/ui_product_images/${img}`;
+}
+
+const fetchOrders = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get("http://127.0.0.1:8000/api/vendor/orders", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    orders.value = response.data;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
   }
-])
+}
 
-const updateStatus = (id, newStatus) => {
-  const order = orders.value.find(o => o.id === id)
-  if (order) order.status = newStatus
-  dropdownOpen.value = null
+onMounted(() => {
+  fetchOrders();
+});
+
+const updateStatus = async (id, newStatus) => {
+  try {
+    const token = localStorage.getItem('token');
+    // আপনার Route URL: /vendor/order-status/{id}
+    const response = await axios.post(`http://127.0.0.1:8000/api/vendor/order-status/${id}`, 
+    { status: newStatus },
+    { headers: { Authorization: `Bearer ${token}` } });
+    
+    // UI Update (Live change)
+    const order = orders.value.find(o => o.id === id)
+    if (order) order.status = newStatus
+    dropdownOpen.value = null
+    
+    alert(response.data.message || "Status updated successfully!");
+  } catch (error) {
+    // যদি স্টক না থাকে বা কোনো এরর হয়, তাহলে এরর মেসেজ দেখাবে
+    alert(error.response?.data?.message || "Failed to update status.");
+  }
 }
 
 const toggleDropdown = async (id, event) => {
@@ -200,10 +209,20 @@ const openViewModal = (order) => {
   dropdownOpen.value = null
 }
 
-const deleteOrder = (id) => {
-  if(confirm('Are you sure?')) {
-    orders.value = orders.value.filter(o => o.id !== id)
-    dropdownOpen.value = null
+const deleteOrder = async (id) => {
+  if(confirm('Are you sure you want to delete this order?')) {
+    try {
+      const token = localStorage.getItem('token');
+      // আপনার Route URL: /vendor/order-delete/{id}
+      await axios.delete(`http://127.0.0.1:8000/api/vendor/order-delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      orders.value = orders.value.filter(o => o.id !== id)
+      dropdownOpen.value = null
+      alert("Order deleted.");
+    } catch (error) {
+      alert("Failed to delete order.");
+    }
   }
 }
 
@@ -227,54 +246,41 @@ const filteredOrders = computed(() => {
 .title { text-align:center; font-size:26px; font-weight:600; margin-bottom:30px; color:#1e293b; }
 .search-input { width:100%; max-width:350px; padding:0.7rem 1rem; margin-bottom:1.5rem; border:1px solid #e2e8f0; border-radius:8px; outline:none; }
 .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-
 .table-responsive { width:100%; overflow-x:auto; border-radius:8px; }
 .custom-category-table { width:100%; border-collapse:collapse; }
 .custom-category-table th, .custom-category-table td { padding:14px 15px; text-align:left; border-bottom:1px solid #f1f5f9; font-size:14px; }
 .custom-category-table th { background-color:#f8fafc; font-weight:600; color: #64748b; text-transform: uppercase; font-size: 12px; }
-
-.status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+.status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-transform: capitalize;}
 .pending { background: #fef9c3; color: #854d0e; }
 .confirmed { background: #dbeafe; color: #1e40af; }
 .shipped { background: #e0e7ff; color: #3730a3; }
 .delivered { background: #dcfce7; color: #166534; }
-
+.cancelled { background: #fee2e2; color: #b91c1c; }
 .category-image { width:50px; height:50px; object-fit:cover; border-radius:6px; border: 1px solid #e2e8f0; }
 .dropdown-btn { padding:7px 14px; border:none; border-radius:6px; background:#2563eb; color:white; cursor:pointer; font-weight:600; font-size: 13px; }
-
 .dropdown-menu-absolute { background:white; box-shadow:0 10px 25px rgba(0,0,0,0.15); border-radius:8px; overflow:hidden; min-width:160px; border: 1px solid #f1f5f9; }
 .dropdown-menu-absolute button { display:block; width:100%; border:none; background:none; padding:12px 15px; cursor:pointer; text-align:left; font-size:14px; transition: 0.2s; }
 .dropdown-menu-absolute button:hover { background: #f8fafc; }
 .view-btn { color:#2563eb; font-weight: 500; }
 .delete-btn { color:#dc2626; font-weight: 500; }
-
 .order-modal { max-width: 700px !important; }
 .order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; }
 .full-width { grid-column: span 2; }
 .detail-section { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #f1f5f9; }
 .section-title { font-size: 14px; color: #64748b; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-transform: uppercase; }
-
 .product-preview { display: flex; gap: 15px; align-items: center; }
 .large-preview-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
 .price-text { color: #2563eb; font-weight: 800; font-size: 16px; }
-
 .info-list p { margin-bottom: 8px; font-size: 14px; color: #334155; }
 .payment-badge { background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 6px; display: inline-block; font-size: 14px; }
-
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
 .modal-content { background: white; padding: 30px; border-radius: 16px; width: 95%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .close-modal { background: #f1f5f9; border: none; font-size: 20px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; }
-
 .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
 .cancel-btn { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569; }
 .save-btn { background: #2563eb; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-@media (max-width: 600px) {
-  .order-details-grid { grid-template-columns: 1fr; }
-  .full-width { grid-column: span 1; }
-}
+@media (max-width: 600px) { .order-details-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
 </style>

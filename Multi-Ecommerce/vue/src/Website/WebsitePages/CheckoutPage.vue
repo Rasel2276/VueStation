@@ -132,8 +132,8 @@
               </div>
             </div>
 
-            <button class="confirm-order-btn" @click="handleCheckout">
-              Place Order Now ৳{{ grandTotal }}
+            <button class="confirm-order-btn" @click="handleCheckout" :disabled="loading">
+              {{ loading ? 'Processing...' : 'Place Order Now ৳' + grandTotal }}
             </button>
 
             <p class="trust-note">
@@ -158,9 +158,11 @@
 <script setup>
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
 const cartItems = ref([]);
+const loading = ref(false);
 
 const form = reactive({ 
   name: "", 
@@ -173,7 +175,6 @@ const form = reactive({
 
 const shipping = ref(100); 
 
-// ইমেজ ইউআরএল জেনারেটর (মার্কেটপ্লেস এর সাথে সেম)
 const getImageUrl = (img) => {
   return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
 };
@@ -187,7 +188,6 @@ const loadCart = () => {
 
 const saveCart = () => {
   localStorage.setItem('shopping_cart', JSON.stringify(cartItems.value));
-  // নেভবার আপডেট করার ইভেন্ট
   window.dispatchEvent(new CustomEvent('cart-updated'));
 };
 
@@ -222,24 +222,53 @@ const removeItem = (index) => {
   }
 };
 
-const handleCheckout = () => {
-  if(!form.name || !form.phone || !form.thana) {
+// logic updated to match your exact controller requirements
+const handleCheckout = async () => {
+  if(!form.name || !form.phone || !form.thana || !form.area || !form.homeInfo) {
     return alert("Please provide full delivery information!");
   }
+
+  loading.value = true;
   
-  // এখানে আপনি আপনার এপিআই কল করতে পারবেন
-  alert(`Order Placed Successfully!\nTotal: ৳${grandTotal.value}`);
-  
-  cartItems.value = [];
-  saveCart();
-  router.push('/');
+  try {
+    const token = localStorage.getItem('token');
+    
+    const orderData = {
+      customer_name: form.name,
+      phone: form.phone,
+      thana: form.thana,
+      area: form.area,
+      address: form.homeInfo,
+      payment_method: form.payment === 'cod' ? 'Cash On Delivery' : 'Online Payment',
+      cartItems: cartItems.value 
+    };
+
+    await axios.post("http://127.0.0.1:8000/api/customer/place-order", orderData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    alert("Order Placed Successfully!");
+    
+    cartItems.value = [];
+    saveCart();
+    router.push('/');
+    
+  } catch (error) {
+    console.error("Order error:", error);
+    if (error.response && error.response.status === 422) {
+        alert("Validation Error: Please check all fields.");
+    } else {
+        alert(error.response?.data?.message || "Something went wrong!");
+    }
+  } finally {
+    loading.value = false;
+  }
 };
 
-const goShopping = () => router.push('/'); // আপনার শপ পেজ অনুযায়ী রাউট
+const goShopping = () => router.push('/'); 
 </script>
 
 <style scoped>
-/* আপনার দেওয়া CSS একদম হুবহু রাখা হয়েছে */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 .checkout-wrapper { background-color: #f4f7fa; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .container { width: 100%; max-width: 1200px; }

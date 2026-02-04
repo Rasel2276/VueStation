@@ -5,18 +5,20 @@ namespace App\Http\Controllers\Vendor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Vendor\CustomerOrder;
+use App\Models\Vendor\VendorStock;
+use App\Models\Admin\AdminStock; // এডমিন স্টক মডেল যুক্ত করা হয়েছে
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
     /**
      * 1. Vendor Orders List
-     * Ei function-ti vendor-er dashboard-e tar nizer order gulo dekhabe.
+     * ভেন্ডর ড্যাশবোর্ডে শুধুমাত্র লগইন করা ভেন্ডরের অর্ডারগুলো দেখাবে।
      */
     public function index()
     {
-        // Shudhu logged-in vendor-er order gulo niye ashbe
         $orders = CustomerOrder::where('vendor_id', Auth::id())
                     ->latest()
                     ->get();
@@ -26,7 +28,7 @@ class OrderController extends Controller
 
     /**
      * 2. Store Order (From Checkout)
-     * Customer jokhon order place korbe, tokhon eita kaj korbe.
+     * কাস্টমার যখন চেকআউট করবে তখন এই ফাংশনটি কল হবে।
      */
     public function storeOrder(Request $request)
     {
@@ -39,14 +41,12 @@ class OrderController extends Controller
             'cartItems'     => 'required|array',
         ]);
 
-        // Ekta common Order ID generate kora (Ex: ORD-AB123)
         $commonOrderId = 'ORD-' . strtoupper(Str::random(5));
 
-        // Cart-e thaka protiti product-er jonno alada entry hobe
         foreach ($request->cartItems as $item) {
             CustomerOrder::create([
                 'order_id'      => $commonOrderId,
-                'product_id'    => $item['id'],
+                'product_id'    => $item['id'], // এটি অরিজিনাল Product ID
                 'product_name'  => $item['name'],
                 'image'         => $item['image'] ?? null,
                 'qty'           => $item['qty'],
@@ -56,7 +56,7 @@ class OrderController extends Controller
                 'thana'         => $request->thana,
                 'area'          => $request->area,
                 'address'       => $request->address,
-                'vendor_id'     => $item['vendor_id'], // Ei product-ta jar tar ID
+                'vendor_id'     => $item['vendor_id'],
                 'payment_method'=> $request->payment_method ?? 'Cash On Delivery',
                 'status'        => 'Pending',
             ]);
@@ -70,26 +70,78 @@ class OrderController extends Controller
 
     /**
      * 3. Update Status
-     * Vendor tar dashboard theke status (Confirmed, Shipped etc) change korle.
+     * ভেন্ডর যখন স্ট্যাটাস আপডেট করবে তখন স্টক অটোমেটিক ম্যানেজ হবে।
      */
-    public function updateStatus(Request $request, $id)
-    {
-        $order = CustomerOrder::where('vendor_id', Auth::id())->findOrFail($id);
-        
-        $request->validate([
-            'status' => 'required|string'
-        ]);
+public function updateStatus(Request $request, $id)
+{
+    $request->validate(['status' => 'required|string']);
 
-        $order->update([
-            'status' => $request->status
-        ]);
+    $vendor_id = Auth::id();
+    $order = CustomerOrder::where('vendor_id', $vendor_id)->findOrFail($id);
+    
+    $newStatus = $request->status;
+    $oldStatus = $order->status;
 
-        return response()->json([
-            'message' => 'Order status updated to ' . $request->status,
-            'data' => $order
-        ]);
+    DB::beginTransaction();
+
+    try {
+        // ১. কনফার্ম করলে স্টকের লজিক
+        if ($newStatus == 'Confirmed' && $oldStatus != 'Confirmed') {
+            $productInfo = DB::table('customer_products')
+                            ->where('id', $order->product_id)
+                            ->first();
+
+            if (!$productInfo) {
+                throw new \Exception('Product mapping not found in customer products!');
+            }
+
+            $vendorStock = VendorStock::where('vendor_id', $vendor_id)
+                            ->where('id', $productInfo->vendor_stock_id) 
+                            ->first();
+
+            if (!$vendorStock) {
+                throw new \Exception('Stock record not found in your inventory!');
+            }
+
+            if ($vendorStock->quantity < $order->qty) {
+                throw new \Exception('Insufficient stock! Available: ' . $vendorStock->quantity);
+            }
+
+            $vendorStock->decrement('quantity', $order->qty);
+            
+            // কনফার্ম এর জন্য কাস্টম মেসেজ
+            $responseMessage = "Order confirmed and stock updated successfully!";
+        } 
+        else {
+            // অন্য সব স্ট্যাটাসের জন্য ডাইনামিক মেসেজ (Shipped, Delivered, etc.)
+            $responseMessage = "Order status updated to " . $newStatus . " successfully!";
+        }
+
+        // ২. কনফার্ম থেকে ক্যানসেল করলে স্টক ফেরত দেওয়া
+        if ($newStatus == 'Cancelled' && $oldStatus == 'Confirmed') {
+            $productInfo = DB::table('customer_products')->where('id', $order->product_id)->first();
+            if ($productInfo) {
+                $vendorStock = VendorStock::where('vendor_id', $vendor_id)
+                                ->where('id', $productInfo->vendor_stock_id)
+                                ->first();
+                if ($vendorStock) {
+                    $vendorStock->increment('quantity', $order->qty);
+                }
+            }
+            $responseMessage = "Order cancelled and stock returned successfully!";
+        }
+
+        // ৩. ফাইনাল আপডেট
+        $order->update(['status' => $newStatus]);
+        DB::commit();
+
+        return response()->json(['message' => $responseMessage]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['message' => 'Error: ' . $e->getMessage()], 400);
     }
-
+}
     /**
      * 4. Delete Order
      */

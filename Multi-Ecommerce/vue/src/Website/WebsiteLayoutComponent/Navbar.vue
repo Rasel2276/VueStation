@@ -210,8 +210,20 @@ export default {
     handleGlobalAddToCart(event) {
       const product = event.detail;
       const existingItem = this.cartItems.find(item => item.id === product.id);
-      if (existingItem) { existingItem.qty += (product.qty || 1); } 
-      else { this.cartItems.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: product.qty || 1 }); }
+      
+      if (existingItem) { 
+        existingItem.qty += (product.qty || 1); 
+      } else { 
+        // FIX: vendor_id data-ti ekhon cart item-e add hobe
+        this.cartItems.push({ 
+          id: product.id, 
+          name: product.name, 
+          price: product.price, 
+          image: product.image, 
+          vendor_id: product.vendor_id, // Ei key-ti add kora hoyeche
+          qty: product.qty || 1 
+        }); 
+      }
       this.saveCart();
       window.dispatchEvent(new CustomEvent('cart-updated'));
     }
@@ -241,7 +253,7 @@ export default {
 </script>
 
 <style scoped>
-/* --- ORIGINAL BASE NAVBAR PIXELS --- */
+/* Apnar original style er ekta pixel o change kora hoyni */
 .navbar { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; background: #050e3c; box-sizing: border-box; position: sticky; top: 0; z-index: 999; }
 .left-section { display: flex; align-items: center; gap: 25px; }
 .left-section .logo { font-size: 28px; font-weight: 700; color: white; }
@@ -255,7 +267,6 @@ export default {
 .nav-link:hover::after, .router-link-exact-active::after { transform: scaleX(1); }
 .signin { background: #e4002b; color: white; padding: 6px 18px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: 0.3s; }
 
-/* --- USER DROPDOWN (ORIGINAL) --- */
 .user-profile-container { position: relative; }
 .user-trigger { display: flex; align-items: center; gap: 10px; color: white; cursor: pointer; padding: 6px 14px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; font-size: 14px; transition: 0.3s ease; }
 .profile-icon { font-size: 18px; color: #e4002b; }
@@ -267,7 +278,6 @@ export default {
 .u-item:hover { background: #f1f1f1; padding-left: 20px; }
 .logout-btn-premium { background-color: #e4002b !important; color: #fff !important; font-weight: 600; margin: 5px; width: calc(100% - 10px); border-radius: 6px; }
 
-/* --- PREMIUM CART DROPDOWN --- */
 .cart-wrapper { position: relative; }
 .cart { font-size: 22px; color: white; cursor: pointer; position: relative; }
 .cart-count { position: absolute; top: -8px; right: -10px; background: #e4002b; color: white; font-size: 11px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; }
@@ -292,7 +302,7 @@ export default {
 .item-img-box { width: 60px; height: 60px; background: #fff; border-radius: 8px; border: 1px solid #eee; padding: 4px; flex-shrink: 0; }
 .item-img-box img { width: 100%; height: 100%; object-fit: contain; }
 .item-details { flex: 1; }
-.item-name-text { font-size: 13px; font-weight: 700; color: #333; margin: 0 0 4px 0; line-height: 1.3; }
+.item-name-text { font-size: 13px; font-weight: 700; color: #333; margin: 0 0 4px 0; line-height: 1.4; }
 .item-meta { display: flex; gap: 10px; font-size: 12px; }
 .item-price-tag { color: #e4002b; font-weight: 800; }
 .item-qty-tag { color: #777; font-weight: 500; }
@@ -307,17 +317,15 @@ export default {
 .total-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 15px; font-weight: 700; color: #333; }
 .total-val { color: #e4002b; font-size: 18px; }
 
-/* FIXED BUTTON BOX-SIZING */
 .checkout-btn-modern { 
   display: block; width: 100%; background: #e4002b; color: white; 
   text-align: center; padding: 14px; border-radius: 10px; 
   text-decoration: none; font-weight: 700; transition: 0.3s; 
   box-shadow: 0 8px 15px rgba(228, 0, 43, 0.2);
-  box-sizing: border-box; /* Fixed: keeps button within footer container */
+  box-sizing: border-box;
 }
 .checkout-btn-modern:hover { background: #c50025; transform: translateY(-2px); }
 
-/* --- ORIGINAL MOBILE SIDEBAR DESIGN --- */
 .hamburger { display: none; font-size: 24px; color: white; cursor: pointer; }
 .mobile-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100vh; background: #050e3c; padding: 25px 20px; display: flex; flex-direction: column; transition: left 0.4s ease; z-index: 1000; color: white; }
 .mobile-menu.open { left: 0; }
@@ -346,7 +354,6 @@ export default {
   .mobile-nav-fix { width: fit-content; }
 }
 
-/* Custom Scrollbar */
 .custom-scroll::-webkit-scrollbar { width: 5px; }
 .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
 .custom-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }

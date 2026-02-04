@@ -48,6 +48,7 @@ import HomeProducts from '../Website/WebsitePages/HomeProducts.vue'
 import CustomerReviews from '../Website/WebsitePages/CustomerReviews.vue'
 import CustomerProductManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerProductManage.vue'
 import CustomerOrderManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerOrderManage.vue'
+import OrderTrackingPage from '../Website/WebsitePages/OrderTrackingPage.vue'
 
 
 
@@ -135,6 +136,7 @@ const routes = [
       { path: 'product_details', component: ProductDetails },
       { path: 'checkoutpage', component: CheckoutPage },
       { path: 'customerreviews', component: CustomerReviews },
+      { path: 'ordertracking', component: OrderTrackingPage },
     ],
   },
 ]
@@ -159,7 +161,8 @@ router.beforeEach((to, from, next) => {
     to.path === '/contact'||
     to.path === '/product_details'||
     to.path === '/customerreviews'||
-    to.path === '/checkoutpage'
+    to.path === '/checkoutpage'||
+    to.path === '/ordertracking'
   ) {
     return next()
   }
