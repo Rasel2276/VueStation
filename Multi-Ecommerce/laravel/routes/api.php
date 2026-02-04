@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Vendor\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -63,8 +64,9 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
 
 });
 
-
-
+// Customer order place korar route (Public)
+Route::post('/customer/place-order', [OrderController::class, 'storeOrder']);
+Route::get('marketplace/all-products', [CustomerProductController::class, 'getAllProducts']);
 // Vendor routes with role
 Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/dashboard', function(){
@@ -90,7 +92,12 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::put('/vendor/customer-products/{id}', [CustomerProductController::class, 'update']);
     Route::delete('/vendor/customer-products/{id}', [CustomerProductController::class, 'destroy']);
     Route::get('vendor/get-stocks', [CustomerProductController::class, 'getVendorStocks']);
-    Route::get('marketplace/all-products', [CustomerProductController::class, 'getAllProducts']);
+
+
+    Route::get('/vendor/orders', [OrderController::class, 'index']);
+    Route::post('/vendor/order-status/{id}', [OrderController::class, 'updateStatus']);
+    Route::delete('/vendor/order-delete/{id}', [OrderController::class, 'destroy']);
+    
 });
 
 

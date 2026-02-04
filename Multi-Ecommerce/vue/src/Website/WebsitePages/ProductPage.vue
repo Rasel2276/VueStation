@@ -64,8 +64,13 @@
               <button class="floating-add-cart" @click.stop="addToCart(product)" title="Add to Cart">
                 <i class="fa-solid fa-cart-plus"></i>
               </button>
-              <div class="img-inner-bg"></div>
-              <img :src="getImageUrl(product.image)" :alt="product.name" />
+              
+              <div class="img-inner-bg-box">
+                <img :src="getImageUrl(product.image)" :alt="product.name" />
+                <div class="p-overlay-hover">
+                  <span class="view-text">👁️ Quick View</span>
+                </div>
+              </div>
             </div>
 
             <div class="card-info">
@@ -125,7 +130,7 @@ const mobileMenuOpen = ref(false);
 const page = ref(1);
 const perPage = 8;
 
-const products = ref([]); // ডাটাবেস থেকে আসা প্রোডাক্ট এখানে থাকবে
+const products = ref([]);
 const priceMax = ref(500000);
 const priceMin = 0;
 
@@ -136,18 +141,17 @@ const filters = reactive({
   maxPrice: 500000 
 });
 
-// ইমেজ লোড করার ফাংশন
 const getImageUrl = (img) => {
   return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
 };
 
-// ডাটাবেস থেকে সব প্রোডাক্ট নিয়ে আসা
 const fetchAllProducts = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/marketplace/all-products");
+    const res = await axios.get("http://127.0.0.1:8000/api/marketplace/all-products", {
+       headers: { 'Authorization': null } 
+    });
     products.value = res.data;
     
-    // হাইয়েস্ট প্রাইস সেট করা রেঞ্জ স্লাইডারের জন্য
     if (products.value.length > 0) {
       const highest = Math.max(...products.value.map(p => Number(p.price)));
       priceMax.value = highest > 0 ? highest : 500000;
@@ -158,13 +162,11 @@ const fetchAllProducts = async () => {
   }
 };
 
-// ডাইনামিক ক্যাটেগরি লিস্ট (ইউনিক)
 const categories = computed(() => {
   const cats = products.value.map(p => p.category).filter(c => c);
   return Array.from(new Set(cats));
 });
 
-// ডাইনামিক ব্র্যান্ড লিস্ট (ইউনিক)
 const brands = computed(() => {
   const brnds = products.value.map(p => p.brand).filter(b => b);
   return Array.from(new Set(brnds));
@@ -212,7 +214,6 @@ function addToCart(product) {
 }
 
 function goToDetails(product) {
-  // প্রোডাক্ট অবজেক্টে vendor_id অলরেডি আছে, যা পরবর্তী অর্ডারে লাগবে
   localStorage.setItem('selectedProduct', JSON.stringify(product));
   router.push('/product_details');
 }
@@ -220,7 +221,7 @@ function goToDetails(product) {
 const rangePercent = computed(() => (Math.min(filters.maxPrice, priceMax.value) / priceMax.value) * 100);
 
 onMounted(() => {
-  fetchAllProducts(); // পেজ লোড হলে ডাটা আসবে
+  fetchAllProducts(); 
   const check = () => (isMobile.value = window.innerWidth <= 768);
   check(); 
   window.addEventListener("resize", check);
@@ -228,7 +229,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* আপনার আগের CSS হুবহু এখানে থাকবে (কোনো পিক্সেল পরিবর্তন হবে না) */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 .page { font-family: Inter, system-ui, sans-serif; color: #222; }
 #search-bar { padding: 7px; }
@@ -251,9 +251,40 @@ onMounted(() => {
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .card { background: #fff; border-radius: 12px; padding: 0; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: transform 0.2s; text-align: center; }
 .card:hover { transform: translateY(-5px); }
-.img-wrap { width: 100%; height: 180px; position: relative; display: flex; align-items: center; justify-content: center; background: #fff; padding: 20px; }
-.img-inner-bg { position: absolute; width: 75%; height: 55%; background: #f8f8f8; z-index: 1; }
-.img-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; z-index: 2; filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1)); }
+
+/* --- IMAGE SECTION: HEIGHT REDUCED BY 5PX --- */
+.img-wrap { width: 100%; height: 175px; position: relative; padding: 8px; background: #fff; display: flex; align-items: center; justify-content: center; }
+.img-inner-bg-box { 
+  position: relative; 
+  width: 100%; 
+  height: 100%; 
+  background: #f8fafc; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+.img-inner-bg-box img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; 
+  padding: 5px; 
+  transition: transform 0.6s ease; 
+}
+.card:hover .img-inner-bg-box img { transform: scale(1.08); } 
+
+.p-overlay-hover {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 30, 60, 0.15);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: 0.3s;
+}
+.card:hover .p-overlay-hover { opacity: 1; }
+.view-text { background: #fff; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; color: #001E3C; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+/* -------------------------------------- */
+
 .floating-add-cart { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: #fff; border: none; border-radius: 50%; color: #333; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; transition: 0.2s; }
 .floating-add-cart:hover { background: #333; color: #fff; }
 .card-info { padding: 10px 15px 15px; flex-grow: 1; }
@@ -268,6 +299,17 @@ onMounted(() => {
 .pagination button { padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
 .pagination button.active { background: #e4002b; color: #fff; border-color: #e4002b; }
 .toast { position: fixed; right: 20px; bottom: 20px; background: #fff; border-left: 4px solid #2ecc71; padding: 12px 16px; border-radius: 8px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 10px; z-index: 9999; color: #2ecc71; font-weight: 500; }
+
 @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px) { .mobile-top { display: flex; } .content { flex-direction: column; padding: 12px; margin: 0; } .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; z-index: 1000; width: 80%; max-width: 300px; box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2); } .sidebar.open { left: 0; } .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .img-wrap { height: 140px; } .price { font-size: 18px; } .brand-name { font-size: 13px; } }
+@media (max-width: 768px) { 
+  .mobile-top { display: flex; } 
+  .content { flex-direction: column; padding: 12px; margin: 0; } 
+  .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; z-index: 1000; width: 80%; max-width: 300px; box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2); } 
+  .sidebar.open { left: 0; } 
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } 
+  /* --- MOBILE HEIGHT REDUCED BY 5PX --- */
+  .img-wrap { height: 135px; } 
+  .price { font-size: 18px; } 
+  .brand-name { font-size: 13px; } 
+}
 </style>
