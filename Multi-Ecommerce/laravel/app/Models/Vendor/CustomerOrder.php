@@ -12,6 +12,7 @@ class CustomerOrder extends Model
 
     protected $fillable = [
         'order_id',
+        'user_id',
         'product_id',
         'product_name',
         'image',
@@ -27,6 +28,11 @@ class CustomerOrder extends Model
         'status'
     ];
 
+    // কাস্টমারের সাথে রিলেশন (অর্ডারটি কোন ইউজারের)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     // Vendor-er sathe relationship (Relationship with User table)
     public function vendor()
     {

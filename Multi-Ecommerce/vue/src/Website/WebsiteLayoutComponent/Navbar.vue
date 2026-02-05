@@ -158,6 +158,7 @@ export default {
         { name: "Products", path: "/products" },
         { name: "About", path: "/about" },
         { name: "Contact", path: "/contact" },
+        { name: "Track Order", path: "/ordertracking" },
       ],
       cartItems: []
     };

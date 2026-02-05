@@ -49,6 +49,7 @@ import CustomerReviews from '../Website/WebsitePages/CustomerReviews.vue'
 import CustomerProductManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerProductManage.vue'
 import CustomerOrderManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerOrderManage.vue'
 import OrderTrackingPage from '../Website/WebsitePages/OrderTrackingPage.vue'
+import MyOrderManage from '../Dashboard/Customerdashboard/Customer-components/MyOrderManage.vue'
 
 
 
@@ -102,6 +103,7 @@ const routes = [
     component: CustomerDefaultLayout,
     children: [
       { path: '', component: CustomerDashboard },
+      { path: '/my-order/order', component: MyOrderManage },
     ],
   },
 

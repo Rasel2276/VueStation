@@ -30,43 +30,47 @@ class OrderController extends Controller
      * 2. Store Order (From Checkout)
      * কাস্টমার যখন চেকআউট করবে তখন এই ফাংশনটি কল হবে।
      */
-    public function storeOrder(Request $request)
-    {
-        $request->validate([
-            'customer_name' => 'required|string',
-            'phone'         => 'required|string',
-            'thana'         => 'required',
-            'area'          => 'required',
-            'address'       => 'required',
-            'cartItems'     => 'required|array',
+public function storeOrder(Request $request)
+{
+    $request->validate([
+        'customer_name' => 'required|string',
+        'phone'         => 'required|string',
+        'thana'         => 'required',
+        'area'          => 'required',
+        'address'       => 'required',
+        'cartItems'     => 'required|array',
+    ]);
+
+    $commonOrderId = 'ORD-' . strtoupper(Str::random(5));
+
+    foreach ($request->cartItems as $item) {
+        CustomerOrder::create([
+            'order_id'      => $commonOrderId,
+            
+            // ✅ পরিবর্তন এখানে: এটি লগইন করা থাকলে আইডি দিবে, না থাকলে NULL দিবে।
+            'user_id'       => auth('sanctum')->id(), 
+            
+            'product_id'    => $item['id'], 
+            'product_name'  => $item['name'],
+            'image'         => $item['image'] ?? null,
+            'qty'           => $item['qty'],
+            'price'         => $item['price'] * $item['qty'],
+            'customer_name' => $request->customer_name,
+            'phone'         => $request->phone,
+            'thana'         => $request->thana,
+            'area'          => $request->area,
+            'address'       => $request->address,
+            'vendor_id'     => $item['vendor_id'],
+            'payment_method'=> $request->payment_method ?? 'Cash On Delivery',
+            'status'        => 'Pending',
         ]);
-
-        $commonOrderId = 'ORD-' . strtoupper(Str::random(5));
-
-        foreach ($request->cartItems as $item) {
-            CustomerOrder::create([
-                'order_id'      => $commonOrderId,
-                'product_id'    => $item['id'], // এটি অরিজিনাল Product ID
-                'product_name'  => $item['name'],
-                'image'         => $item['image'] ?? null,
-                'qty'           => $item['qty'],
-                'price'         => $item['price'] * $item['qty'],
-                'customer_name' => $request->customer_name,
-                'phone'         => $request->phone,
-                'thana'         => $request->thana,
-                'area'          => $request->area,
-                'address'       => $request->address,
-                'vendor_id'     => $item['vendor_id'],
-                'payment_method'=> $request->payment_method ?? 'Cash On Delivery',
-                'status'        => 'Pending',
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Order placed successfully!',
-            'order_id' => $commonOrderId
-        ], 201);
     }
+
+    return response()->json([
+        'message' => 'Order placed successfully!',
+        'order_id' => $commonOrderId
+    ], 201);
+}
 
     /**
      * 3. Update Status
@@ -152,4 +156,65 @@ public function updateStatus(Request $request, $id)
 
         return response()->json(['message' => 'Order deleted successfully']);
     }
+
+
+    /**
+ * 5. Track Order for Customer
+ * কাস্টমার যখন Order ID এবং Phone দিয়ে সার্চ করবে।
+ */
+public function trackOrder(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|string',
+        'phone'    => 'required|string',
+    ]);
+
+    // আমরা 'latest()' ব্যবহার করছি কারণ একই আইডিতে মাল্টিপল প্রোডাক্ট থাকতে পারে
+    $order = CustomerOrder::where('order_id', $request->order_id)
+                ->where('phone', $request->phone)
+                ->first(); // প্রথমটি নেওয়া হচ্ছে হেডার ইনফোর জন্য
+
+    if ($order) {
+        return response()->json([
+            'success' => true,
+            'order'   => $order
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'No order found! Please check your Order ID and Phone Number and try again.'
+    ], 404);
+}
+
+
+public function customerOrders(Request $request)
+{
+    // ১. লগইন করা কাস্টমারের আইডি নেওয়া
+    $userId = auth('sanctum')->id();
+
+    // ২. ইউজার আইডি দিয়ে অর্ডারগুলো খুঁজে বের করা
+    // এটি অনেক বেশি নির্ভুল (কারণ একই ফোন নাম্বার অন্য কেউ ব্যবহার করতে পারে, কিন্তু আইডি ইউনিক)
+    $orders = CustomerOrder::where('user_id', $userId)
+                ->orderBy('id', 'desc')
+                ->get();
+
+    return response()->json($orders);
+}
+
+public function cancelOrder($id)
+{
+    $order = CustomerOrder::where('id', $id)
+                ->where('user_id', auth('sanctum')->id()) // নিজের অর্ডার কি না চেক
+                ->first();
+
+    if (!$order) {
+        return response()->json(['message' => 'Order not found'], 404);
+    }
+
+    $order->update(['status' => 'Cancelled']);
+
+    return response()->json(['message' => 'Order cancelled successfully!']);
+}
+
 }

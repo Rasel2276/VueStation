@@ -65,8 +65,10 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
 });
 
 // Customer order place korar route (Public)
+ Route::get('/track-order', [OrderController::class, 'trackOrder']);
 Route::post('/customer/place-order', [OrderController::class, 'storeOrder']);
 Route::get('marketplace/all-products', [CustomerProductController::class, 'getAllProducts']);
+
 // Vendor routes with role
 Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/dashboard', function(){
@@ -97,6 +99,7 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/orders', [OrderController::class, 'index']);
     Route::post('/vendor/order-status/{id}', [OrderController::class, 'updateStatus']);
     Route::delete('/vendor/order-delete/{id}', [OrderController::class, 'destroy']);
+   
     
 });
 
@@ -108,6 +111,9 @@ Route::middleware(['auth:sanctum','role:customer'])->group(function(){
     Route::get('/customer/dashboard', function(){
         return "Customer Dashboard";
     });
+
+    Route::get('/customer/my-orders', [OrderController::class, 'customerOrders']);
+    Route::post('/customer/order-cancel/{id}', [OrderController::class, 'cancelOrder']);
 });
 
 
