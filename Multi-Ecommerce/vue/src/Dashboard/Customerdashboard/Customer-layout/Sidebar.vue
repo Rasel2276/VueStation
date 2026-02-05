@@ -76,26 +76,10 @@
         label: 'My Order',
         children: [
         { icon: '📦', label: 'Order', to: '/my-order/order' },
-        { icon: '🛠️', label: 'Manage Order', to: '/my-order/manage-order' },
+        { icon: '🛠️', label: 'Order Return', to: '/my-order/order_return' },
+        { icon: '🧾', label: 'Return Record', to: '/my-order/order_return_record' },
         ],
     },
-
-    {
-        icon: '🚚',
-        label: 'Order Track',
-        children: [
-        { icon: '🚚', label: 'Order Track', to: '/order-track/order-track' },
-        ],
-    },
-
-    {
-        icon: '📩',
-        label: 'Chats',
-        children: [
-        { icon: '🗨️', label: 'Chat with Seller', to: '/chats/chat-with-vendor' },
-        ],
-    },
-
 
 
     ]

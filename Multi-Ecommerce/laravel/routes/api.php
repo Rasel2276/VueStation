@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminPurchaseController;
 use App\Http\Controllers\Vendor\VendorReturnController;
 use App\Http\Controllers\Vendor\VendorPurchaseController;
 use App\Http\Controllers\Vendor\CustomerProductController;
+use App\Http\Controllers\Vendor\CustomerOrderReturnController;
 
 // Auth routes
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
@@ -99,7 +100,8 @@ Route::middleware(['auth:sanctum','role:vendor'])->group(function(){
     Route::get('/vendor/orders', [OrderController::class, 'index']);
     Route::post('/vendor/order-status/{id}', [OrderController::class, 'updateStatus']);
     Route::delete('/vendor/order-delete/{id}', [OrderController::class, 'destroy']);
-   
+    Route::post('/vendor/return-status/{id}', [CustomerOrderReturnController::class, 'updateReturnStatus']);
+    Route::get('/vendor/customer-returns', [CustomerOrderReturnController::class, 'vendorReturnList']);
     
 });
 
@@ -114,6 +116,9 @@ Route::middleware(['auth:sanctum','role:customer'])->group(function(){
 
     Route::get('/customer/my-orders', [OrderController::class, 'customerOrders']);
     Route::post('/customer/order-cancel/{id}', [OrderController::class, 'cancelOrder']);
+    Route::post('/customer/order-return', [CustomerOrderReturnController::class, 'storeReturnRequest']);
+    Route::get('/customer/my-returns', [CustomerOrderReturnController::class, 'myReturns']);
+    Route::delete('/customer/return-cancel/{id}', [CustomerOrderReturnController::class, 'cancelReturn']);
 });
 
 

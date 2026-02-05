@@ -109,8 +109,6 @@
         label: 'Customer Hub',
         children: [
         { icon: '🛒', label: 'Customer Order', to: '/customer-hub/customer-order' },
-        { icon: '📦', label: 'Customer Order Items', to: '/customer-hub/customer-order-items' },
-        { icon: '👤', label: 'Customer Information', to: '/customer-hub/customer-information' },
         { icon: '↩️', label: 'Customer Return', to: '/customer-hub/customer-return' },
         { icon: '📋', label: 'Return Record', to: '/customer-hub/return-record' },
         ],

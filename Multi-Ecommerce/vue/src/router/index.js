@@ -50,6 +50,10 @@ import CustomerProductManage from '../Dashboard/Vendordashboard/Vendor-component
 import CustomerOrderManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerOrderManage.vue'
 import OrderTrackingPage from '../Website/WebsitePages/OrderTrackingPage.vue'
 import MyOrderManage from '../Dashboard/Customerdashboard/Customer-components/MyOrderManage.vue'
+import ReturnRequest from '../Dashboard/Customerdashboard/Customer-components/ReturnRequest.vue'
+import CustomerReturnRequestManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerReturnRequestManage.vue'
+import ReturnHistory from '../Dashboard/Vendordashboard/Vendor-components/ReturnHistory.vue'
+import MyReturnList from '../Dashboard/Customerdashboard/Customer-components/MyReturnList.vue'
 
 
 
@@ -104,6 +108,8 @@ const routes = [
     children: [
       { path: '', component: CustomerDashboard },
       { path: '/my-order/order', component: MyOrderManage },
+      { path: '/my-order/order_return', component: ReturnRequest },
+      { path: '/my-order/order_return_record', component: MyReturnList },
     ],
   },
 
@@ -123,6 +129,8 @@ const routes = [
       { path: '/ui-product/add-product', component: AddCustomerProduct },
       { path: '/ui-product/manage-product', component: CustomerProductManage },
       { path: '/customer-hub/customer-order', component: CustomerOrderManage },
+      { path: '/customer-hub/customer-return', component: CustomerReturnRequestManage },
+      { path: '/customer-hub/return-record', component: ReturnHistory },
     ],
   },
 
