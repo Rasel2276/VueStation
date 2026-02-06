@@ -114,16 +114,7 @@
         ],
     },
 
-    {
-        icon: '🏪',
-        label: 'Store',
-        children: [
-        { icon: '🏗️', label: 'Create Store', to: '/store/create-stor' },
-        { icon: '🛠️', label: 'Manage Store', to: '/store/manage-stoer' },
-        ],
-    },
-
-
+ 
     {
         icon: '📈',
         label: 'Reports',

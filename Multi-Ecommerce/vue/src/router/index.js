@@ -54,6 +54,11 @@ import ReturnRequest from '../Dashboard/Customerdashboard/Customer-components/Re
 import CustomerReturnRequestManage from '../Dashboard/Vendordashboard/Vendor-components/CustomerReturnRequestManage.vue'
 import ReturnHistory from '../Dashboard/Vendordashboard/Vendor-components/ReturnHistory.vue'
 import MyReturnList from '../Dashboard/Customerdashboard/Customer-components/MyReturnList.vue'
+import ProfileSettings from '../Dashboard/Vendordashboard/Vendor-components/VendorProfileSettings.vue'
+import CustomerProfileSettings from '../Dashboard/Customerdashboard/Customer-components/CustomerProfileSettings.vue'
+import CustomerUserProfileView from '../Dashboard/Customerdashboard/Customer-components/CustomerUserProfileView.vue'
+import VendorProfileSettings from '../Dashboard/Vendordashboard/Vendor-components/VendorProfileSettings.vue'
+import VendorUserProfileView from '../Dashboard/Vendordashboard/Vendor-components/VendorUserProfileView.vue'
 
 
 
@@ -83,7 +88,7 @@ const routes = [
     path: '/AdminDefaultLayout',
     component: AdminDefaultLayout,
     children: [
-      { path: '', component: AdminDashboard },  
+      { path: '', component: AdminDashboard },
       { path: '/category/add_category', component: CategoryCreate }, 
       { path: '/category/manage_category', component: CategoryManage },
       { path: '/sub-category/add_category', component: SubCategoryCreate },
@@ -110,6 +115,8 @@ const routes = [
       { path: '/my-order/order', component: MyOrderManage },
       { path: '/my-order/order_return', component: ReturnRequest },
       { path: '/my-order/order_return_record', component: MyReturnList },
+      { path: '/account-info/my-profile', component: CustomerUserProfileView },
+      { path: '/account-info/manage-profile', component: CustomerProfileSettings },
     ],
   },
 
@@ -131,6 +138,8 @@ const routes = [
       { path: '/customer-hub/customer-order', component: CustomerOrderManage },
       { path: '/customer-hub/customer-return', component: CustomerReturnRequestManage },
       { path: '/customer-hub/return-record', component: ReturnHistory },
+      { path: '/profile/edit-profile', component: VendorProfileSettings },
+      { path: '/profile/my-profile', component: VendorUserProfileView },
     ],
   },
 

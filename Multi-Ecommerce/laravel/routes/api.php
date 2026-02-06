@@ -7,6 +7,7 @@ use App\Http\Controllers\Vendor\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Vendor\ProfileController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Vendor\VendorStockController;
 use App\Http\Controllers\Admin\AdminPurchaseController;
@@ -119,6 +120,14 @@ Route::middleware(['auth:sanctum','role:customer'])->group(function(){
     Route::post('/customer/order-return', [CustomerOrderReturnController::class, 'storeReturnRequest']);
     Route::get('/customer/my-returns', [CustomerOrderReturnController::class, 'myReturns']);
     Route::delete('/customer/return-cancel/{id}', [CustomerOrderReturnController::class, 'cancelReturn']);
+});
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/profile', [ProfileController::class, 'index']);
+    Route::post('/user/profile-update', [ProfileController::class, 'updateProfile']);
 });
 
 
