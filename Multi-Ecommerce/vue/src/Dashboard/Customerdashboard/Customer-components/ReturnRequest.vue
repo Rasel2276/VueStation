@@ -1,12 +1,18 @@
 <template>
   <div class="page">
     <div class="card">
-      <h2 class="title">Customer Order Return Request</h2>
+      <div class="card-header">
+        <div class="icon-circle">
+          <i class="fas fa-undo-alt"></i>
+        </div>
+        <h2 class="title">Order Return Request</h2>
+        <p class="subtitle">Please provide your details to initiate the return</p>
+      </div>
 
       <form class="form" @submit.prevent="submitForm">
         <div class="field-row">
           <div class="field">
-            <label>Order Tracking ID</label>
+            <label><i class="fas fa-hashtag"></i> Order Tracking ID</label>
             <input 
               type="text" 
               v-model="form.order_id" 
@@ -16,35 +22,39 @@
           </div>
 
           <div class="field">
-            <label>Registered Phone Number</label>
+            <label><i class="fas fa-phone-alt"></i> Registered Phone Number</label>
             <input 
               type="text" 
               v-model="form.phone" 
-              placeholder="Enter your phone number" 
+              placeholder="017XXXXXXXX" 
               required 
             />
           </div>
         </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label>Reason for Return</label>
-            <textarea 
-              rows="4" 
-              placeholder="Why do you want to return this product?" 
-              v-model="form.reason" 
-              required
-            ></textarea>
-          </div>
+        <div class="field">
+          <label><i class="fas fa-comment-dots"></i> Reason for Return</label>
+          <textarea 
+            rows="3" 
+            placeholder="Tell us why you want to return this product..." 
+            v-model="form.reason" 
+            required
+          ></textarea>
         </div>
 
-        <div v-if="message" :class="['alert-box', isError ? 'alert-error' : 'alert-success']">
-          {{ message }}
-        </div>
+        <transition name="fade">
+          <div v-if="message" :class="['alert-box', isError ? 'alert-error' : 'alert-success']">
+            <i :class="isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'"></i>
+            {{ message }}
+          </div>
+        </transition>
 
         <div class="btn-wrapper">
           <button class="btn" type="submit" :disabled="loading">
-            <i class="fas fa-undo"></i> {{ loading ? 'Processing...' : 'Submit Return Request' }}
+            <span v-if="!loading">
+              Submit Return Request <i class="fas fa-arrow-right"></i>
+            </span>
+            <span v-else class="loader-spinner"></span>
           </button>
         </div>
       </form>
@@ -66,7 +76,6 @@ export default {
         phone: "",
         reason: ""
       },
-      // কাস্টমারের টোকেন নিচ্ছি
       token: localStorage.getItem("token") || localStorage.getItem("customertoken")
     }
   },
@@ -85,8 +94,6 @@ export default {
         
         this.isError = false;
         this.message = res.data.message;
-        
-        // ফর্ম রিসেট
         this.form = { order_id: "", phone: "", reason: "" };
         
       } catch (err) {
@@ -101,96 +108,173 @@ export default {
 </script>
 
 <style scoped>
-/* কার্ডের হাইট এবং প্যাডিং কমানো হয়েছে */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
 .page {
-  min-height: 20vh; /* পেজের মিনিমাম হাইট কমানো হয়েছে */
+  min-height: 60vh;
   display: flex;
   justify-content: center;
-  padding: 20px 15px; /* বাইরের প্যাডিং কমানো হয়েছে */
-  background-color: #f9fafb;
+  align-items: center;
+  padding: 40px 15px;
+  background-color: #f8fafc;
+  font-family: 'Outfit', sans-serif;
 }
 
 .card {
   width: 100%;
-  max-width: 850px;
+  max-width: 700px;
   background: #ffffff;
-  padding: 20px 30px; /* কার্ডের ভেতরের প্যাডিং কমানো হয়েছে */
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  background: #f1f5f9;
+  color: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  font-size: 24px;
 }
 
 .title {
-  text-align: center;
-  font-size: 22px; /* টাইটেল সাইজ একটু ছোট করা হয়েছে */
+  font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 20px; /* নিচের গ্যাপ কমানো হয়েছে */
-  border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 10px;
+  color: #0f172a;
+  margin: 0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* প্রতিটি ফিল্ডের মাঝের গ্যাপ কমানো হয়েছে */
+  gap: 20px;
 }
 
 .field-row {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
 }
 
 .field {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 250px;
 }
 
 .field label {
-  font-size: 13px; /* লেবেল সাইজ একটু ছোট */
+  font-size: 13px;
   font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 5px;
+  color: #475569;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field label i {
+  color: #3b82f6;
+  font-size: 12px;
 }
 
 .field input,
 .field textarea {
-  padding: 10px; /* ইনপুটের ভেতরের প্যাডিং কমানো হয়েছে */
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
   font-size: 14px;
+  transition: all 0.3s ease;
+  background: #fcfdfe;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   outline: none;
 }
 
 /* Alert Boxes */
 .alert-box {
-  padding: 10px;
-  border-radius: 6px;
+  padding: 14px;
+  border-radius: 12px;
   font-size: 14px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
+.alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
 .btn-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .btn {
-  background: #1e293b;
+  width: 100%;
+  background: #0f172a;
   color: #fff;
-  padding: 10px 35px; /* বাটনের হাইট কমানো হয়েছে */
+  padding: 14px;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 700;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.btn:hover {
-  background: #0f172a;
+.btn:hover:not(:disabled) {
+  background: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loader-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Animations */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
+.fade-enter, .fade-leave-to { opacity: 0; }
+
+@media (max-width: 640px) {
+  .field-row { flex-direction: column; gap: 20px; }
+  .card { padding: 30px 20px; }
 }
 </style>

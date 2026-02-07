@@ -103,7 +103,7 @@ onMounted(loadProfile);
 
 .profile-page {
   background: #f8fafc;
-  min-height: 40vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +148,7 @@ onMounted(loadProfile);
   background: #10b981; border: 3px solid #0f172a; border-radius: 50%;
 }
 
-.user-title { color: #fff; font-size: 22px; font-weight: 700; margin-bottom: 5px; }
+.user-title { color: #fff; font-size: 22px; font-weight: 700; margin-bottom: 5px; text-align: center; }
 .user-role { 
   background: #3b82f6; color: #fff; font-size: 10px; 
   padding: 2px 12px; border-radius: 50px; text-transform: uppercase; font-weight: 700;
@@ -184,12 +184,11 @@ onMounted(loadProfile);
 }
 .value-box i { color: #3b82f6; font-size: 15px; }
 
-/* ADDRESS SECTION: Only fonts and spacing adjusted */
 .address-board {
   background: #f8fafc;
   border: 1px solid #edf2f7;
   border-radius: 15px;
-  padding: 25px 30px; /* Padding slightly increased for better look */
+  padding: 25px 30px;
 }
 
 .board-header {
@@ -202,11 +201,11 @@ onMounted(loadProfile);
   display: flex; align-items: center; justify-content: space-between;
 }
 
-.addr-col { display: flex; flex-direction: column; gap: 6px; } /* Gap adjusted */
+.addr-col { display: flex; flex-direction: column; gap: 6px; }
 .addr-col.lg { flex: 1.5; padding-left: 25px; }
 
 .addr-label { font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-.addr-value { font-size: 16px; color: #1e293b; font-weight: 600; } /* Font increased from 14px to 16px */
+.addr-value { font-size: 16px; color: #1e293b; font-weight: 600; }
 
 .addr-divider { width: 1px; height: 35px; background: #e2e8f0; margin: 0 20px; }
 
@@ -214,15 +213,51 @@ onMounted(loadProfile);
   display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-/* Loader */
 .spinner { width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+/* --- RESPONSIVE FIXES (No design change) --- */
 @media (max-width: 900px) {
-  .sleek-card { flex-direction: column; height: auto; }
-  .side-brand, .main-content { width: 100%; }
-  .address-flex-table { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .sleek-card { 
+    flex-direction: column; 
+    height: auto; 
+    max-width: 100%; /* Ensures equal side margins on mobile */
+  }
+  .side-brand { 
+    width: 100%; 
+    padding: 40px 20px; 
+    box-sizing: border-box; /* Fixes padding issues */
+  }
+  .main-content { 
+    width: 100%; 
+    padding: 30px 25px; /* Equalized horizontal padding */
+    box-sizing: border-box;
+  }
+  .info-row-top { 
+    grid-template-columns: 1fr; /* Stacked but keeps same design */
+    gap: 20px; 
+    margin-bottom: 30px; 
+  }
+  .address-flex-table { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 15px; 
+  }
   .addr-divider { display: none; }
-  .addr-col.lg { padding-left: 0; }
+  .addr-col.lg { 
+    padding-left: 0; 
+    width: 100%; 
+  }
+  .value-box { 
+    font-size: 15px; 
+    word-break: break-all; /* Prevents long emails from breaking layout */
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page { padding: 10px; } /* Slimmer outer margin for iPhone SE */
+  .main-content { padding: 25px 20px; } /* Ensures left and right padding are identical */
+  .address-board { padding: 20px; }
+  .user-title { font-size: 19px; }
 }
 </style>

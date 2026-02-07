@@ -3,14 +3,16 @@
     <div class="card">
       <h2 class="title">My Orders List</h2>
 
-      <div class="table-responsive">
+      <div class="search-container">
         <input
           type="text"
           v-model="search"
-          placeholder="Search by Order ID or Product Name..."
+          placeholder="Search by Order ID..."
           class="search-input"
         />
+      </div>
 
+      <div class="table-responsive">
         <table class="custom-category-table">
           <thead>
             <tr>
@@ -27,20 +29,20 @@
 
           <tbody>
             <tr v-for="order in filteredOrders" :key="order.id">
-              <td>#{{ order.id }}</td>
-              <td style="font-weight:700; color:#2563eb">{{ order.order_id }}</td>
-              <td>
+              <td data-label="ID">#{{ order.id }}</td>
+              <td data-label="Order ID" style="font-weight:700; color:#2563eb">{{ order.order_id }}</td>
+              <td data-label="Image">
                 <img :src="getImageUrl(order.image)" class="category-image" />
               </td>
-              <td style="font-weight:600">{{ order.product_name }}</td>
-              <td>{{ order.qty }} pcs</td>
-              <td>৳ {{ order.price }}</td>
-              <td>
+              <td data-label="Product Name" style="font-weight:600">{{ order.product_name }}</td>
+              <td data-label="Quantity">{{ order.qty }} pcs</td>
+              <td data-label="Total Price">৳ {{ order.price }}</td>
+              <td data-label="Status">
                 <span :class="['status-badge', order.status.toLowerCase()]">
                   {{ order.status }}
                 </span>
               </td>
-              <td>
+              <td data-label="Actions">
                 <button class="dropdown-btn" @click="toggleDropdown(order.id, $event)">
                   Actions ▾
                 </button>
@@ -78,9 +80,9 @@
 
     <transition name="fade">
       <div v-if="showViewModal" class="modal-overlay" @click.self="showViewModal = false">
-        <div class="modal-content order-modal">
+        <div class="modal-content">
           <div class="modal-header">
-            <h3>Order Details: {{ selectedOrder.order_id }}</h3>
+            <h3 class="modal-title-text">Order: {{ selectedOrder.order_id }}</h3>
             <button class="close-modal" @click="showViewModal = false">&times;</button>
           </div>
           
@@ -89,10 +91,10 @@
               <h4 class="section-title">Product Information</h4>
               <div class="product-preview">
                 <img :src="getImageUrl(selectedOrder.image)" class="large-preview-img" />
-                <div>
+                <div class="modal-text-content">
                   <p><strong>Product:</strong> {{ selectedOrder.product_name }}</p>
                   <p><strong>Quantity:</strong> {{ selectedOrder.qty }} pcs</p>
-                  <p><strong>Total Price:</strong> <span class="price-text">৳ {{ selectedOrder.price }}</span></p>
+                  <p><strong>Total:</strong> <span class="price-text">৳ {{ selectedOrder.price }}</span></p>
                 </div>
               </div>
             </div>
@@ -108,8 +110,10 @@
 
             <div class="detail-section full-width">
               <h4 class="section-title">Current Status</h4>
-              <div class="payment-badge" :class="selectedOrder.status?.toLowerCase()">
-                <strong>Status:</strong> {{ selectedOrder.status }}
+              <div class="payment-badge-container">
+                <span :class="['status-badge', selectedOrder.status?.toLowerCase()]" style="font-size: 14px; padding: 6px 15px;">
+                  {{ selectedOrder.status }}
+                </span>
               </div>
             </div>
           </div>
@@ -205,19 +209,22 @@ const filteredOrders = computed(() => {
 </script>
 
 <style scoped>
-/* সব স্টাইল ভেন্ডর পেজের মতোই রাখা হয়েছে যেন ইন্টারফেস সেম থাকে */
-.page { min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding:40px 0; font-family:"Segoe UI", sans-serif; background: #f8fafc;}
-.card { width:95%; max-width:1200px; background:#fff; border-radius:12px; padding:2rem; box-shadow:0 4px 20px rgba(0,0,0,0.05); }
-.title { text-align:center; font-size:26px; font-weight:600; margin-bottom:30px; color:#1e293b; }
-.search-input { width:100%; max-width:350px; padding:0.7rem 1rem; margin-bottom:1.5rem; border:1px solid #e2e8f0; border-radius:8px; outline:none; transition: 0.3s; }
+/* Base Styles */
+.page { min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding:20px 10px; font-family:"Segoe UI", sans-serif; background: #f8fafc; box-sizing: border-box;}
+.card { width:100%; max-width:1200px; background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.05); overflow: hidden;}
+.title { text-align:center; font-size:24px; font-weight:600; margin-bottom:25px; color:#1e293b; }
+.search-container { width: 100%; display: flex; justify-content: flex-start; }
+.search-input { width:100%; max-width:350px; padding:0.7rem 1rem; margin-bottom:1.5rem; border:1px solid #e2e8f0; border-radius:8px; outline:none; transition: 0.3s; font-size: 14px;}
 .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
-.table-responsive { width:100%; overflow-x:auto; border-radius:8px; }
+/* Table Styles */
+.table-responsive { width:100%; overflow-x:auto; }
 .custom-category-table { width:100%; border-collapse:collapse; }
 .custom-category-table th, .custom-category-table td { padding:14px 15px; text-align:left; border-bottom:1px solid #f1f5f9; font-size:14px; }
-.custom-category-table th { background-color:#f8fafc; font-weight:600; color: #64748b; text-transform: uppercase; font-size: 12px; }
+.custom-category-table th { background-color:#f8fafc; font-weight:600; color: #64748b; text-transform: uppercase; font-size: 12px; white-space: nowrap;}
 
-.status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-transform: capitalize; }
+/* Status Badges */
+.status-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: capitalize; white-space: nowrap; display: inline-block;}
 .pending { background: #fef9c3; color: #854d0e; }
 .confirmed { background: #dbeafe; color: #1e40af; }
 .delivered { background: #dcfce7; color: #166534; }
@@ -225,8 +232,8 @@ const filteredOrders = computed(() => {
 
 .category-image { width:45px; height:45px; object-fit:cover; border-radius:6px; border: 1px solid #e2e8f0; }
 
-/* Dropdown Action Buttons */
-.dropdown-btn { padding:7px 14px; border:1px solid #e2e8f0; border-radius:6px; background:#fff; color:#475569; cursor:pointer; font-weight:600; font-size: 13px; transition: 0.2s; }
+/* Actions & Dropdown */
+.dropdown-btn { padding:7px 14px; border:1px solid #e2e8f0; border-radius:6px; background:#fff; color:#475569; cursor:pointer; font-weight:600; font-size: 13px; transition: 0.2s; white-space: nowrap;}
 .dropdown-btn:hover { background: #f1f5f9; }
 
 .dropdown-menu-absolute { background:white; box-shadow:0 10px 25px rgba(0,0,0,0.15); border-radius:8px; overflow:hidden; min-width:170px; border: 1px solid #f1f5f9; }
@@ -235,23 +242,61 @@ const filteredOrders = computed(() => {
 .dropdown-menu-absolute button i { margin-right: 8px; width: 14px; }
 .view-btn { color:#2563eb !important; font-weight: 600; }
 
-/* Modal & Transitions */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
-.modal-content { background: white; padding: 30px; border-radius: 16px; width: 95%; max-width: 700px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-.order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; }
-.detail-section { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #f1f5f9; }
+/* Modal Design - Uniform Spacing Fix */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); padding: 16px; }
+.modal-content { background: white; padding: 24px; border-radius: 16px; width: 100%; max-width: 650px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-height: 90vh; overflow-y: auto; position: relative; box-sizing: border-box; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+.modal-title-text { font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; }
+.close-modal { background: #f1f5f9; border: none; font-size: 22px; cursor: pointer; color: #64748b; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+.order-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+.detail-section { background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #f1f5f9; box-sizing: border-box; }
 .full-width { grid-column: span 2; }
-.section-title { font-size: 13px; color: #64748b; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-transform: uppercase; font-weight: 700; }
+.section-title { font-size: 11px; color: #94a3b8; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #edf2f7; padding-bottom: 5px; }
 .product-preview { display: flex; gap: 15px; align-items: center; }
-.large-preview-img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
-.price-text { color: #2563eb; font-weight: 800; font-size: 16px; }
+.large-preview-img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0; }
+.modal-text-content p { margin: 3px 0; font-size: 14px; color: #475569; }
+.price-text { color: #2563eb; font-weight: 800; font-size: 17px; }
 
-.modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
-.cancel-btn { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569; }
-.save-btn { background: #2563eb; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+.cancel-btn { background: #f1f5f9; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569; }
+.save-btn { background: #2563eb; color: white; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
+/* Transitions */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 
-@media (max-width: 600px) { .order-details-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+/* Responsive Media Queries */
+@media (max-width: 850px) {
+  .custom-category-table thead { display: none; }
+  .custom-category-table tr { display: block; border: 1px solid #e2e8f0; margin-bottom: 15px; border-radius: 10px; padding: 10px; background: #fff; }
+  .custom-category-table td { display: flex; justify-content: space-between; align-items: center; text-align: right; border-bottom: 1px solid #f1f5f9; padding: 10px 5px; }
+  .custom-category-table td:last-child { border-bottom: none; }
+  .custom-category-table td::before { content: attr(data-label); font-weight: 700; color: #64748b; text-transform: uppercase; font-size: 11px; text-align: left; margin-right: 10px; }
+}
+
+@media (max-width: 600px) { 
+  .modal-overlay { padding: 15px; } /* Same padding on both sides */
+  .modal-content { 
+    padding: 16px; 
+    max-width: calc(100vw - 30px); /* Ensures equal margins on left/right */
+    margin: 0 auto; 
+    border-radius: 12px;
+  }
+  .order-details-grid { 
+    grid-template-columns: 1fr; 
+    gap: 12px; 
+  }
+  .full-width { grid-column: span 1; }
+  .product-preview { flex-direction: row; gap: 12px; }
+  .large-preview-img { width: 65px; height: 65px; }
+  .modal-footer { 
+    flex-direction: column; 
+    gap: 10px; 
+    padding-top: 15px;
+  }
+  .modal-footer button { width: 100%; margin: 0; }
+  .detail-section { padding: 14px; }
+  .modal-title-text { font-size: 16px; }
+}
 </style>
