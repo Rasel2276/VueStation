@@ -110,9 +110,7 @@
         icon: '⏳',
         label: 'Vendor Hub',
         children: [
-        { icon: '📥', label: 'Sales Request', to: '/vendor-hub/sales-request' },
         { icon: '💰', label: 'Sales', to: '/vendor-hub/sales' },
-        { icon: '↩️', label: 'Sales Return Request', to: '/vendor-hub/sales-return-request' },
         { icon: '📋', label: 'Sales Return', to: '/vendor-hub/sales-return' },
         ],
     },
@@ -135,6 +133,16 @@
         children: [
         { icon: '👤', label: 'Vendor List', to: '/users/vendor-list' },
         { icon: '👤', label: 'Customer List', to: '/users/customer-list' },
+        ],
+    },
+
+
+        {
+        icon: '🧑',
+        label: 'Profile',
+        children: [
+        { icon: '🧑', label: 'My Profile', to: '/admin/profile/my-profile' },
+        { icon: '✏️', label: 'Edit Profile', to: '/admin/profile/edit-profile' },
         ],
     },
 

@@ -72,6 +72,10 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     Route::patch('/sales-report/{id}/status', [SalesReportController::class, 'updateStatus']);
     Route::delete('/sales-report/{id}', [SalesReportController::class, 'destroy']);
 
+    // Sales return Report Routes
+    Route::get('/sales-returns', [SalesReportController::class, 'returnList']);
+    Route::delete('/sales-returns/{id}', [SalesReportController::class, 'destroyReturn']);
+
 
     // vendor user routes
     Route::get('/admin/vendors', [UserController::class, 'index']);

@@ -32,10 +32,10 @@
             </template>
 
             <!-- Settings Link -->
-            <RouterLink to="/settings" class="nav-item" exact-active-class="active">
+            <!-- <RouterLink to="/settings" class="nav-item" exact-active-class="active">
                 <span class="icon">⚙️</span>
                 <span v-if="!collapsed">Settings</span>
-            </RouterLink>
+            </RouterLink> -->
         </nav>
     </aside>
 </template>

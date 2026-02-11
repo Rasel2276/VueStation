@@ -7,7 +7,7 @@
         <input
           type="text"
           v-model="search"
-          placeholder="Search by Vendor Name or Email..."
+          placeholder="Search by  Name..."
           class="search-input"
         />
 

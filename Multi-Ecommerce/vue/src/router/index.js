@@ -62,6 +62,9 @@ import VendorUserProfileView from '../Dashboard/Vendordashboard/Vendor-component
 import VendorList from '../Dashboard/Admindashboard/Admincomponents/VendorList.vue'
 import CustomerList from '../Dashboard/Admindashboard/Admincomponents/CustomerList.vue'
 import SalesRecord from '../Dashboard/Admindashboard/Admincomponents/SalesRecord.vue'
+import SalesReturn from '../Dashboard/Admindashboard/Admincomponents/SalesReturn.vue'
+import AdminUserProfileView from '../Dashboard/Admindashboard/Admincomponents/AdminUserProfileView.vue'
+import AdminProfileSettings from '../Dashboard/Admindashboard/Admincomponents/AdminProfileSettings.vue'
 
 
 
@@ -94,6 +97,9 @@ const routes = [
       { path: '/users/vendor-list', component: VendorList },
       { path: '/users/customer-list', component: CustomerList },
       { path: '/vendor-hub/sales', component: SalesRecord },
+      { path: '/vendor-hub/sales-return', component: SalesReturn },
+      { path: '/admin/profile/my-profile', component: AdminUserProfileView },
+      { path: '/admin/profile/edit-profile', component: AdminProfileSettings },
     ],
   },
 

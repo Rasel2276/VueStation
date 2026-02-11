@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
+use App\Models\Vendor\VendorReturn;
 use App\Http\Controllers\Controller;
 use App\Models\Vendor\VendorPurchase;
-use Illuminate\Http\Request;
 
 class SalesReportController extends Controller
 {
@@ -55,4 +56,35 @@ class SalesReportController extends Controller
         }
         return response()->json(['message' => 'Record not found'], 404);
     }
+
+
+
+
+    /**
+ * সকল সেলস রিটার্ন লিস্ট নিয়ে আসা
+ */
+public function returnList()
+{
+    try {
+        // প্রথমে চেক করি রিলেশন ছাড়াই ডাটা আসে কিনা
+        $returns = VendorReturn::with(['vendor', 'product'])->orderBy('id', 'desc')->get();
+        return response()->json($returns);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+/**
+ * সেলস রিটার্ন ডিলিট করা
+ */
+public function destroyReturn($id)
+{
+    $return = VendorReturn::find($id);
+    if ($return) {
+        $return->delete();
+        return response()->json(['message' => 'Return record deleted successfully']);
+    }
+    return response()->json(['message' => 'Record not found'], 404);
+}
+    
 }

@@ -2,41 +2,38 @@
   <div class="page">
     <div class="card">
       <div class="card-header">
-        <div class="icon-circle">
-          <i class="fas fa-undo-alt"></i>
-        </div>
         <h2 class="title">Order Return Request</h2>
-        <p class="subtitle">Please provide your details to initiate the return</p>
+        <p class="subtitle">Please fill out the form below</p>
       </div>
 
       <form class="form" @submit.prevent="submitForm">
         <div class="field-row">
           <div class="field">
-            <label><i class="fas fa-hashtag"></i> Order Tracking ID</label>
+            <label>Order ID</label>
             <input 
               type="text" 
               v-model="form.order_id" 
-              placeholder="Ex: ORD-12345" 
+              placeholder="Order ID" 
               required 
             />
           </div>
 
           <div class="field">
-            <label><i class="fas fa-phone-alt"></i> Registered Phone Number</label>
+            <label>Phone Number</label>
             <input 
               type="text" 
               v-model="form.phone" 
-              placeholder="017XXXXXXXX" 
+              placeholder="Phone Number" 
               required 
             />
           </div>
         </div>
 
         <div class="field">
-          <label><i class="fas fa-comment-dots"></i> Reason for Return</label>
+          <label>Reason</label>
           <textarea 
             rows="3" 
-            placeholder="Tell us why you want to return this product..." 
+            placeholder="Reason for return" 
             v-model="form.reason" 
             required
           ></textarea>
@@ -44,16 +41,13 @@
 
         <transition name="fade">
           <div v-if="message" :class="['alert-box', isError ? 'alert-error' : 'alert-success']">
-            <i :class="isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'"></i>
             {{ message }}
           </div>
         </transition>
 
         <div class="btn-wrapper">
           <button class="btn" type="submit" :disabled="loading">
-            <span v-if="!loading">
-              Submit Return Request <i class="fas fa-arrow-right"></i>
-            </span>
+            <span v-if="!loading">Submit Request</span>
             <span v-else class="loader-spinner"></span>
           </button>
         </div>
@@ -122,11 +116,11 @@ export default {
 
 .card {
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
   background: #ffffff;
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
   border: 1px solid #f1f5f9;
 }
 
@@ -135,21 +129,8 @@ export default {
   margin-bottom: 30px;
 }
 
-.icon-circle {
-  width: 60px;
-  height: 60px;
-  background: #f1f5f9;
-  color: #3b82f6;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 15px;
-  font-size: 24px;
-}
-
 .title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
@@ -164,12 +145,12 @@ export default {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .field-row {
   display: flex;
-  gap: 20px;
+  gap: 15px;
 }
 
 .field {
@@ -179,24 +160,16 @@ export default {
 }
 
 .field label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #475569;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.field label i {
-  color: #3b82f6;
-  font-size: 12px;
+  margin-bottom: 6px;
 }
 
 .field input,
 .field textarea {
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 10px;
   border: 1px solid #e2e8f0;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -207,28 +180,18 @@ export default {
 .field textarea:focus {
   border-color: #3b82f6;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   outline: none;
 }
 
-/* Alert Boxes */
 .alert-box {
-  padding: 14px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 10px;
   font-size: 14px;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
 }
 
 .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-
-.btn-wrapper {
-  margin-top: 10px;
-}
 
 .btn {
   width: 100%;
@@ -236,45 +199,54 @@ export default {
   color: #fff;
   padding: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
 }
 
 .btn:hover:not(:disabled) {
   background: #3b82f6;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
 }
 
 .btn:disabled {
   opacity: 0.7;
-  cursor: not-allowed;
 }
 
 .loader-spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
+  animation: spin 1s linear infinite;
+  display: inline-block;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Animations */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
-.fade-enter, .fade-leave-to { opacity: 0; }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
+/* 📱 MOBILE RESPONSIVE UPDATES */
 @media (max-width: 640px) {
-  .field-row { flex-direction: column; gap: 20px; }
-  .card { padding: 30px 20px; }
+  .page {
+    padding: 20px 10px; /* পেজের ডানে-বামে হালকা জায়গা থাকবে */
+  }
+
+  .card {
+    padding: 25px 20px; /* কার্ডের ভেতরের প্যাডিং কমিয়ে দেওয়া হয়েছে */
+    border-radius: 15px; /* মোবাইলে হালকা কম রেডিয়াস ভালো লাগে */
+  }
+
+  .field-row {
+    flex-direction: column; /* ইনপুটগুলো নিচে নিচে আসবে */
+    gap: 15px;
+  }
+
+  .title {
+    font-size: 20px; /* টাইটেল একটু ছোট করা হয়েছে */
+  }
 }
 </style>
