@@ -1,3 +1,3 @@
 <template>
-  <h1>recent page</h1>
+  <h1>recent pages</h1>
 </template>

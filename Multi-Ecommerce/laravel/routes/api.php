@@ -3,11 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Vendor\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Vendor\ProfileController;
+use App\Http\Controllers\Admin\SalesReportController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Vendor\VendorStockController;
 use App\Http\Controllers\Admin\AdminPurchaseController;
@@ -63,6 +65,21 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function(){
     // Supplier return product
     Route::post('/admin/purchase/return', [AdminPurchaseController::class, 'supplierReturn']);
     Route::get('/admin/purchase/return-history', [AdminPurchaseController::class, 'returnHistory']);
+
+
+    // Sales Report Routes
+    Route::get('/sales-report', [SalesReportController::class, 'index']);
+    Route::patch('/sales-report/{id}/status', [SalesReportController::class, 'updateStatus']);
+    Route::delete('/sales-report/{id}', [SalesReportController::class, 'destroy']);
+
+
+    // vendor user routes
+    Route::get('/admin/vendors', [UserController::class, 'index']);
+    Route::delete('/admin/vendors/{id}', [UserController::class, 'destroy']);
+
+    // customer user rotues
+    Route::get('/admin/customers', [UserController::class, 'customers']);
+    Route::delete('/admin/customers/{id}', [UserController::class, 'destroy']);
 
 });
 

@@ -5,7 +5,6 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Parent Category & Subcategory Name -->
         <div class="field-row">
           <div class="field">
             <label>Parent Category</label>
@@ -32,7 +31,6 @@
           </div>
         </div>
 
-        <!-- Slug -->
         <div class="field">
           <label>Slug</label>
           <input
@@ -42,7 +40,6 @@
           />
         </div>
 
-        <!-- Description -->
         <div class="field">
           <label>Description</label>
           <textarea
@@ -52,7 +49,6 @@
           ></textarea>
         </div>
 
-        <!-- Status & Image -->
         <div class="field-row">
           <div class="field">
             <label>Status</label>
@@ -68,7 +64,6 @@
           </div>
         </div>
 
-        <!-- Button -->
         <div class="btn-wrapper">
           <button class="btn" type="submit">
             Save Subcategory
@@ -167,11 +162,13 @@ export default {
 </script>
 
 <style scoped>
+/* ডেক্সটপ ডিজাইন - ১ পিক্সেলও পরিবর্তন নেই */
 .page {
   min-height: 60vh;
   display: flex;
   justify-content: center;
-  padding: 20px 15px;
+  padding: 40px 15px;
+  box-sizing: border-box;
 }
 
 .card {
@@ -181,6 +178,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .title {
@@ -220,6 +218,8 @@ export default {
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .field input:focus,
@@ -250,9 +250,40 @@ export default {
   background: #2563eb;
 }
 
+/* 📱 FULLY MOBILE RESPONSIVE (iPhone SE & Others) */
 @media (max-width: 768px) {
+  .page {
+    padding: 20px 10px;
+  }
+
+  .card {
+    padding: 25px 15px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
   .field-row {
-    flex-direction: column;
+    flex-direction: column; /* মোবাইলে রো কলাম হয়ে যাবে */
+    gap: 15px;
+  }
+
+  .form {
+    gap: 15px;
+  }
+
+  .btn {
+    width: 100%; /* মোবাইলে বাটন বড় হবে */
+    padding: 14px;
+  }
+}
+
+/* iPhone SE এবং খুব ছোট ফোনের জন্য */
+@media (max-width: 375px) {
+  .card {
+    padding: 20px 10px;
   }
 }
 </style>

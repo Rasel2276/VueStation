@@ -5,6 +5,19 @@
 
       <form class="form" @submit.prevent="submitForm">
         <div v-for="(purchase, index) in purchases" :key="index" class="purchase-row">
+          <div class="row-header">
+            <span class="item-label">Item #{{ index + 1 }}</span>
+            <button 
+              v-if="purchases.length > 1" 
+              type="button" 
+              class="remove-btn" 
+              @click="removeRow(index)"
+              title="Remove this item"
+            >
+              ✕
+            </button>
+          </div>
+
           <div class="field-row">
             <div class="field">
               <label>Supplier</label>
@@ -49,14 +62,14 @@
             </div>
           </div>
 
-          <div class="btn-wrapper">
+          <div class="btn-wrapper add-row-wrapper">
             <button type="button" class="add-btn" @click="addRow">+ Add Product</button>
           </div>
 
           <hr />
         </div>
 
-        <div class="btn-wrapper">
+        <div class="btn-wrapper submit-wrapper">
           <button class="btn" type="submit">Submit Purchase</button>
         </div>
       </form>
@@ -65,7 +78,7 @@
 </template>
 
 <script>
-import api from "../../../axios"; // Correct relative path
+import api from "../../../axios"; 
 
 export default {
   name: "AdminPurchase",
@@ -97,6 +110,10 @@ export default {
         purchase_price: 0,
         vendor_sale_price: 0,
       });
+    },
+    // নতুন মেথড আইটেম কাটার জন্য
+    removeRow(index) {
+      this.purchases.splice(index, 1);
     },
     purchaseTotal(purchase) {
       return (purchase.quantity || 0) * (purchase.purchase_price || 0);
@@ -133,6 +150,7 @@ export default {
   display: flex;
   justify-content: center;
   padding: 40px 15px;
+  box-sizing: border-box;
 }
 
 .card {
@@ -142,6 +160,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .title {
@@ -154,19 +173,55 @@ export default {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 30px; /* ডেস্কটপে সেকশনগুলোর মাঝে গ্যাপ বাড়ানো হয়েছে */
+}
+
+/* আইটেম হেডার এবং ক্রস বাটন স্টাইল */
+.row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.item-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.remove-btn {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.remove-btn:hover {
+  background: #f87171;
+  color: white;
 }
 
 .field-row {
   display: flex;
-  gap: 20px;
+  gap: 30px; /* ইনপুটগুলোর মাঝখানের গ্যাপ বাড়ানো হয়েছে */
   flex-wrap: wrap;
+  margin-bottom: 20px; /* রো গুলোর মাঝে গ্যাপ */
 }
 
 .field {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 200px;
 }
 
 .field label {
@@ -181,6 +236,8 @@ export default {
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .field input:focus,
@@ -205,6 +262,7 @@ export default {
   cursor: pointer;
   font-size: 14px;
   transition: 0.3s;
+  white-space: nowrap;
 }
 
 .btn:hover,
@@ -213,13 +271,40 @@ export default {
 }
 
 hr {
-  margin: 20px 0;
+  margin: 30px 0; /* গ্যাপ বাড়ানোর জন্য মার্জিন বাড়ানো হয়েছে */
   border: 0.5px solid #e5e7eb;
 }
 
 @media (max-width: 768px) {
+  .card {
+    padding: 20px 15px;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+
   .field-row {
     flex-direction: column;
+    gap: 15px;
   }
+
+  .field {
+    min-width: 100%;
+  }
+
+  .btn-wrapper {
+    justify-content: center;
+  }
+
+  .btn, .add-btn {
+    width: 100%;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  .page { padding: 20px 10px; }
+  .card { padding: 15px 10px; }
 }
 </style>

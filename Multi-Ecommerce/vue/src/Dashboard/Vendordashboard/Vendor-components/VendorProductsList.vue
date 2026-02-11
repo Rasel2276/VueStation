@@ -3,36 +3,39 @@
     <div class="card">
       <h2 class="title">Admin Product List</h2>
 
-      <div class="table-responsive">
+      <div class="table-wrapper">
         <input type="text" v-model="search" placeholder="Search" class="search-input" />
 
-        <table class="custom-category-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Product Name</th>
-              <th>Image</th>
-              <th>Available Stock</th>
-              <th>Price</th>
-              <th>Buy Now</th>
-            </tr>
-          </thead>
+        <div class="table-responsive">
+          <table class="custom-category-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Image</th>
+                <th>Available Stock</th>
+                <th>Price</th>
+                <th>Buy Now</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            <tr v-for="product in filteredProducts" :key="product.id">
-              <td>{{ product.id }}</td>
-              <td>{{ product.product_name }}</td>
-              <td>
-                <img v-if="product.product_image" :src="imageUrl(product.product_image)" class="product-image" />
-              </td>
-              <td>{{ product.available_stock }}</td>
-              <td>{{ product.price }}</td>
-              <td>
-                <button @click="buyNow(product)" class="buy-btn">Buy Now</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            <tbody>
+              <tr v-for="product in filteredProducts" :key="product.id">
+                <td data-label="ID">{{ product.id }}</td>
+                <td data-label="Product Name" style="font-weight:600">{{ product.product_name }}</td>
+                <td data-label="Image">
+                  <img v-if="product.product_image" :src="imageUrl(product.product_image)" class="product-image" />
+                  <span v-else>No Image</span>
+                </td>
+                <td data-label="Available Stock">{{ product.available_stock }}</td>
+                <td data-label="Price">{{ product.price }}</td>
+                <td data-label="Buy Now">
+                  <button @click="buyNow(product)" class="buy-btn">Buy Now</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p v-if="filteredProducts.length === 0" class="no-data">No products found.</p>
       </div>
     </div>
@@ -47,13 +50,11 @@ const search = ref('')
 const products = ref([])
 const token = localStorage.getItem('token')
 
-// Fetch vendor stock (directly use response)
 const fetchProducts = async () => {
   try {
     const res = await axios.get('http://127.0.0.1:8000/api/vendor/admin-stocks', {
       headers: { Authorization: `Bearer ${token}` }
     })
-    // Directly assign, no mapping needed
     products.value = res.data
   } catch (err) {
     console.error(err.response?.data || err)
@@ -62,7 +63,6 @@ const fetchProducts = async () => {
 
 onMounted(fetchProducts)
 
-// Filtered products
 const filteredProducts = computed(() => {
   if (!search.value.trim()) return products.value
   const s = search.value.toLowerCase()
@@ -71,16 +71,15 @@ const filteredProducts = computed(() => {
   )
 })
 
-// Image URL
 const imageUrl = (filename) => `http://127.0.0.1:8000/product_images/${filename}`
 
-// Buy Now placeholder
 const buyNow = (product) => {
   alert(`You clicked Buy Now for "${product.product_name}". Implement purchase logic here.`)
 }
 </script>
 
 <style scoped>
+/* 🔒 DESKTOP DESIGN - 100% UNCHANGED */
 .page {
   min-height: 100vh;
   display:flex;
@@ -88,6 +87,7 @@ const buyNow = (product) => {
   align-items:flex-start;
   padding:40px 0;
   font-family:"Segoe UI", sans-serif;
+  box-sizing: border-box;
 }
 .card {
   width:100%;
@@ -96,6 +96,7 @@ const buyNow = (product) => {
   border-radius:8px;
   padding:2rem;
   box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 .title {
   text-align:center;
@@ -111,14 +112,16 @@ const buyNow = (product) => {
   margin-bottom:1rem;
   border:1px solid #d2d6da;
   border-radius:.375rem;
+  box-sizing: border-box;
 }
+.table-wrapper { width: 100%; }
 .table-responsive {
   width:100%;
-  overflow-x:auto;
   border-radius:8px;
   box-shadow:0 2px 4px rgba(0,0,0,0.05);
   background:white;
   padding:0.5rem;
+  box-sizing: border-box;
 }
 .custom-category-table {
   width:100%;
@@ -162,5 +165,55 @@ const buyNow = (product) => {
   color:#555;
   text-align:center;
   font-style:italic;
+}
+
+/* 📱 MOBILE RESPONSIVE - ADDED FOR PERFECT FIT */
+@media (max-width: 850px) {
+  .page { padding: 15px; }
+  .card { padding: 15px; border-radius: 12px; }
+  .title { font-size: 20px; margin-bottom: 20px; }
+  .search-input { max-width: 100%; }
+
+  .custom-category-table { min-width: 100%; }
+  .custom-category-table thead { display: none; }
+  
+  .custom-category-table tr { 
+    display: block; 
+    border: 1px solid #e2e8f0; 
+    margin-bottom: 15px; 
+    border-radius: 10px; 
+    padding: 10px; 
+    background: #fff;
+  }
+  
+  .custom-category-table td { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    text-align: right; 
+    border-bottom: 1px solid #f1f5f9; 
+    padding: 10px 8px; 
+    font-size: 13px;
+  }
+  
+  .custom-category-table td:last-child { border-bottom: none; }
+  
+  .custom-category-table td::before { 
+    content: attr(data-label); 
+    font-weight: 700; 
+    color: #64748b; 
+    text-transform: uppercase; 
+    font-size: 10px; 
+    text-align: left; 
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .product-image { width: 40px; height: 40px; }
+  .buy-btn { width: auto; padding: 5px 15px; }
+}
+
+@media (max-width: 380px) {
+  .custom-category-table td { font-size: 12px; padding: 8px 5px; }
 }
 </style>

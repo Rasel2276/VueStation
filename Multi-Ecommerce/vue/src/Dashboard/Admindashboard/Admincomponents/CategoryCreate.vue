@@ -5,7 +5,6 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Name & Slug -->
         <div class="field-row">
           <div class="field">
             <label>Category Name</label>
@@ -26,7 +25,6 @@
           </div>
         </div>
 
-        <!-- Description -->
         <div class="field">
           <label>Description</label>
           <textarea
@@ -36,7 +34,6 @@
           ></textarea>
         </div>
 
-        <!-- Status & Image -->
         <div class="field-row">
           <div class="field">
             <label>Status</label>
@@ -49,11 +46,10 @@
 
           <div class="field">
             <label>Category Image</label>
-            <input type="file" @change="handleImage" />
+            <input type="file" @change="handleImage" class="file-input" />
           </div>
         </div>
 
-        <!-- Button -->
         <div class="btn-wrapper">
           <button class="btn" type="submit">
             Save Category
@@ -133,11 +129,13 @@ export default {
 </script>
 
 <style scoped>
+/* ডেক্সটপ ডিজাইন - হুবহু আগের মতোই */
 .page {
   min-height: 50vh;
   display: flex;
   justify-content: center;
   padding: 40px 15px;
+  box-sizing: border-box; /* padding ও বর্ডার যেন সাইজ না বাড়ায় */
 }
 
 .card {
@@ -147,6 +145,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .title {
@@ -186,6 +185,8 @@ export default {
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  width: 100%;
+  box-sizing: border-box; /* ইনপুট যেন কার্ডের বাইরে না যায় */
 }
 
 .field input:focus,
@@ -216,9 +217,49 @@ export default {
   background: #2563eb;
 }
 
+/* --- FULLY MOBILE RESPONSIVE (iPhone SE & Others) --- */
 @media (max-width: 768px) {
+  .page {
+    padding: 20px 10px; /* মোবাইলে প্যাডিং কমানো হয়েছে */
+  }
+
+  .card {
+    padding: 20px 15px; /* কার্ডের ভেতরের প্যাডিং কমানো হয়েছে */
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
   .field-row {
-    flex-direction: column;
+    flex-direction: column; /* রো থেকে কলামে কনভার্ট */
+    gap: 15px;
+  }
+
+  .form {
+    gap: 15px;
+  }
+
+  .btn {
+    width: 100%; /* মোবাইলে বাটন ফুল উইডথ হবে */
+    padding: 14px;
+  }
+  
+  /* ফাইল ইনপুট মোবাইলে সুন্দর দেখানোর জন্য */
+  .field input[type="file"] {
+    padding: 8px 0;
+    border: none;
+  }
+}
+
+/* অতি ক্ষুদ্র স্ক্রিনের জন্য (যেমন: iPhone SE) */
+@media (max-width: 375px) {
+  .card {
+    padding: 15px 10px;
+  }
+  .title {
+    font-size: 18px;
   }
 }
 </style>

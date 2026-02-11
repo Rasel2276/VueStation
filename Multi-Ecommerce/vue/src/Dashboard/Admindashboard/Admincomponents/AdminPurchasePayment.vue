@@ -1,42 +1,44 @@
 <template>
   <div class="page">
     <div class="card">
-      <h2 class="title">Payment</h2>
+      <h2 class="title">Payment Summary</h2>
 
-      <div class="table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Supplier</th>
-              <th>Quantity</th>
-              <th>Purchase Price</th>
-              <th>Vendor Sale Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in purchasesData" :key="index">
-              <td>{{ getProductName(item.product_id) }}</td>
-              <td>{{ getSupplierName(item.supplier_id) }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>{{ item.purchase_price.toFixed(2) }}</td>
-              <td>{{ item.vendor_sale_price.toFixed(2) }}</td>
-              <td>{{ itemTotal(item).toFixed(2) }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-wrapper">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Supplier</th>
+                <th>Quantity</th>
+                <th>Purchase Price</th>
+                <th>Vendor Sale Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in purchasesData" :key="index">
+                <td data-label="Product" class="bold-text">{{ getProductName(item.product_id) }}</td>
+                <td data-label="Supplier">{{ getSupplierName(item.supplier_id) }}</td>
+                <td data-label="Quantity">{{ item.quantity }}</td>
+                <td data-label="Purchase Price">{{ item.purchase_price.toFixed(2) }}</td>
+                <td data-label="Vendor Sale Price">{{ item.vendor_sale_price.toFixed(2) }}</td>
+                <td data-label="Total" class="total-cell">{{ itemTotal(item).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="summary">
-        <div class="field">
+      <div class="summary-card">
+        <div class="summary-field">
           <label>Grand Total:</label>
-          <span>{{ grandTotal.toFixed(2) }}</span>
+          <span class="grand-total-amount">{{ grandTotal.toFixed(2) }}</span>
         </div>
 
-        <div class="field">
+        <div class="summary-field">
           <label>Payment Method:</label>
-          <select v-model="payment_method">
+          <select v-model="payment_method" class="payment-select">
             <option value="">Select Method</option>
             <option value="cash">Cash</option>
             <option value="bank">Bank</option>
@@ -45,7 +47,7 @@
         </div>
 
         <div class="btn-wrapper">
-          <button class="btn" @click="submitPayment">Pay Now</button>
+          <button class="pay-btn" @click="submitPayment">Pay Now</button>
         </div>
       </div>
     </div>
@@ -120,10 +122,7 @@ export default {
         this.$router.push("/inventory/Purchase");
       } catch (err) {
         console.error("FULL ERROR:", err);
-
         if (err.response) {
-          console.error("STATUS:", err.response.status);
-          console.error("DATA:", err.response.data);
           alert(JSON.stringify(err.response.data, null, 2));
         } else {
           alert("Network / Axios error");
@@ -135,11 +134,14 @@ export default {
 </script>
 
 <style scoped>
+/* 🔒 DESKTOP & GENERAL STYLES */
 .page {
-  min-height: 50vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   padding: 40px 15px;
+  background-color: #f8fafc;
 }
 
 .card {
@@ -147,20 +149,23 @@ export default {
   max-width: 950px;
   background: #fff;
   padding: 35px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .title {
   text-align: center;
   font-size: 24px;
   margin-bottom: 30px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .table-responsive {
   overflow-x: auto;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
 .custom-table {
@@ -170,44 +175,122 @@ export default {
 
 .custom-table th,
 .custom-table td {
-  padding: 12px 15px;
-  border: 1px solid #e5e7eb;
+  padding: 14px 15px;
   text-align: left;
+  border-bottom: 1px solid #e2e8f0;
   font-size: 14px;
 }
 
 .custom-table th {
-  background-color: #f3f4f6;
+  background-color: #f8fafc;
   font-weight: 600;
+  color: #475569;
 }
 
-.summary {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.total-cell {
+  font-weight: 700;
+  color: #2563eb;
 }
 
-.summary .field {
+/* SUMMARY SECTION */
+.summary-card {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.summary-field {
   display: flex;
   justify-content: space-between;
-  font-size: 16px;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
-.btn-wrapper {
-  display: flex;
-  justify-content: flex-end;
+.summary-field label {
+  font-weight: 600;
+  color: #475569;
 }
 
-.btn {
-  background: #3b82f6;
-  color: #fff;
-  padding: 10px 20px;
+.grand-total-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.payment-select {
+  padding: 8px 12px;
   border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  width: 180px;
+}
+
+.pay-btn {
+  background: #1e293b;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
+  font-weight: 700;
+  width: 100%;
+  transition: 0.3s;
 }
 
-.btn:hover {
-  background: #2563eb;
+.pay-btn:hover {
+  background: #000;
+  transform: translateY(-2px);
+}
+
+/* 📱 MOBILE RESPONSIVE (Label-Value Format) */
+@media (max-width: 768px) {
+  .page { padding: 15px 10px; }
+  .card { padding: 20px 15px; }
+
+  .custom-table thead { display: none; } /* টেবিল হেডার হাইড */
+
+  .custom-table tr {
+    display: block;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .custom-table td {
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 5px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .custom-table td:last-child { border-bottom: none; }
+
+  .custom-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+    width: 40%;
+    flex-shrink: 0;
+  }
+
+  .summary-card {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
+  .payment-select {
+    width: 60%;
+  }
+}
+
+@media (max-width: 375px) {
+  .title { font-size: 20px; }
 }
 </style>

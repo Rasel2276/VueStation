@@ -29,15 +29,15 @@
           <hr />
         </div>
 
-        <div class="field-row" style="justify-content: flex-end; margin-top: 20px;">
-          <div class="field" style="flex: 0 0 300px;">
+        <div class="field-row summary-row-container" style="justify-content: flex-end; margin-top: 20px;">
+          <div class="field summary-field" style="flex: 0 0 300px;">
             <label>Grand Total</label>
             <input type="number" :value="grandTotal" readonly style="font-weight: bold; color: #1e40af;" />
           </div>
         </div>
 
-        <div class="field-row" style="margin-top: 15px; justify-content: flex-end;">
-          <div class="field" style="flex: 0 0 300px;">
+        <div class="field-row summary-row-container" style="margin-top: 15px; justify-content: flex-end;">
+          <div class="field summary-field" style="flex: 0 0 300px;">
             <label>Payment Method</label>
             <select v-model="payment_method" required>
               <option value="">Select Method</option>
@@ -48,8 +48,8 @@
           </div>
         </div>
 
-        <div class="action-buttons" style="justify-content: flex-end; margin-top: 20px;">
-          <button type="button" @click="$router.back()" class="submit-btn" style="background: #6b7280; margin-right: 10px;">Back</button>
+        <div class="action-buttons" style="display: flex; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" @click="$router.back()" class="submit-btn back-btn-mobile" style="background: #6b7280; margin-right: 10px;">Back</button>
           <button type="submit" class="submit-btn" :disabled="loading">
             {{ loading ? 'Processing...' : 'Pay Now' }}
           </button>
@@ -103,7 +103,7 @@ const submitFinalPurchase = async () => {
     alert(res.data.message || "Purchase Successful!");
     router.push('/vendor-inventory/vendor_purchase-record');
   } catch (err) {
-    alert("Error: " + (err.response?.data?.message || "সাবমিট ব্যর্থ হয়েছে"));
+    alert("Error: " + (err.response?.data?.message || "সাবমিট ব্যর্থ হয়েছে"));
   } finally {
     loading.value = false;
   }
@@ -117,7 +117,18 @@ const submitFinalPurchase = async () => {
 .field-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 10px; }
 .field { flex: 1; display: flex; flex-direction: column; }
 .field label { font-weight: bold; margin-bottom: 5px; font-size: 13px; }
-.field input, .field select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+.field input, .field select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
 .submit-btn { background: #3b82f6; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
 hr { border: none; border-top: 1px solid #eee; margin: 10px 0; }
+
+/* মোবাইল রেসপন্সিভনেস - ডেক্সটপ মোডকে স্পর্শ করবে না */
+@media (max-width: 768px) {
+  .page { padding: 10px; }
+  .card { padding: 15px; }
+  .field-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .summary-field { flex: 1 1 auto !important; } /* মোবাইলে ৩০০ পিক্সেল ফিক্সড না রেখে ফুল উইডথ করবে */
+  .action-buttons { flex-direction: column; }
+  .submit-btn { width: 100%; margin-right: 0 !important; margin-bottom: 10px; }
+  .back-btn-mobile { order: 1; margin-bottom: 0; } /* Back বাটন নিচে যাবে */
+}
 </style>

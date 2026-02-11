@@ -5,7 +5,6 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Product Name & SKU -->
         <div class="field-row">
           <div class="field">
             <label>Product Name</label>
@@ -27,7 +26,6 @@
           </div>
         </div>
 
-        <!-- Category & Subcategory -->
         <div class="field-row">
           <div class="field">
             <label>Category</label>
@@ -50,7 +48,6 @@
           </div>
         </div>
 
-        <!-- Supplier & Base Price -->
         <div class="field-row">
           <div class="field">
             <label>Supplier</label>
@@ -72,7 +69,6 @@
           </div>
         </div>
 
-        <!-- Description -->
         <div class="field">
           <label>Description</label>
           <textarea
@@ -82,11 +78,10 @@
           ></textarea>
         </div>
 
-        <!-- Image, Color & Size -->
         <div class="field-row">
           <div class="field">
             <label>Product Image</label>
-            <input type="file" @change="handleImage" />
+            <input type="file" @change="handleImage" class="file-input" />
           </div>
 
           <div class="field">
@@ -108,7 +103,6 @@
           </div>
         </div>
 
-        <!-- Featured & Status -->
         <div class="field-row">
           <div class="field">
             <label>Featured</label>
@@ -127,7 +121,6 @@
           </div>
         </div>
 
-        <!-- Button -->
         <div class="btn-wrapper">
           <button class="btn" type="submit">
             Save Product
@@ -236,7 +229,6 @@ export default {
 
         alert("Product added successfully!");
 
-        // Reset form
         this.form = {
           product_name: "",
           sku: "",
@@ -264,11 +256,13 @@ export default {
 </script>
 
 <style scoped>
+/* 🔒 DESKTOP DESIGN - ১ পিক্সেলও পরিবর্তন নেই */
 .page {
   min-height: 50vh;
   display: flex;
   justify-content: center;
   padding: 40px 15px;
+  box-sizing: border-box;
 }
 
 .card {
@@ -278,6 +272,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .title {
@@ -317,6 +312,8 @@ export default {
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .field input:focus,
@@ -324,6 +321,10 @@ export default {
 .field textarea:focus {
   outline: none;
   border-color: #3b82f6;
+}
+
+.file-input {
+  padding: 10px !important;
 }
 
 .btn-wrapper {
@@ -347,9 +348,39 @@ export default {
   background: #2563eb;
 }
 
+/* 📱 FULLY MOBILE RESPONSIVE (iPhone SE Ready) */
 @media (max-width: 768px) {
+  .page {
+    padding: 20px 10px;
+  }
+
+  .card {
+    padding: 25px 15px;
+  }
+
   .field-row {
-    flex-direction: column;
+    flex-direction: column; /* মোবাইলে রো থেকে কলাম হয়ে যাবে */
+    gap: 15px;
+  }
+
+  .form {
+    gap: 15px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    width: 100%; /* মোবাইলে বাটন বড় হবে */
+    padding: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  .card {
+    padding: 20px 10px;
   }
 }
 </style>

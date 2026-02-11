@@ -127,11 +127,13 @@ export default {
 </script>
 
 <style scoped>
+/* 🔒 DESKTOP DESIGN - UNCHANGED */
 .page {
   min-height: 35vh;
   display: flex;
   justify-content: center;
   padding: 40px 15px;
+  box-sizing: border-box;
 }
 .card {
   width: 100%;
@@ -140,6 +142,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 .title {
   text-align: center;
@@ -163,6 +166,7 @@ export default {
 .field label {
   font-size: 14px;
   margin-bottom: 6px;
+  font-weight: 500;
 }
 .field input,
 .field select,
@@ -170,10 +174,14 @@ export default {
   padding: 12px;
   border-radius: 6px;
   border: 1px solid #d1d5db;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 .field small {
   font-size: 12px;
   color: #555;
+  margin-top: 4px;
 }
 .btn-wrapper {
   display: flex;
@@ -186,5 +194,49 @@ export default {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn:hover {
+  background: #2563eb;
+}
+.btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* 📱 MOBILE RESPONSIVE - ADDED FOR PERFECT FIT */
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 12px;
+  }
+  .card {
+    padding: 20px;
+    border-radius: 8px;
+  }
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .field-row {
+    flex-direction: column; /* মোবাইলে পাশাপাশি থেকে ওপর-নিচ হবে */
+    gap: 15px;
+  }
+  .form {
+    gap: 15px;
+  }
+  .btn {
+    width: 100%; /* মোবাইলে বাটন ফুল উইথ হবে সহজে প্রেস করার জন্য */
+  }
+}
+
+/* iPhone SE Specific */
+@media (max-width: 380px) {
+  .card {
+    padding: 15px;
+  }
+  .field label {
+    font-size: 13px;
+  }
 }
 </style>

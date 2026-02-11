@@ -24,4 +24,9 @@ class VendorPurchase extends Model
     public function adminStock() {
         return $this->belongsTo(AdminStock::class, 'admin_stock_id');
     }
+
+    public function vendor()
+{
+    return $this->belongsTo(User::class, 'vendor_id');
+}
 }

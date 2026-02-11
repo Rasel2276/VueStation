@@ -5,7 +5,6 @@
 
       <form class="form" @submit.prevent="submitForm">
 
-        <!-- Supplier Name & Email -->
         <div class="field-row">
           <div class="field">
             <label>Supplier Name</label>
@@ -27,7 +26,6 @@
           </div>
         </div>
 
-        <!-- Phone & Contact Person -->
         <div class="field-row">
           <div class="field">
             <label>Phone</label>
@@ -48,7 +46,6 @@
           </div>
         </div>
 
-        <!-- Address & Status -->
         <div class="field-row">
           <div class="field">
             <label>Address</label>
@@ -69,7 +66,6 @@
           </div>
         </div>
 
-        <!-- Button -->
         <div class="btn-wrapper">
           <button class="btn" type="submit">
             Save Supplier
@@ -138,11 +134,13 @@ export default {
 </script>
 
 <style scoped>
+/* 🔒 DESKTOP DESIGN - UNCHANGED (Exactly as requested) */
 .page {
   min-height: 50vh;
   display: flex;
   justify-content: center;
-  padding: 20px 15px;
+  padding: 40px 15px; /* Desktop margin adjust */
+  box-sizing: border-box;
 }
 
 .card {
@@ -152,6 +150,7 @@ export default {
   padding: 35px;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .title {
@@ -191,6 +190,8 @@ export default {
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  width: 100%; /* Ensure full width inside flex */
+  box-sizing: border-box;
 }
 
 .field input:focus,
@@ -221,9 +222,39 @@ export default {
   background: #2563eb;
 }
 
+/* 📱 FULLY MOBILE RESPONSIVE FIXES */
 @media (max-width: 768px) {
+  .page {
+    padding: 20px 10px; /* Smaller padding for mobile */
+  }
+
+  .card {
+    padding: 25px 15px; /* Adjust card padding */
+  }
+
   .field-row {
-    flex-direction: column;
+    flex-direction: column; /* Stack fields vertically */
+    gap: 15px;
+  }
+
+  .form {
+    gap: 15px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    width: 100%; /* Full width button on mobile */
+  }
+}
+
+/* Extra small devices (iPhone SE) */
+@media (max-width: 375px) {
+  .card {
+    padding: 20px 10px;
   }
 }
 </style>

@@ -32,10 +32,10 @@
             </template>
 
             <!-- Settings Link -->
-            <RouterLink to="/settings" class="nav-item" exact-active-class="active">
+            <!-- <RouterLink to="/settings" class="nav-item" exact-active-class="active">
                 <span class="icon">⚙️</span>
                 <span v-if="!collapsed">Settings</span>
-            </RouterLink>
+            </RouterLink> -->
         </nav>
     </aside>
 </template>
@@ -93,16 +93,6 @@
     },
 
 
-    {
-        icon: '📢',
-        label: 'Promotions',
-        children: [
-        { icon: '🏷️', label: 'Coupon', to: '/promotions/coupon' },
-        { icon: '💸', label: 'Discount', to: '/promotions/discount' },
-        { icon: '⭐', label: 'Offer', to: '/promotions/offers' },
-        { icon: '🗂️', label: 'Manage Promotions', to: '/promotions/manage-promotions' },
-        ],
-    },
 
     {
         icon: '👥',
@@ -125,14 +115,6 @@
         ],
     },
 
-    {
-        icon: '📩',
-        label: 'Chats',
-        children: [
-        { icon: '🗨️', label: 'Chat with Admin', to: '/chats/chat-with-admin' },
-        { icon: '🗨️', label: 'Chat with Customer', to: '/chats/chat-with-customer' },
-        ],
-    },
 
     {
         icon: '🧑',

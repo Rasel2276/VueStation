@@ -105,10 +105,37 @@ onMounted(fetchAdminStocks);
 .field-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 10px; }
 .field { flex: 1; display: flex; flex-direction: column; }
 .field label { font-weight: bold; margin-bottom: 5px; font-size: 13px; }
-.field input, .field select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-.action-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+.field input, .field select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+.action-buttons { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
 .add-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
 .submit-btn { background: #3b82f6; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
 .remove-btn { background: #ef4444; color: white; border: none; width: 30px; height: 38px; border-radius: 4px; cursor: pointer; }
 hr { border: none; border-top: 1px solid #eee; margin: 10px 0; }
+
+/* Mobile Responsiveness for iPhone SE and others */
+@media (max-width: 768px) {
+  .page { padding: 15px; }
+  .card { padding: 20px; }
+  .field-row { 
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 12px; 
+    position: relative; 
+    padding-top: 30px; /* স্পেস রাখা হয়েছে যাতে রিমুভ বাটন ইনপুটের উপর না পড়ে */
+  }
+  .remove-btn { 
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%; /* গোল করা হয়েছে দেখতে সুন্দর লাগার জন্য */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 10;
+  }
+  .action-buttons { flex-direction: column; }
+  .add-btn, .submit-btn { width: 100%; }
+}
 </style>

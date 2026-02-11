@@ -59,21 +59,9 @@ import CustomerProfileSettings from '../Dashboard/Customerdashboard/Customer-com
 import CustomerUserProfileView from '../Dashboard/Customerdashboard/Customer-components/CustomerUserProfileView.vue'
 import VendorProfileSettings from '../Dashboard/Vendordashboard/Vendor-components/VendorProfileSettings.vue'
 import VendorUserProfileView from '../Dashboard/Vendordashboard/Vendor-components/VendorUserProfileView.vue'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import VendorList from '../Dashboard/Admindashboard/Admincomponents/VendorList.vue'
+import CustomerList from '../Dashboard/Admindashboard/Admincomponents/CustomerList.vue'
+import SalesRecord from '../Dashboard/Admindashboard/Admincomponents/SalesRecord.vue'
 
 
 
@@ -103,6 +91,9 @@ const routes = [
       { path: '/inventory/my-stock', component: AdminStockManage },
       { path: '/inventory/purchase-return', component: SupplierPurchaseReturn },
       { path: '/inventory/return-record', component: SupplierReturnHistory },
+      { path: '/users/vendor-list', component: VendorList },
+      { path: '/users/customer-list', component: CustomerList },
+      { path: '/vendor-hub/sales', component: SalesRecord },
     ],
   },
 
