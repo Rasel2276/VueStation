@@ -77,6 +77,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref("");
 const suppliers = ref([]);
@@ -86,8 +87,8 @@ const token = localStorage.getItem("token");
 
 const fetchSuppliers = async () => {
   try {
-    const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/suppliers",
+    const res = await api.get(
+      "/admin/suppliers",
       { headers: { Authorization: `Bearer ${token}` } }
     );
     suppliers.value = res.data;
@@ -132,7 +133,7 @@ const toggleDropdown = async (id, event) => {
 const deleteSupplier = async (id) => {
   if (!confirm("Are you sure you want to delete?")) return;
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/admin/suppliers/${id}`, {
+    await api.delete(`/admin/suppliers/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     suppliers.value = suppliers.value.filter(s => s.id !== id);

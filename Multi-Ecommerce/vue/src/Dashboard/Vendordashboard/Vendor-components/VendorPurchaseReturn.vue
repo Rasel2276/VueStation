@@ -50,6 +50,7 @@
 
 <script>
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   data() {
@@ -83,7 +84,7 @@ export default {
   methods: {
     async fetchStocks() {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/vendor/my-stocks", {
+        const res = await api.get("/vendor/my-stocks", {
           headers: { Authorization: `Bearer ${this.token}` }
         });
         this.stocks = res.data.map(s => ({
@@ -96,7 +97,7 @@ export default {
     },
     async fetchSuppliers() {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/admin/suppliers", {
+        const res = await api.get("/admin/suppliers", {
           headers: { Authorization: `Bearer ${this.token}` }
         });
         this.suppliers = res.data.map(s => ({ id: s.id, name: s.supplier_name }));
@@ -112,7 +113,7 @@ export default {
       }
       this.loading = true;
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/vendor/returns", this.form, {
+        const res = await api.post("/vendor/returns", this.form, {
           headers: { Authorization: `Bearer ${this.token}` }
         });
         alert(res.data.message);

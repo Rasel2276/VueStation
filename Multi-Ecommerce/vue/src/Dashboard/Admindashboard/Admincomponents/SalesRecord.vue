@@ -90,6 +90,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const sales = ref([])
@@ -99,7 +100,7 @@ const token = localStorage.getItem('token')
 
 const fetchSales = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/sales-report', {
+    const res = await api.get('/sales-report', {
       headers: { Authorization: `Bearer ${token}` }
     })
     sales.value = res.data
@@ -151,7 +152,7 @@ const viewInvoice = (sale) => {
 const deleteRecord = async (id) => {
   if (!confirm('Are you sure you want to delete this record?')) return
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/sales-report/${id}`, {
+    await api.delete(`/sales-report/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     dropdownOpen.value = null

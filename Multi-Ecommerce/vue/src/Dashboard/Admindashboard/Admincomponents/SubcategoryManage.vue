@@ -84,6 +84,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue"
 import axios from "axios"
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref("")
 const subcategories = ref([])
@@ -93,8 +94,8 @@ const token = localStorage.getItem("token")
 
 const fetchSubcategories = async () => {
   try {
-    const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/subcategories",
+    const res = await api.get(
+      "/admin/subcategories",
       { headers: { Authorization: `Bearer ${token}` } }
     )
     subcategories.value = res.data
@@ -117,7 +118,7 @@ const filteredSubcategories = computed(() => {
   )
 })
 
-const imageUrl = (file) => `http://127.0.0.1:8000/subcategory_images/${file}`
+const imageUrl = (file) => `${BASE_URL}/subcategory_images/${file}`
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
@@ -140,7 +141,7 @@ const toggleDropdown = async (id, event) => {
 const deleteSubcategory = async (id) => {
   if (!confirm("Are you sure you want to delete?")) return
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/admin/subcategories/${id}`, {
+    await api.delete(`/admin/subcategories/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     subcategories.value = subcategories.value.filter(s => s.id !== id)

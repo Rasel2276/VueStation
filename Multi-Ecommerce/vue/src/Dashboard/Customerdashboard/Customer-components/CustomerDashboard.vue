@@ -127,7 +127,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const today = new Date().toLocaleDateString(undefined, {
   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -187,7 +187,7 @@ const formatDate = (dateString) => {
 const handleTracking = async () => {
   loading.value = true
   try {
-    const response = await axios.get('track-order', {
+    const response = await api.get('track-order', {
       params: { order_id: searchId.value, phone: searchPhone.value }
     })
     if (response.data.success) {

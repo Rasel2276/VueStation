@@ -67,6 +67,7 @@
 
 <script>
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   name: "SupplierPurchaseReturn",
@@ -94,7 +95,7 @@ export default {
   methods: {
     async loadStocks() {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/admin/stock", {
+        const res = await api.get("/admin/stock", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -113,7 +114,7 @@ export default {
 
     async loadProductsAndSuppliers() {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/admin/purchase", {
+        const res = await api.get("/admin/purchase", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -153,8 +154,8 @@ export default {
 
     async submitForm() {
       try {
-        await axios.post(
-          "http://127.0.0.1:8000/api/admin/purchase/return",
+        await api.post(
+          "/admin/purchase/return",
           this.form,
           {
             headers: {

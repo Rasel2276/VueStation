@@ -131,6 +131,7 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const dropdownOpen = ref(null)
@@ -142,13 +143,13 @@ const orders = ref([])
 const getImageUrl = (img) => {
   if (!img) return 'https://via.placeholder.com/150';
   if (img.startsWith('http')) return img;
-  return `http://127.0.0.1:8000/ui_product_images/${img}`;
+  return `${BASE_URL}/ui_product_images/${img}`;
 }
 
 const fetchMyOrders = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get("http://127.0.0.1:8000/api/customer/my-orders", {
+    const response = await api.get("/customer/my-orders", {
       headers: { Authorization: `Bearer ${token}` }
     });
     orders.value = response.data;
@@ -161,7 +162,7 @@ const cancelOrder = async (id) => {
   if (!confirm("Are you sure you want to cancel this order?")) return;
   try {
     const token = localStorage.getItem('token');
-    await axios.post(`http://127.0.0.1:8000/api/customer/order-cancel/${id}`, {}, {
+    await api.post(`/customer/order-cancel/${id}`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const order = orders.value.find(o => o.id === id);

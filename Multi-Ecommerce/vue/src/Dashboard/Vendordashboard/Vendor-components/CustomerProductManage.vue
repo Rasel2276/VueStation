@@ -138,6 +138,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const products = ref([])
@@ -152,7 +153,7 @@ const editForm = ref({ id: null, name: '', brand: '', category: '', price: '', q
 
 const fetchProducts = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/vendor/customer-products', {
+    const res = await api.get('/vendor/customer-products', {
       headers: { Authorization: `Bearer ${token}` }
     })
     products.value = res.data
@@ -161,7 +162,7 @@ const fetchProducts = async () => {
 
 onMounted(fetchProducts)
 
-const imageUrl = img => `http://127.0.0.1:8000/ui_product_images/${img}`
+const imageUrl = img => `${BASE_URL}/ui_product_images/${img}`
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) { dropdownOpen.value = null; return; }
@@ -208,7 +209,7 @@ const updateProduct = async () => {
   })
 
   try {
-    await axios.post(`http://127.0.0.1:8000/api/vendor/customer-products/${editForm.value.id}`, formData, {
+    await api.post(`/vendor/customer-products/${editForm.value.id}`, formData, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
     })
     alert('Updated successfully!')
@@ -220,7 +221,7 @@ const updateProduct = async () => {
 const deleteProduct = async (id) => {
   if (!confirm('Are you sure you want to delete this product?')) return
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/vendor/customer-products/${id}`, {
+    await api.delete(`/vendor/customer-products/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     products.value = products.value.filter(p => p.id !== id)

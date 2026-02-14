@@ -7,7 +7,7 @@
     <div v-else class="sleek-card">
       <div class="side-brand">
         <div class="avatar-wrapper">
-          <img :src="form.profile_picture ? 'http://127.0.0.1:8000/' + form.profile_picture : '/default-avatar.png'" class="avatar-img" />
+          <img :src="form.profile_picture ? `${BASE_URL}/${form.profile_picture}` : '/default-avatar.png'" class="avatar-img" />
           <div class="badge-online"></div>
         </div>
         <h2 class="user-title">{{ form.full_name || 'User Name' }}</h2>
@@ -72,6 +72,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import api, { BASE_URL } from '../../../axios';
 
 const userRole = ref(localStorage.getItem('role'));
 const token = localStorage.getItem('token') || localStorage.getItem('vendortoken');
@@ -84,7 +85,7 @@ const form = ref({
 
 const loadProfile = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/user/profile', {
+    const res = await api.get('/user/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     form.value.email = res.data.email;

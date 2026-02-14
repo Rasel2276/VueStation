@@ -79,14 +79,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 // State variables
 const token = localStorage.getItem('token')
-const adminDisplayName = ref('Admin') // ডাইনামিক নামের জন্য
+const adminDisplayName = ref('Admin') 
 const totalSalesAmount = ref(0)
 const totalPurchaseAmount = ref(0)
 const totalVendorsCount = ref(0)
-const targetGoal = 1000000 // উদাহরণস্বরূপ ১ লক্ষ টাকা টার্গেট
+const targetGoal = 1000000 
 
 const today = new Date().toLocaleDateString(undefined, {
     weekday: 'long',
@@ -112,15 +113,15 @@ const fetchDashboardData = async () => {
         const headers = { Authorization: `Bearer ${token}` }
 
         // ২. Sales Report থেকে Total Sales ক্যালকুলেশন
-        const salesRes = await axios.get('http://127.0.0.1:8000/api/sales-report', { headers })
+        const salesRes = await api.get('/sales-report', { headers })
         totalSalesAmount.value = salesRes.data.reduce((acc, curr) => acc + parseFloat(curr.total || 0), 0)
 
         // ৩. Purchases থেকে Total Purchase ক্যালকুলেশন
-        const purchaseRes = await axios.get('http://127.0.0.1:8000/api/admin/purchase', { headers })
+        const purchaseRes = await api.get('/admin/purchase', { headers })
         totalPurchaseAmount.value = purchaseRes.data.reduce((acc, curr) => acc + (parseFloat(curr.purchase_price) * parseInt(curr.quantity)), 0)
 
         // ৪. Vendors Directory থেকে ভেন্ডর সংখ্যা
-        const vendorRes = await axios.get('http://127.0.0.1:8000/api/admin/vendors', { headers })
+        const vendorRes = await api.get('/admin/vendors', { headers })
         totalVendorsCount.value = vendorRes.data.filter(user => user.role === 'vendor').length
 
     } catch (err) {

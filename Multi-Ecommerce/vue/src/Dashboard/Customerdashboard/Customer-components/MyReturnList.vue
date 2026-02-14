@@ -65,6 +65,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const returns = ref([])
@@ -72,7 +73,7 @@ const token = localStorage.getItem('token')
 
 const fetchMyReturns = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/customer/my-returns', {
+    const res = await api.get('/customer/my-returns', {
       headers: { Authorization: `Bearer ${token}` }
     })
     returns.value = res.data
@@ -87,7 +88,7 @@ const cancelRequest = async (id) => {
   if (!confirm('আপনি কি এই রিটার্ন রিকোয়েস্টটি ক্যান্সেল করতে চান?')) return
 
   try {
-    const res = await axios.delete(`http://127.0.0.1:8000/api/customer/return-cancel/${id}`, {
+    const res = await api.delete(`/customer/return-cancel/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     alert(res.data.message)

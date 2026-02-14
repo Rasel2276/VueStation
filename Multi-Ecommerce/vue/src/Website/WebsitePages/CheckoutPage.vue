@@ -159,6 +159,7 @@
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import api, { BASE_URL } from '../../axios';
 
 const router = useRouter();
 const cartItems = ref([]);
@@ -176,7 +177,7 @@ const form = reactive({
 const shipping = ref(100); 
 
 const getImageUrl = (img) => {
-  return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
+  return img ? `${BASE_URL}/ui_product_images/${img}` : '/assets/no-image.jpg';
 };
 
 const loadCart = () => {
@@ -243,7 +244,7 @@ const handleCheckout = async () => {
       cartItems: cartItems.value 
     };
 
-    await axios.post("http://127.0.0.1:8000/api/customer/place-order", orderData, {
+    await api.post("/customer/place-order", orderData, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

@@ -53,6 +53,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const router = useRouter();
 const purchases = ref([{ admin_stock_id: "", product_name: "", quantity: 1, price: 0 }]);
@@ -67,7 +68,7 @@ const purchaseTotal = (p) => (Number(p.quantity) || 0) * (Number(p.price) || 0);
 
 const fetchAdminStocks = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/vendor/admin-stocks", {
+    const res = await api.get("/vendor/admin-stocks", {
       headers: { Authorization: `Bearer ${token}` },
     });
     adminStocks.value = res.data;

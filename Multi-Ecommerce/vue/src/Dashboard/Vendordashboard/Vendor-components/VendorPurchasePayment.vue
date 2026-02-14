@@ -63,6 +63,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const router = useRouter();
 const purchases = ref([]);
@@ -96,7 +97,7 @@ const submitFinalPurchase = async () => {
       price: item.price
     }));
 
-    const res = await axios.post("http://127.0.0.1:8000/api/vendor/purchases", payload, {
+    const res = await api.post("/vendor/purchases", payload, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

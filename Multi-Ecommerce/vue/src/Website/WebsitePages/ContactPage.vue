@@ -1,7 +1,6 @@
 <template>
   <div class="contact-page">
 
-    <!-- HERO SECTION -->
     <section class="hero">
       <div class="hero-content">
         <h1>Contact Us</h1>
@@ -9,11 +8,9 @@
       </div>
     </section>
 
-    <!-- CONTACT SECTION -->
     <section class="contact-section">
       <div class="contact-container">
 
-        <!-- CONTACT INFO -->
         <div class="contact-info">
           <h2>Get in Touch</h2>
           <p>Feel free to reach out to us via the form or using the contact info below.</p>
@@ -31,7 +28,6 @@
           </div>
         </div>
 
-        <!-- CONTACT FORM -->
         <div class="contact-form">
           <h2>Send a Message</h2>
           <form @submit.prevent="submitForm">
@@ -80,6 +76,13 @@ export default {
 .contact-page {
   font-family: "Segoe UI", Arial, sans-serif;
   color: #222;
+  /* Added for safety */
+  box-sizing: border-box; 
+}
+
+/* Ensure all elements respect padding */
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 /* ===== HERO SECTION ===== */
@@ -91,6 +94,7 @@ export default {
   align-items: center;
   position: relative;
   text-align: center;
+  padding: 0 20px;
 }
 
 .hero::before {
@@ -103,7 +107,7 @@ export default {
 .hero-content {
   position: relative;
   color: #fff;
-  animation: fadeInDown 1s ease forwards; /* About page-এর মতো animation */
+  animation: fadeInDown 1s ease forwards;
 }
 
 .hero-content h1 {
@@ -163,6 +167,7 @@ export default {
 /* CONTACT FORM */
 .contact-form {
   flex: 1 1 450px;
+  width: 100%; /* Important for mobile */
 }
 
 .contact-form h2 {
@@ -216,22 +221,35 @@ button:hover {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
+  .contact-section {
+    padding: 60px 5%;
+  }
   .contact-container {
     gap: 30px;
   }
 }
 
 @media (max-width: 768px) {
-  .hero-content h1 { font-size: 2rem; }
+  .hero-content h1 { font-size: 2.2rem; }
   .hero-content p { font-size: 1rem; }
+  
+  .contact-section {
+    padding: 40px 20px; /* Side margin for mobile */
+  }
+
   .contact-container {
     flex-direction: column;
-    gap: 30px;
+    gap: 40px;
+  }
+
+  .contact-form, .contact-info {
+    flex: 1 1 100%;
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .hero { height: 30vh; }
+  .hero { height: 35vh; }
   .contact-form h2, .contact-info h2 { font-size: 1.6rem; }
 }
 </style>

@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import api from "../../../axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   name: "AdminPurchasePayment",

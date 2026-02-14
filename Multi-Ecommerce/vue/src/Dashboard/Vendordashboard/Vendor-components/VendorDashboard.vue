@@ -79,6 +79,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const today = new Date().toLocaleDateString(undefined, {
     weekday: 'long',
@@ -99,7 +100,7 @@ const formatNumber = (num) => {
 
 const fetchOrders = async () => {
     try {
-        const response = await axios.get("http://127.0.0.1:8000/api/vendor/orders", {
+        const response = await api.get("/vendor/orders", {
             headers: { Authorization: `Bearer ${token}` }
         });
         orders.value = Array.isArray(response.data) ? response.data : [];
@@ -110,7 +111,7 @@ const fetchOrders = async () => {
 
 const fetchPurchases = async () => {
     try {
-        const res = await axios.get('http://127.0.0.1:8000/api/vendor/purchases', {
+        const res = await api.get('/vendor/purchases', {
             headers: { Authorization: `Bearer ${token}` }
         })
         purchases.value = Array.isArray(res.data) ? res.data : [];

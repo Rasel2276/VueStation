@@ -76,6 +76,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const categories = ref([])
@@ -85,7 +86,7 @@ const token = localStorage.getItem('token')
 
 const fetchCategories = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/admin/categories', {
+    const res = await api.get('/admin/categories', {
       headers: { Authorization: `Bearer ${token}` }
     })
     categories.value = res.data
@@ -107,7 +108,7 @@ const filteredCategories = computed(() => {
   )
 })
 
-const imageUrl = (filename) => `http://127.0.0.1:8000/category_images/${filename}`
+const imageUrl = (filename) => `${BASE_URL}/category_images/${filename}`
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
@@ -130,7 +131,7 @@ const toggleDropdown = async (id, event) => {
 const deleteCategory = async (id) => {
   if (!confirm('Are you sure you want to delete this category?')) return
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/admin/categories/${id}`, {
+    await api.delete(`/admin/categories/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     categories.value = categories.value.filter(cat => cat.id !== id)

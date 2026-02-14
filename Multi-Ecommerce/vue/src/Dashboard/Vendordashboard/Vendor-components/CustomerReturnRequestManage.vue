@@ -82,6 +82,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const returns = ref([])
@@ -91,7 +92,7 @@ const token = localStorage.getItem('vendortoken') || localStorage.getItem('token
 
 const fetchReturns = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/vendor/customer-returns', {
+    const res = await api.get('/vendor/customer-returns', {
       headers: { Authorization: `Bearer ${token}` }
     })
     returns.value = res.data
@@ -103,7 +104,7 @@ onMounted(fetchReturns)
 const updateStatus = async (id, status) => {
   if (!confirm(`Are you sure you want to ${status}?`)) return
   try {
-    const res = await axios.post(`http://127.0.0.1:8000/api/vendor/return-status/${id}`, 
+    const res = await api.post(`/vendor/return-status/${id}`, 
       { status }, { headers: { Authorization: `Bearer ${token}` } }
     )
     alert(res.data.message)

@@ -86,6 +86,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../axios';
 
 const searchId = ref('')
 const searchPhone = ref('')
@@ -132,7 +133,7 @@ const formatDate = (dateString) => {
 const handleTracking = async () => {
   loading.value = true
   try {
-    const response = await axios.get('track-order', {
+    const response = await api.get('track-order', {
       params: { order_id: searchId.value, phone: searchPhone.value }
     })
     if (response.data.success) {

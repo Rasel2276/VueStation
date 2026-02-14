@@ -22,7 +22,7 @@
               <span class="h-badge">Limited Series</span>
               <h1 class="hero-title">Pro Audio <br/><span class="text-accent-color">Series Z</span></h1>
               <p class="hero-desc">Experience studio-quality sound with our next-gen acoustic technology.</p>
-              <button class="h-btn-premium">Explore Now <span class="btn-arrow">→</span></button>
+              <button class="h-btn-premium" @click="$router.push('/products')">Explore Now <span class="btn-arrow">→</span></button>
             </div>
           </div>
         </div>
@@ -35,7 +35,7 @@
               <div class="h-text-area">
                 <h3 class="side-title">Smart Tech</h3>
                 <p class="side-desc">The future of wearable.</p>
-                <button class="h-link-premium">Shop Now</button>
+                <button class="h-link-premium" @click="$router.push('/products')">Shop Now</button>
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@
               <div class="h-text-area">
                 <h3 class="side-title">Accessories</h3>
                 <p class="side-desc">Minimal & Essential.</p>
-                <button class="h-link-premium">Shop Now</button>
+                <button class="h-link-premium" @click="$router.push('/products')">Shop Now</button>
               </div>
             </div>
           </div>
@@ -67,26 +67,24 @@
 
         <div class="slider-viewport">
           <div class="product-row" :style="rowStyle">
-            <div class="p-card" v-for="p in productItems" :key="p.uid">
+            <div class="p-card" v-for="p in productItems" :key="p.id">
               <div class="p-image-box">
-                <span class="p-tag-new" v-if="p.sale">{{ p.saleText }}</span>
-                <img :src="p.img" alt="Product" />
+                <img :src="getImageUrl(p.image)" :alt="p.name" />
                 <div class="p-overlay">
-                  <button class="quick-view">👁️ Quick View</button>
+                  <button class="quick-view" @click="viewDetails(p)">👁️ Quick View</button>
                 </div>
               </div>
               <div class="p-info">
-                <p class="p-category">{{ p.category }}</p>
+                <p class="p-category">{{ p.category || 'General' }}</p>
                 <h4 class="p-title">{{ p.name }}</h4>
-                <p class="p-short-desc">{{ p.desc }}</p>
+                <p class="p-short-desc">{{ p.details }}</p>
                 <div class="p-price-row">
                   <div class="price-group">
-                    <span class="p-price-val">${{ p.price }}</span>
-                    <span class="p-old-price" v-if="p.oldPrice">${{ p.oldPrice }}</span>
+                    <span class="p-price-val">৳{{ p.price }}</span>
                   </div>
-                  <span class="p-rating">⭐ {{ p.rating }}</span>
+                  <span class="p-rating">⭐ 4.9</span>
                 </div>
-                <button class="always-visible-add">
+                <button class="always-visible-add" @click="addToCart(p)">
                   <span class="btn-icon">🛒</span>
                   <span>Add to Cart</span>
                 </button>
@@ -101,20 +99,13 @@
 </template>
 
 <script>
+import api, { BASE_URL } from '../../axios';
+
 export default {
   data() {
     return {
       isAnimating: false,
-      productItems: [
-        { uid: 1, name: 'Wireless Headphone', price: 129, oldPrice: 150, category: 'Audio', desc: 'High fidelity sound with noise cancellation.', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', rating: 4.8, sale: true, saleText: 'Sale' },
-        { uid: 2, name: 'Smart Watch Z', price: 199, category: 'Wearables', desc: 'Monitor your health 24/7 with sensors.', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500', rating: 4.9, sale: false },
-        { uid: 3, name: 'Gaming Mouse', price: 59, oldPrice: 80, category: 'Accessories', desc: 'Ultra-fast response for pro gaming.', img: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500', rating: 4.7, sale: true, saleText: 'Best Seller' },
-        { uid: 4, name: 'Mechanical Keyboard', price: 149, category: 'Accessories', desc: 'RGB backlit mechanical keys.', img: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=500', rating: 4.9, sale: false },
-        { uid: 5, name: 'Bluetooth Speaker', price: 89, category: 'Audio', desc: 'Waterproof portable bass speaker.', img: 'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=500', rating: 4.6, sale: true, saleText: '10% Off' },
-        { uid: 6, name: 'Tech Backpack', price: 110, category: 'Travel', desc: 'Anti-theft bag with USB port.', img: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500', rating: 4.5, sale: false },
-        { uid: 7, name: 'VR Headset', price: 299, category: 'Gadgets', desc: 'Immersive virtual reality kit.', img: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=500', rating: 4.8, sale: false },
-        { uid: 8, name: 'Fast Charger', price: 25, category: 'Power', desc: 'Dual port 65W charging adapter.', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', rating: 4.9, sale: true, saleText: 'New' },
-      ],
+      productItems: [],
       services: [
         { icon: '🚀', title: 'Express', desc: 'Ships in 24h' },
         { icon: '🛡️', title: 'Secure', desc: 'Safe Payment' },
@@ -130,9 +121,30 @@ export default {
       };
     }
   },
+  mounted() {
+    this.fetchProducts();
+  },
   methods: {
+    async fetchProducts() {
+      try {
+        const response = await api.get('/marketplace/all-products');
+        this.productItems = response.data;
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    },
+    getImageUrl(imageName) {
+      return imageName ? `${BASE_URL}/ui_product_images/${imageName}` : 'https://via.placeholder.com/300';
+    },
+    addToCart(product) {
+      window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }));
+    },
+    viewDetails(product) {
+      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      this.$router.push('/product_details');
+    },
     slideRight() {
-      if (this.isAnimating) return;
+      if (this.isAnimating || this.productItems.length === 0) return;
       this.isAnimating = true;
       const moveCount = window.innerWidth <= 768 ? 1 : 4;
       const itemsToMove = this.productItems.splice(0, moveCount);
@@ -140,7 +152,7 @@ export default {
       setTimeout(() => { this.isAnimating = false; }, 600);
     },
     slideLeft() {
-      if (this.isAnimating) return;
+      if (this.isAnimating || this.productItems.length === 0) return;
       this.isAnimating = true;
       const moveCount = window.innerWidth <= 768 ? 1 : 4;
       const itemsToMove = this.productItems.splice(-moveCount);
@@ -152,6 +164,7 @@ export default {
 </script>
 
 <style scoped>
+/* 100% ORIGINAL CSS - NO CHANGES MADE */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 .store-page {
@@ -598,13 +611,12 @@ export default {
   .side-desc { font-size: 9px; margin-bottom: 8px; }
   .h-link-premium { font-size: 9px; }
 
-  /* IPHONE SE / SMALL SCREEN FIX - PRODUCT SECTION */
   .product-row {
-    gap: 12px; /* Gap ektu komano hoyeche jeno container-e fit hoy */
+    gap: 12px; 
   }
   .p-card {
-    flex: 0 0 calc(50% - 6px); /* 10px gap chilo seta 6px kora hoyeche space rakhar jonno */
-    min-width: 140px; /* Minimum width set kora hoyeche jate kete na jay */
+    flex: 0 0 calc(50% - 6px); 
+    min-width: 140px; 
   }
   
   .main-container {
@@ -612,7 +624,6 @@ export default {
   }
 }
 
-/* 320px screen width-er jonno extra safety */
 @media (max-width: 330px) {
   .p-card {
     flex: 0 0 calc(50% - 6px);

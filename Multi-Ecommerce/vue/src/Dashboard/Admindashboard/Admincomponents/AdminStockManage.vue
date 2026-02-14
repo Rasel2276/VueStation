@@ -86,6 +86,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref("");
 const stocks = ref([]);
@@ -95,8 +96,8 @@ const token = localStorage.getItem("token");
 
 const fetchStocks = async () => {
   try {
-    const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/stock",
+    const res = await api.get(
+      "/admin/stock",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -125,7 +126,7 @@ const filteredStocks = computed(() => {
   );
 });
 
-const imageUrl = (file) => `http://127.0.0.1:8000/product_images/${file}`;
+const imageUrl = (file) => `${BASE_URL}/product_images/${file}`;
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
@@ -150,8 +151,8 @@ const toggleDropdown = async (id, event) => {
 const deleteStock = async (productId) => {
   if (!confirm("Are you sure you want to delete this stock?")) return;
   try {
-    await axios.delete(
-      `http://127.0.0.1:8000/api/admin/stock/${productId}`,
+    await api.delete(
+      `/admin/stock/${productId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     stocks.value = stocks.value.filter(s => s.product_id !== productId);

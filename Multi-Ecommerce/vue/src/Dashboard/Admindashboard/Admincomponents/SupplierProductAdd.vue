@@ -134,6 +134,7 @@
 
 <script>
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   name: "ProductCreate",
@@ -173,8 +174,8 @@ export default {
 
     async fetchCategories() {
       try {
-        const res = await axios.get(
-          "http://127.0.0.1:8000/api/admin/categories",
+        const res = await api.get(
+          "/admin/categories",
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         this.categories = res.data;
@@ -185,8 +186,8 @@ export default {
 
     async fetchSubcategories() {
       try {
-        const res = await axios.get(
-          "http://127.0.0.1:8000/api/admin/subcategories",
+        const res = await api.get(
+          "/admin/subcategories",
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         this.subcategories = res.data;
@@ -197,8 +198,8 @@ export default {
 
     async fetchSuppliers() {
       try {
-        const res = await axios.get(
-          "http://127.0.0.1:8000/api/admin/suppliers",
+        const res = await api.get(
+          "/admin/suppliers",
           { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
         this.suppliers = res.data;
@@ -216,8 +217,8 @@ export default {
       }
 
       try {
-        await axios.post(
-          "http://127.0.0.1:8000/api/admin/products",
+        await api.post(
+          "/admin/products",
           formData,
           {
             headers: {

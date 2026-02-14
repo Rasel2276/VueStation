@@ -73,6 +73,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const returns = ref([])
@@ -82,7 +83,7 @@ const token = localStorage.getItem('token')
 
 const fetchReturns = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/admin/purchase/return-history', {
+    const res = await api.get('/admin/purchase/return-history', {
       headers: { Authorization: `Bearer ${token}` }
     })
     returns.value = res.data.map(r => ({
@@ -137,7 +138,7 @@ const viewReason = (item) => {
 const deleteReturn = async (id) => {
   if (!confirm('Are you sure you want to delete this return?')) return
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/admin/purchase/return/${id}`, {
+    await api.delete(`/admin/purchase/return/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     returns.value = returns.value.filter(r => r.id !== id)

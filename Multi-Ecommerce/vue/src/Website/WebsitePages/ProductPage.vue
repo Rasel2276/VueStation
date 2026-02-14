@@ -123,6 +123,7 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import api, { BASE_URL } from '../../axios';
 
 const router = useRouter();
 const isMobile = ref(false);
@@ -142,14 +143,12 @@ const filters = reactive({
 });
 
 const getImageUrl = (img) => {
-  return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
+  return img ? `${BASE_URL}/ui_product_images/${img}` : '/assets/no-image.jpg';
 };
 
 const fetchAllProducts = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/marketplace/all-products", {
-       headers: { 'Authorization': null } 
-    });
+    const res = await api.get("/marketplace/all-products");
     products.value = res.data;
     
     if (products.value.length > 0) {

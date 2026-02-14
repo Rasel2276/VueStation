@@ -58,6 +58,7 @@
 
 <script>
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   data() {
@@ -79,7 +80,7 @@ export default {
       this.message = '';
       
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/customer/order-return", this.form, {
+        const res = await api.post("/customer/order-return", this.form, {
           headers: { 
             Authorization: `Bearer ${this.token}`,
             Accept: 'application/json'

@@ -89,6 +89,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import api, { BASE_URL } from '../../axios';
 
 const router = useRouter();
 const qty = ref(1);
@@ -96,7 +97,7 @@ const toast = reactive({ active: false, msg: "" });
 const product = ref(null);
 
 const getImageUrl = (img) => {
-  return img ? `http://127.0.0.1:8000/ui_product_images/${img}` : '/assets/no-image.jpg';
+  return img ? `${BASE_URL}/ui_product_images/${img}` : '/assets/no-image.jpg';
 };
 
 onMounted(() => {

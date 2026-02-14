@@ -79,6 +79,7 @@
 
 <script>
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 export default {
   name: "SupplierCreate",
@@ -99,8 +100,8 @@ export default {
   methods: {
     async submitForm() {
       try {
-        await axios.post(
-          "http://127.0.0.1:8000/api/admin/suppliers",
+        await api.post(
+          "/admin/suppliers",
           this.form,
           {
             headers: {

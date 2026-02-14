@@ -45,6 +45,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const products = ref([])
@@ -52,7 +53,7 @@ const token = localStorage.getItem('token')
 
 const fetchProducts = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/vendor/admin-stocks', {
+    const res = await api.get('/vendor/admin-stocks', {
       headers: { Authorization: `Bearer ${token}` }
     })
     products.value = res.data
@@ -71,7 +72,7 @@ const filteredProducts = computed(() => {
   )
 })
 
-const imageUrl = (filename) => `http://127.0.0.1:8000/product_images/${filename}`
+const imageUrl = (filename) => `${BASE_URL}/product_images/${filename}`
 
 const buyNow = (product) => {
   alert(`You clicked Buy Now for "${product.product_name}". Implement purchase logic here.`)

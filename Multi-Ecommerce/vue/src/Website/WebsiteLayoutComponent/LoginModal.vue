@@ -29,6 +29,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import api, { BASE_URL } from '../../axios';
 
 const emit = defineEmits(['close', 'openRegister'])
 const email = ref('')
@@ -39,7 +40,7 @@ const router = useRouter()
 const handleLogin = async () => {
   loading.value = true
   try {
-    const res = await axios.post('http://127.0.0.1:8000/api/login', {
+    const res = await api.post('/login', {
       email: email.value,
       password: password.value
     })

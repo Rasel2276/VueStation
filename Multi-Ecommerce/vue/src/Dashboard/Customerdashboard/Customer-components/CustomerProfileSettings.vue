@@ -4,7 +4,7 @@
       <form @submit.prevent="updateProfile" class="modern-form">
         <div class="avatar-center-box">
           <div class="avatar-edit-wrapper">
-            <img :src="previewImage || (form.profile_picture ? 'http://127.0.0.1:8000/' + form.profile_picture : '/default-avatar.png')" class="main-avatar" />
+            <img :src="previewImage || (form.profile_picture ? `${BASE_URL}/${form.profile_picture}` : '/default-avatar.png')" class="main-avatar" />
             <label class="camera-icon">
               <i class="fas fa-camera"></i>
               <input type="file" @change="onFileChange" hidden />
@@ -67,7 +67,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api, { BASE_URL } from '../../../axios';
 
 const userRole = ref(localStorage.getItem('role'));
 const token = localStorage.getItem('token') || localStorage.getItem('vendortoken');
@@ -82,7 +82,7 @@ const form = ref({
 
 const loadProfile = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/user/profile', {
+    const res = await api.get('/user/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     form.value.full_name = res.data.profile?.full_name || res.data.name;
@@ -117,7 +117,7 @@ const updateProfile = async () => {
   if (selectedFile.value) formData.append('profile_picture', selectedFile.value);
 
   try {
-    const res = await axios.post('http://127.0.0.1:8000/api/user/profile-update', formData, {
+    const res = await api.post('/user/profile-update', formData, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
     });
     alert(res.data.message);

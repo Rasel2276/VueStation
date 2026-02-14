@@ -62,6 +62,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const history = ref([])
@@ -71,7 +72,7 @@ const token = localStorage.getItem('vendortoken') || localStorage.getItem('token
 
 const fetchHistory = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/vendor/customer-returns', {
+    const res = await api.get('/vendor/customer-returns', {
       headers: { Authorization: `Bearer ${token}` }
     })
     history.value = res.data

@@ -112,6 +112,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const vendorStocks = ref([]);
 const fileInputs = ref([]);
@@ -148,7 +149,7 @@ const addNewProduct = () => {
 
 const getStocks = async () => {
   try {
-    const res = await axios.get("http://127.0.0.1:8000/api/vendor/my-stocks", {
+    const res = await api.get("/vendor/my-stocks", {
       headers: { Authorization: `Bearer ${token}` }
     });
     vendorStocks.value = res.data;
@@ -208,7 +209,7 @@ const submitForm = async () => {
         }
       });
 
-      await axios.post("http://127.0.0.1:8000/api/vendor/customer-products", formData, {
+      await api.post("/vendor/customer-products", formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}` 

@@ -78,6 +78,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const vendors = ref([])
@@ -88,7 +89,7 @@ const token = localStorage.getItem('token') // Admin Token
 const fetchVendors = async () => {
   try {
     // এখানে আপনার API এন্ডপয়েন্ট দিন যা সব ইউজার আনে
-    const res = await axios.get('http://127.0.0.1:8000/api/admin/vendors', {
+    const res = await api.get('/admin/vendors', {
       headers: { Authorization: `Bearer ${token}` }
     })
     // শুধুমাত্র ভেন্ডরদের ফিল্টার করে রাখা হচ্ছে

@@ -1,7 +1,6 @@
 <template>
   <div class="about-page">
 
-    <!-- HERO SECTION -->
     <section class="hero">
       <div class="hero-content">
         <h1>About Us</h1>
@@ -9,28 +8,46 @@
       </div>
     </section>
 
-    <!-- ABOUT CONTENT SECTION -->
     <section class="about-content">
-      <div class="about-image">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="About Image">
-      </div>
-      <div class="about-text">
-        <h2>Who We Are</h2>
-        <p>
-          We are committed to providing the best quality products and services to our customers. 
-          Our team is passionate, skilled, and dedicated to innovation and excellence. 
-          We believe in building a community where our customers feel valued and inspired.
-        </p>
-        <p>
-          Our mission is to combine creativity, technology, and customer service to deliver an 
-          exceptional experience. We aim to lead the industry while maintaining integrity and sustainability.
-        </p>
+      <div class="container-modern">
+        <div class="about-visual-box">
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="About Image" class="main-img">
+          <div class="experience-badge">
+            <span class="exp-num">10+</span>
+            <span class="exp-text">Years of <br> Excellence</span>
+          </div>
+        </div>
+        
+        <div class="about-text-box">
+          <div class="section-tag">Who We Are</div>
+          <h2>Crafting Solutions with <span class="highlight">Passion & Precision</span></h2>
+          <p class="lead-text">
+            We are more than just a company; we are a team of dreamers and doers dedicated to redefining industry standards.
+          </p>
+          <div class="mission-vision-grid">
+            <div class="mv-item">
+              <div class="mv-icon">🎯</div>
+              <div class="mv-content">
+                <h4>Our Mission</h4>
+                <p>To deliver exceptional experiences through technology and creativity.</p>
+              </div>
+            </div>
+            <div class="mv-item">
+              <div class="mv-icon">👁️</div>
+              <div class="mv-content">
+                <h4>Our Vision</h4>
+                <p>To lead the global market while maintaining integrity and sustainability.</p>
+              </div>
+            </div>
+          </div>
+          <button class="about-cta">Learn More →</button>
+        </div>
       </div>
     </section>
 
-    <!-- FEATURES SECTION -->
     <section class="features">
-      <h2>Our Highlights</h2>
+      <div class="section-tag">Highlights</div>
+      <h2>Why Choose Us?</h2>
       <div class="feature-cards">
         <div class="feature-card">
           <div class="icon">💎</div>
@@ -53,165 +70,222 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "AboutPage",
-};
-</script>
-
 <style scoped>
 /* ===== GLOBAL ===== */
 .about-page {
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #222;
+  font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  color: #1a202c;
+  overflow-x: hidden;
 }
 
 /* ===== HERO SECTION ===== */
 .hero {
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
               url('https://images.unsplash.com/photo-1506765515384-028b60a970df?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
-  height: 55vh;
+  height: 45vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   text-align: center;
-}
-
-.hero-content {
-  position: relative;
-  color: #fff;
-  animation: fadeInDown 1s ease forwards;
+  padding: 0 20px;
 }
 
 .hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+  animation: fadeInDown 0.8s ease;
 }
 
 .hero-content p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  max-width: 600px;
 }
 
-/* ===== ABOUT CONTENT ===== */
+/* ===== ABOUT SECTION ===== */
 .about-content {
+  padding: 100px 10%;
+  background: #ffffff;
+}
+
+.container-modern {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-visual-box {
+  position: relative;
+}
+
+.main-img {
+  width: 100%;
+  border-radius: 24px;
+  box-shadow: 20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff;
+}
+
+.experience-badge {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  background: #3b82f6;
+  color: white;
+  padding: 20px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 50px;
-  padding: 60px 10%;
-  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+  animation: float 3s ease-in-out infinite;
+  z-index: 2;
 }
 
-.about-image {
-  flex: 1 1 400px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
+.exp-num { font-size: 2rem; font-weight: 800; }
+.exp-text { font-size: 0.85rem; line-height: 1.2; font-weight: 500; }
 
-.about-image img {
-  width: 100%;
-  transition: transform 0.5s ease;
-}
-
-.about-image:hover img {
-  transform: scale(1.05);
-}
-
-.about-text {
-  flex: 1 1 400px;
-}
-
-.about-text h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+.section-tag {
   color: #3b82f6;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  display: block;
 }
 
-.about-text p {
-  font-size: 1rem;
-  margin-bottom: 16px;
-  line-height: 1.6;
-  color: #4b5563;
+.about-text-box h2 {
+  font-size: 2.8rem;
+  line-height: 1.2;
+  margin-bottom: 25px;
+  color: #1a202c;
+  font-weight: 800;
+}
+
+.highlight { color: #3b82f6; }
+
+.lead-text {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 30px;
+  line-height: 1.7;
+}
+
+.mission-vision-grid {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 35px;
+}
+
+.mv-item {
+  display: flex;
+  gap: 15px;
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 16px;
+  transition: 0.3s;
+}
+
+.mv-item:hover { background: #f1f5f9; }
+.mv-icon { font-size: 1.4rem; }
+.mv-content h4 { margin-bottom: 4px; color: #1a202c; font-weight: 700; }
+.mv-content p { font-size: 0.9rem; color: #4a5568; margin: 0; line-height: 1.5; }
+
+.about-cta {
+  background: #1a202c;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.about-cta:hover {
+  background: #3b82f6;
+  transform: translateY(-2px);
 }
 
 /* ===== FEATURES SECTION ===== */
 .features {
-  padding: 60px 10%;
+  padding: 80px 10%;
   text-align: center;
-  background: linear-gradient(135deg, #f3f4f6, #e0f2fe);
+  background: #f8fafc;
 }
 
-.features h2 {
-  font-size: 2rem;
-  margin-bottom: 40px;
-  color: #222;
-  position: relative;
-}
+.features h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 40px; }
 
 .feature-cards {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 24px;
 }
 
 .feature-card {
   background: #fff;
-  padding: 30px 20px;
-  border-radius: 12px;
-  width: 280px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-  text-align: center;
+  padding: 40px 25px;
+  border-radius: 24px;
+  width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  transition: 0.3s;
 }
 
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-}
-
-.feature-card .icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-}
-
-.feature-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 12px;
-  color: #3b82f6;
-}
-
-.feature-card p {
-  font-size: 0.95rem;
-  color: #4b5563;
-  line-height: 1.5;
-}
+.feature-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
 
 /* ===== ANIMATIONS ===== */
-@keyframes fadeInDown {
-  0% { opacity: 0; transform: translateY(-20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ===== RESPONSIVE ===== */
+/* ===== MOBILE RESPONSIVE OPTIMIZATION ===== */
 @media (max-width: 1024px) {
-  .about-content { padding: 50px 5%; gap: 40px; }
-  .features { padding: 50px 5%; }
+  .about-content { padding: 80px 5%; }
+  .container-modern { gap: 40px; }
+  .about-text-box h2 { font-size: 2.2rem; }
 }
 
 @media (max-width: 768px) {
+  .hero { height: 35vh; }
   .hero-content h1 { font-size: 2.2rem; }
   .hero-content p { font-size: 1rem; }
-  .about-content { flex-direction: column; gap: 30px; }
-  .feature-cards { gap: 20px; justify-content: center; }
+
+  .about-content { padding: 60px 20px; }
+  .container-modern { grid-template-columns: 1fr; gap: 60px; text-align: center; }
+
+  .about-visual-box {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .experience-badge {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: -25px;
+    padding: 15px 20px;
+    width: fit-content;
+    white-space: nowrap;
+  }
+
+  .about-text-box h2 { font-size: 1.8rem; margin-top: 10px; }
+  .lead-text { font-size: 1rem; }
+
+  .mv-item {
+    text-align: left; /* Item content left aligned for readability */
+    padding: 15px;
+    align-items: flex-start;
+  }
+
+  .features { padding: 60px 20px; }
+  .features h2 { font-size: 1.8rem; }
+  .feature-card { width: 100%; }
 }
 
 @media (max-width: 480px) {
-  .hero { height: 35vh; }
-  .about-text h2 { font-size: 1.6rem; }
-  .about-text p { font-size: 0.95rem; }
-  .feature-card { width: 100%; max-width: 280px; }
+  .hero-content h1 { font-size: 1.8rem; }
+  .exp-num { font-size: 1.6rem; }
+  .exp-text { font-size: 0.75rem; }
 }
 </style>

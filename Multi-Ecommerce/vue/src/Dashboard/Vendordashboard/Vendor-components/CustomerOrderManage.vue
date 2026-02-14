@@ -143,6 +143,7 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const dropdownOpen = ref(null)
@@ -154,13 +155,13 @@ const orders = ref([])
 const getImageUrl = (img) => {
   if (!img) return 'https://via.placeholder.com/150';
   if (img.startsWith('http')) return img;
-  return `http://127.0.0.1:8000/ui_product_images/${img}`;
+  return `${BASE_URL}/ui_product_images/${img}`;
 }
 
 const fetchOrders = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get("http://127.0.0.1:8000/api/vendor/orders", {
+    const response = await api.get("/vendor/orders", {
       headers: { Authorization: `Bearer ${token}` }
     });
     orders.value = response.data;
@@ -176,7 +177,7 @@ onMounted(() => {
 const updateStatus = async (id, newStatus) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`http://127.0.0.1:8000/api/vendor/order-status/${id}`, 
+    const response = await api.post(`/vendor/order-status/${id}`, 
     { status: newStatus },
     { headers: { Authorization: `Bearer ${token}` } });
     
@@ -217,7 +218,7 @@ const deleteOrder = async (id) => {
   if(confirm('Are you sure you want to delete this order?')) {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://127.0.0.1:8000/api/vendor/order-delete/${id}`, {
+      await api.delete(`/vendor/order-delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       orders.value = orders.value.filter(o => o.id !== id)

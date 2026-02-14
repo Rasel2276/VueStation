@@ -66,6 +66,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../axios';
 
 const emit = defineEmits(['close', 'openLogin'])
 
@@ -80,7 +81,7 @@ const handleRegister = async () => {
   loading.value = true
 
   try {
-    await axios.post('http://127.0.0.1:8000/api/register', {
+    await api.post('/register', {
       name: name.value,
       email: email.value,
       password: password.value,

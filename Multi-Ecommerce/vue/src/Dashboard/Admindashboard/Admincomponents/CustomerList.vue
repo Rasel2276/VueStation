@@ -78,6 +78,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import axios from 'axios'
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref('')
 const customers = ref([])
@@ -88,7 +89,7 @@ const token = localStorage.getItem('token') // Admin Token
 const fetchCustomers = async () => {
   try {
     // আপনার এডমিন ভেন্ডর এপিআই থেকেই ডাটা আনা হচ্ছে
-    const res = await axios.get('http://127.0.0.1:8000/api/admin/customers', {
+    const res = await api.get('/admin/customers', {
       headers: { Authorization: `Bearer ${token}` }
     })
     // এখানে শুধুমাত্র 'customer' রোল ফিল্টার করা হচ্ছে

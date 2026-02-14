@@ -94,7 +94,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
-import axios from "axios";
+import api, { BASE_URL } from '../../../axios';
 
 const search = ref("");
 const purchases = ref([]);
@@ -104,8 +104,8 @@ const token = localStorage.getItem("token");
 
 const fetchPurchases = async () => {
   try {
-    const res = await axios.get(
-      "http://127.0.0.1:8000/api/admin/purchase",
+    const res = await api.get(
+      "/admin/purchase",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -140,7 +140,7 @@ const filteredPurchases = computed(() => {
   );
 });
 
-const imageUrl = (file) => `http://127.0.0.1:8000/product_images/${file}`;
+const imageUrl = (file) => `${BASE_URL}/product_images/${file}`;
 
 const toggleDropdown = async (id, event) => {
   if (dropdownOpen.value === id) {
@@ -164,8 +164,8 @@ const toggleDropdown = async (id, event) => {
 const deletePurchase = async (productId) => {
   if (!confirm("Are you sure you want to delete this purchase?")) return;
   try {
-    await axios.delete(
-      `http://127.0.0.1:8000/api/admin/purchase/${productId}`,
+    await api.delete(
+      `/admin/purchase/${productId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     purchases.value = purchases.value.filter(p => p.product_id !== productId);
